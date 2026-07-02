@@ -1,0 +1,14 @@
+@import url(./fonts.css);
+
+
+#root {
+  width: 100vw;
+  min-height: 100vh;
+  border: 100px;
+  text-align: center;
+  background-color: hsl(240, 31%, 10%);
+  background-image: url("../src/assets/Texturelabs_Sky_173M.jpg");
+  color: rgba(255, 255, 255, 0.87);
+}
+
+

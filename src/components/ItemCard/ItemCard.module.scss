@@ -1,0 +1,100 @@
+.ItemCard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    width: 250px;
+    height: 350px;
+    cursor: pointer;
+    box-sizing: border-box;
+    background-color: transparent;
+    border: 1px solid white;
+    padding: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.5s ease;
+    margin: 50px;
+
+    &:hover  {
+        transform: scale(1.05); 
+    }
+
+    &:hover .overlay {
+        opacity: 0;
+    }
+
+/*     &:hover .background {
+        transform: scale(1.1); 
+    }*/
+
+    &.active {
+        opacity: 1;
+        background-color: var(--color-secondary);
+        border-radius: var(--border-radius);
+    }
+
+
+
+    span {
+        align-self: flex-start;
+        color: var(--color-text);
+        font-family: 'Spectral SC', serif;
+        font-weight: bold;
+        font-size: 24px;
+        text-align: center;
+        z-index: 1;
+
+    }
+
+    hr {
+        border: 2px solid white;
+        width: 100%;
+    }
+
+    p {
+        align-self: flex-start;
+
+    }
+}
+
+.background{
+position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+    background-size: cover;
+    transition: transform 0.5s ease;
+
+}
+
+.content{
+position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+      display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 5%;
+    box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+
+}
+
+.overlay{
+      position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(13, 15, 137, 0.35); /* Azul translúcido */
+  z-index: 2;
+    transition: opacity 0.5s ease;
+
+}

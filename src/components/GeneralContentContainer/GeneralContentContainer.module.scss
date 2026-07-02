@@ -1,0 +1,11 @@
+.GeneralContentContainer{
+    max-width: 70vw;
+    min-height: 20vh;
+    padding: 2%;
+    border: 3px solid #FFF48E;
+    border-radius: 10px;
+    background-color: hsl(240, 31%, 10%, 0.5);
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: content-box;
+}
