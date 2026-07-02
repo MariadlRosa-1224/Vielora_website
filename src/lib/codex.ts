@@ -20,8 +20,8 @@ const codexEntrySchema = z.object({
   rank: z.string(),
   dangerLevel: z.union([z.string(), z.number()]).transform(String),
 
-  aspects: z.array(z.string()).default([]),
-  loot: z.string().default("None"),
+  aspects: z.array(z.string()).default(["None"]),
+  loot: z.array(z.string()).default(["None"]),
 
   stats: z.object({
     strength: z.number(),
@@ -32,7 +32,7 @@ const codexEntrySchema = z.object({
     senses: z.number(),
   }),
 
-  abilities: z.array(z.string()).default([]),
+  abilities: z.array(z.string()).default(["None"]),
   draft: z.boolean().default(false),
 });
 
