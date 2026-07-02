@@ -175,6 +175,12 @@ const handleSubmit = async (event: React.FormEvent) => {
             markdown,
           };
 
+    const payloadText = JSON.stringify(payload);
+
+console.log(
+  "Payload size MB:",
+  new Blob([payloadText]).size / 1024 / 1024,
+);
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {

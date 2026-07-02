@@ -1,5 +1,5 @@
 bucket_name = "vielora-website-dev"
 aws_region  = "us-east-2"
 github_owner = "MariadlRosa-1224"
-github_repo  = "Vielora_website"
+github_repo  = "Vielora-website"
 github_branch = "main"
