@@ -97,20 +97,34 @@ async function createEntry(input) {
 
   const commitMessage = `feat(content): add ${title}`;
 
-  await putGithubFile({
-    path: mdxPath,
-    content: mdx,
-    message: commitMessage,
-    token,
-  });
+const writtenFiles = [];
 
-  await putGithubFile({
-    path: mainImagePath,
-    contentBase64: mainImage.base64,
-    message: commitMessage,
-    token,
-    alreadyBase64: true,
-  });
+const mdxResult = await putGithubFile({
+  path: mdxPath,
+  content: mdx,
+  message: commitMessage,
+  token,
+});
+
+writtenFiles.push({
+  path: mdxPath,
+  htmlUrl: mdxResult.content?.html_url,
+  commitUrl: mdxResult.commit?.html_url,
+});
+
+const mainImageResult = await putGithubFile({
+  path: mainImagePath,
+  contentBase64: mainImage.base64,
+  message: commitMessage,
+  token,
+  alreadyBase64: true,
+});
+
+writtenFiles.push({
+  path: mainImagePath,
+  htmlUrl: mainImageResult.content?.html_url,
+  commitUrl: mainImageResult.commit?.html_url,
+});
 
   for (const image of extraImages) {
     await putGithubFile({
@@ -120,12 +134,19 @@ async function createEntry(input) {
       token,
       alreadyBase64: true,
     });
+
+      writtenFiles.push({
+    path: image.repoPath,
+    htmlUrl: imageResult.content?.html_url,
+    commitUrl: imageResult.commit?.html_url,
+  });
   }
 
   return {
     ok: true,
-    mdxPath,
-    mainImagePath,
+        mdxPath,
+        mainImagePath,
+        writtenFiles,
     entryUrl:
       entryType.kind === "creature"
         ? `/codex/creatures/${slug}`
