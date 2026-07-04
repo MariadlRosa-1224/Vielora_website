@@ -7,11 +7,11 @@ const nextConfig: NextConfig = {
     additionalData: `$var: red;`,
     implementation: 'sass-embedded',
   },
-    output: "export",
+/*     output: "export",
   trailingSlash: true,
   images: {
     unoptimized: true,
-  },
+  }, */
 };
 
 export default nextConfig;

@@ -7,7 +7,7 @@ import InfoCard from "@/components/InfoCard/InfoCard";
 export default function Home() {
   return (
     
-      <main className="min-h-screen bg-gradient-to-b from-[#2936A7] to-[#2936A7] ">
+      <main className="min-h-screen bg-gradient-to-b from-[#2936A7] from-30% to-[#0D0F25] to-45% ">
 <section className="relative min-h-[640px] overflow-hidden bg-[#08091c] bg-[url('/images/wip-mainpage.png')] bg-cover bg-center bg-no-repeat md:min-h-[760px] mt-16">
       {/* Overlay general para oscurecer un poco la imagen */}
       <div className="absolute inset-0 bg-[#05071a]/20 " />
@@ -56,7 +56,7 @@ export default function Home() {
           </p>
         </div>
         {/* imagen que divide un div del otros*/}
-        <div className="relative flex w-full items-center justify-left rotate-y-180 left-0 mb-20 pl-170 md:mb-20 ">
+        <div className="relative flex w-full h-[150px] items-center justify-left rotate-y-180 left-0 mb-20 pl-170 md:mb-20 ">
           <Image
             src="/images/crystal-butterfly.png"
             alt="Imagen de ejemplo"
@@ -100,7 +100,7 @@ export default function Home() {
         </div>
 
                 {/* imagen que divide un div del otros*/}
-        <div className="relative flex w-full items-center justify-left left-0 mb-20 pl-170 md:mb-20 ">
+        <div className="relative flex w-full h-[150px] items-center justify-left left-0 mb-20 pl-170 md:mb-20 ">
           <Image
             src="/images/crystal-butterfly.png"
             alt="Imagen de ejemplo"
