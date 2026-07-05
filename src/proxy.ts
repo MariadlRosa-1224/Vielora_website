@@ -45,6 +45,8 @@ export const config = {
     "/editor",
     "/editor/:path*",
     "/login",
+    "/admin",
+    "/admin/:path*"
 
   ],
 };

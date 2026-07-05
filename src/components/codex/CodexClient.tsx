@@ -10,53 +10,80 @@ type CodexClientProps = {
   initialItems: CodexEntryMeta[];
 };
 
-
-
 export default function CodexClient({ initialItems }: CodexClientProps) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+
   const [rank, setRank] = useState("All");
-  const [location, setLocation] = useState("Anywhere");
-  const [dangerLevel, setDangerLevel] = useState("All");
+  const [location, setLocation] = useState("All");
   const [rarity, setRarity] = useState("All");
+
+  const [dangerLevel, setDangerLevel] = useState("All");
   const [tameability, setTameability] = useState("All");
 
-
+  const [stat, setStat] = useState("All");
+  const [school, setSchool] = useState("All");
+  const [caliber, setCaliber] = useState("All");
 
   const filteredItems = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const query = normalize(search);
 
     return initialItems.filter((item) => {
+      const searchableText = getSearchableText(item);
+
       const matchesSearch =
-        query.length === 0 ||
-        item.title.toLowerCase().includes(query) ||
-        item.category.toLowerCase().includes(query) ||
-        item.location.toLowerCase().includes(query) ||
-        item.dangerLevel.toLowerCase().includes(query) ||
-        item.rarity.toLowerCase().includes(query) ||
-        item.tameability.toLowerCase().includes(query) ||
-        item.rank.toLowerCase().includes(query);
+        query.length === 0 || searchableText.includes(query);
 
       const matchesCategory =
-        category === "All" || item.category === category.toLocaleLowerCase();
+        isAll(category) || normalize(item.category) === normalize(category);
 
-      
-      const matchesRank = rank === "All" || item.rank === rank.toLowerCase();
+      const matchesRank = matchesField(item, "rank", rank);
+      const matchesLocation = matchesField(item, "location", location);
+      const matchesDangerLevel = matchesField(
+        item,
+        "dangerLevel",
+        dangerLevel,
+      );
+      const matchesRarity = matchesField(item, "rarity", rarity);
+      const matchesTameability = matchesField(
+        item,
+        "tameability",
+        tameability,
+      );
 
-      const matchesLocation = location === "Anywhere" || item.location === location.toLowerCase();
+      const matchesStat = matchesField(item, "stat", stat);
+      const matchesSchool = matchesField(item, "school", school);
+      const matchesCaliber = matchesField(item, "caliber", caliber);
 
-      const matchesDangerLevel = dangerLevel === "All" || item.dangerLevel === dangerLevel.toLowerCase();
-
-      const matchesRarity = rarity === "All" || item.rarity === rarity.toLowerCase();
-      
-      const matchesTameability = tameability === "All" || item.tameability === tameability.toLowerCase();
-
-      return matchesSearch && matchesCategory && matchesRank && matchesLocation && matchesDangerLevel && matchesRarity && matchesTameability;
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesRank &&
+        matchesLocation &&
+        matchesDangerLevel &&
+        matchesRarity &&
+        matchesTameability &&
+        matchesStat &&
+        matchesSchool &&
+        matchesCaliber
+      );
     });
-  }, [search, category, rank, location, dangerLevel, rarity, tameability]);
+  }, [
+    initialItems,
+    search,
+    category,
+    rank,
+    location,
+    dangerLevel,
+    rarity,
+    tameability,
+    stat,
+    school,
+    caliber,
+  ]);
 
   return (
-    <main className="min-h-screen bg-[#111120] bg-[url('/images/galaxies.jpg')] bg-fixed bg-cover bg-center bg-no-repeat px-8 py-24 text-white">
+    <main className="min-h-screen bg-[#111120] bg-[url('/images/page-backgrounds/galaxies.jpg')] bg-fixed bg-cover bg-center bg-no-repeat px-8 py-24 text-white">
       <div className="mx-auto max-w-7xl">
         <h1 className="mb-8 font-serif text-3xl font-bold uppercase tracking-wider">
           Codex
@@ -82,9 +109,78 @@ export default function CodexClient({ initialItems }: CodexClientProps) {
             setRarity={setRarity}
             tameability={tameability}
             setTameability={setTameability}
+            stat={stat}
+            setStat={setStat}
+            school={school}
+            setSchool={setSchool}
+            caliber={caliber}
+            setCaliber={setCaliber}
           />
         </div>
       </div>
     </main>
   );
+}
+
+function matchesField(
+  item: CodexEntryMeta,
+  fieldName: string,
+  filterValue: string,
+) {
+  if (isAll(filterValue)) {
+    return true;
+  }
+
+  const value = getFieldValue(item, fieldName);
+
+  return normalize(value) === normalize(filterValue);
+}
+
+function getFieldValue(item: CodexEntryMeta, fieldName: string) {
+  const record = item as unknown as Record<string, unknown>;
+  const value = record[fieldName];
+
+  if (value === undefined || value === null) {
+    return "";
+  }
+
+  if (typeof value === "string" || typeof value === "number") {
+    return String(value);
+  }
+
+  return "";
+}
+
+function getSearchableText(item: CodexEntryMeta) {
+  const values = collectSearchableValues(item);
+
+  return values.join(" ").toLowerCase();
+}
+
+function collectSearchableValues(value: unknown): string[] {
+  if (value === undefined || value === null) {
+    return [];
+  }
+
+  if (typeof value === "string" || typeof value === "number") {
+    return [String(value)];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap(collectSearchableValues);
+  }
+
+  if (typeof value === "object") {
+    return Object.values(value).flatMap(collectSearchableValues);
+  }
+
+  return [];
+}
+
+function normalize(value: string) {
+  return value.trim().toLowerCase();
+}
+
+function isAll(value: string) {
+  return value === "All" || value === "";
 }

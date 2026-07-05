@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import CodexEntryLayout from "@/components/codex/CodexEntryLayout";
 import CreatureEntryTemplate from "@/components/codex/entry-templates/CreatureEntryTemplate";
+import SpellEntryTemplate from "@/components/codex/entry-templates/SpellEntryTemplate";
 import { getAllCodexEntries, getCodexEntry } from "@/lib/codex";
 
 type PageProps = {
@@ -34,7 +35,6 @@ export async function generateMetadata({ params }: PageProps) {
 
   return {
     title: `${entry.title} | Codex`,
-    description: entry.tags.join(", "),
   };
 }
 
@@ -46,13 +46,24 @@ export default async function CodexEntryPage({ params }: PageProps) {
     notFound();
   }
 
-  if (entry.category !== "creatures") {
-    notFound();
+  let structuredSection: React.ReactNode;
+
+  switch (entry.category) {
+    case "creatures":
+      structuredSection = <CreatureEntryTemplate entry={entry} />;
+      break;
+
+    case "spells":
+      structuredSection = <SpellEntryTemplate entry={entry} />;
+      break;
+
+    default:
+      notFound();
   }
 
   return (
     <CodexEntryLayout
-      structuredSection={<CreatureEntryTemplate entry={entry} />}
+      structuredSection={structuredSection}
       markdownSection={<MDXRemote source={entry.content} />}
     />
   );

@@ -15,19 +15,6 @@ export const vieloraColors = {
   royalBlue: "#2D38A5",
 } as const;
 
-export type VieloraColorName = keyof typeof vieloraColors;
-
-export const codexCategoryColors = {
-  creatures: vieloraColors.skyBlue,
-  characters: vieloraColors.violet,
-  locations: vieloraColors.aqua,
-  items: vieloraColors.parchment,
-  spells: vieloraColors.roseRed,
-  races: vieloraColors.coral,
-  lore: vieloraColors.royalBlue,
-  dark: vieloraColors.ink,
-} as const;
-
 export const vieloraGradients = {
   blueVertical: `linear-gradient(360deg, ${vieloraColors.skyBlue} 0%, ${vieloraColors.royalBlue} 50%, rgba(0, 0, 0, 0) 80%)`,
 
@@ -39,3 +26,20 @@ export const vieloraGradients = {
 
   coralVertical: `linear-gradient(360deg, ${vieloraColors.coral} 0%, ${vieloraColors.royalBlue} 50%, rgba(0, 0, 0, 0) 80%)`,
 } as const;
+
+export const vieloraHoverGradients: Record<keyof typeof vieloraGradients, string> = {
+  blueVertical:
+    "linear-gradient(360deg, #31D6FF 0%, #3547D8 62%, rgba(0, 0, 0, 0) 95%)",
+
+  violetVertical:
+    "linear-gradient(360deg, #A65CFF 0%, #2525B8 62%, rgba(0, 0, 0, 0) 95%)",
+
+  aquaVertical:
+    "linear-gradient(360deg, #58F5DA 0%, #3547D8 62%, rgba(0, 0, 0, 0) 95%)",
+
+  roseVertical:
+    "linear-gradient(360deg, #FF3B72 0%, #3547D8 62%, rgba(0, 0, 0, 0) 95%)",
+
+  coralVertical:
+    "linear-gradient(360deg, #FF999B 0%, #3547D8 62%, rgba(0, 0, 0, 0) 95%)",
+};

@@ -12,7 +12,7 @@ export type CreatureEntryData = {
   rank: string;
   dangerLevel: string;
   aspects: string[];
-  loot: string;
+  loot: string[];
   stats: {
     strength: number;
     speed: number;
@@ -56,7 +56,12 @@ export default function CreatureEntryTemplate({
         </div>
 
         <div className="mt-6 text-sm">
-          <InfoLine label="Loot" value={entry.loot} />
+          <p className="font-bold">Loot:</p>
+          <ul className="ml-10 mt-1 list-disc">
+            {entry.loot.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
         </div>
 
         <div className="mt-8 grid gap-6 border-t border-white/40 pt-4 md:grid-cols-2">

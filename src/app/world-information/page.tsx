@@ -3,10 +3,11 @@ import Image from "next/image";
 import VerticalColorButton from "@/components/VerticalColorButton";
 
 
+
 export default function Home() {
   return (
       <main className="min-h-screen bg-[#0D0F25] bg-[url('/images/page-backgrounds/dark-starry-sky.jpg')] bg-cover bg-center bg-no-repeat ">
-<section className="relative max-h-[60vh] overflow-hidden bg-[#08091c] bg-[url('/images/world-information/library-wip.png')] bg-cover bg-center bg-no-repeat md:min-h-[60vh] mt-16">
+<section className="relative max-h-[50vh] overflow-hidden bg-[#08091c] bg-[url('/images/world-information/library-wip.png')] bg-cover bg-center bg-no-repeat md:min-h-[50vh] mt-16">
     </section>
 
 
@@ -53,26 +54,92 @@ export default function Home() {
 
     </section>
 
-        {/* imagen que divide un div del otros*/}
-        <div className="relative flex w-full h-[150px] items-center justify-left rotate-y-180 left-0 mb-20 pl-170 md:mb-20 ">
-          <Image
-            src="/images/crystal-butterfly.png"
-            alt="Imagen de ejemplo"
-            width={400}
-            height={200}
-          />
-        </div>
-        {/* Vertical color buttons*/ }
+    {/* Seccion a links de informacion del mundo*/ }
+    <section className="relative min-h-[760px] flex  justify-center md:min-h-[760px]">
+    <div className="relative flex justify-around items-start flex-wrap min-h-[760px] min-w-[1048px] max-w-7xl my-20 mx-10 md:min-h-[760px]">
+      <TitleField title="division 1" />
+      <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="violetVertical"
+      />
+            <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="violetVertical"
+      />
+            <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="violetVertical"
+      />
+            <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="violetVertical"
+      />
+            <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="violetVertical"
+      />
+            <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="violetVertical"
+      />
 
-                {/* imagen que divide un div del otros*/}
-        <div className="relative flex w-full h-[150px] items-center justify-left left-0 mb-20 pl-170 md:mb-20 ">
-          <Image
-            src="/images/crystal-butterfly.png"
-            alt="Imagen de ejemplo"
-            width={400}
-            height={200}
-          />
-        </div>
+      <div className="relative flex justify-around items-start flex-wrap min-h-[760px] min-w-[1048px] max-w-7xl my-20 mx-10 md:min-h-[760px]">
+      <TitleField title="division 2" />
+
+        <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="aquaVertical"
+      />
+              <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="aquaVertical"
+      />
+              <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="aquaVertical"
+      />
+              <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="aquaVertical"
+      />
+                    <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="aquaVertical"
+      />
+                    <VerticalColorButton
+        title="Characters"
+        image="/images/icons/world-information/eye-temporal.png"
+        href="/lore/characters"
+        gradient="aquaVertical"
+      />
+      </div>
+    </div>
+    </section>
+
+
+
 
            
 
@@ -92,7 +159,7 @@ function TitleField({
   
 }) {
   return (
-        <div className="relative flex w-full justify-center">
+        <div className="relative flex w-full justify-center h-[100px]">
           <div className="relative flex  h-[80px] items-center justify-left rotate-y-180 ">
           <Image
             src="/images/crystal-butterfly.png"

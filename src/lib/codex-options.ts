@@ -1,19 +1,16 @@
-export const locations = [
-  "Anywhere",
-  "Plains",
-  "Caves",
-  "Desert",
-  "Forest",
-  "Mountains",
-  "Ocean",
-  "Ruins",
-  "Sky",
+// Generals
+
+export const categories = [
+  "All",
+  "Creatures",
+  "Flora",
+  "Spells",
+  "Techniques",
+  "Runes",
+  "Items",
+  "Potions",
 ];
 
-export const dangerLevels = [
-  "All",
-  ...Array.from({ length: 16 }, (_, index) => String(index)),
-];
 
 export const rarities = [
   "All",
@@ -25,6 +22,27 @@ export const rarities = [
   "Mythical",
 ];
 
+export const locations = [
+  "Anywhere",
+  "Plains",
+  "Caves",
+  "Desert",
+  "Forest",
+  "Mountains",
+  "Ocean",
+  "Ruins",
+  "Sky",
+];
+export const ranks = ["All", "D", "C", "B", "A", "S"];
+
+//Creatures
+
+export const dangerLevels = [
+  "All",
+  ...Array.from({ length: 16 }, (_, index) => String(index)),
+];
+
+
 export const tameabilities = [
   "All",
   "Easy",
@@ -33,15 +51,41 @@ export const tameabilities = [
   "Untameable",
 ];
 
-export const ranks = ["All", "D", "C", "B", "A", "S"];
+// Spells
 
-export const categories = [
+export const spellSchools = [
   "All",
-  "Creatures",
-  "Flora",
-  "Spells",
-  "Techniques",
-  "Runes",
-  "Items",
-  "Potions",
+  "Elemental",
+  "Mana",
+  "Augmentation",
+  "Mental",
+  "Phonic",
+  "Restoration",
+  "Summoning",
+  "Runic",
+  "Mixed",
+  "Relayed",
+  "Necromancy",
+  "Unique"
+];
+
+
+// Techniques
+
+export const techniqueStats = [
+  "All",
+  "Strength",
+  "Speed",
+  "Durability",
+  "Magic",
+  "Intellect",
+  "Senses",
+];
+
+export const techniqueSchools = [
+  "Offensive",
+  "Blitz",
+  "Stallwart",
+  "Attrition",
+  "Willpower"
 ];

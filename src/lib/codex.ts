@@ -5,14 +5,35 @@ import { z } from "zod";
 
 const CODEX_DIR = path.join(process.cwd(), "content/codex");
 
-const codexEntrySchema = z.object({
+const stringListSchema = z.preprocess((value) => {
+  if (value === undefined || value === null || value === "") {
+    return ["None"];
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(String);
+  }
+
+  if (typeof value === "string") {
+    return [value];
+  }
+
+  return value;
+}, z.array(z.string()));
+
+const commonCodexSchema = z.object({
   title: z.string(),
   slug: z.string(),
   category: z.string(),
-  tags: z.array(z.string()).default([]),
-
   image: z.string(),
   imageAlt: z.string(),
+  draft: z.boolean().default(false),
+});
+
+const creatureEntrySchema = commonCodexSchema.extend({
+  category: z.literal("creatures"),
+
+  tags: z.array(z.string()).default([]),
 
   location: z.string(),
   rarity: z.string(),
@@ -20,28 +41,47 @@ const codexEntrySchema = z.object({
   rank: z.string(),
   dangerLevel: z.union([z.string(), z.number()]).transform(String),
 
-  aspects: z.array(z.string()).default(["None"]),
-  loot: z.array(z.string()).default(["None"]),
+  aspects: stringListSchema.default(["None"]),
+  loot: stringListSchema.default(["None"]),
 
   stats: z.object({
-    strength: z.number(),
-    speed: z.number(),
-    durability: z.number(),
-    magic: z.number(),
-    intellect: z.number(),
-    senses: z.number(),
+    strength: z.coerce.number(),
+    speed: z.coerce.number(),
+    durability: z.coerce.number(),
+    magic: z.coerce.number(),
+    intellect: z.coerce.number(),
+    senses: z.coerce.number(),
   }),
 
-  abilities: z.array(z.string()).default(["None"]),
-  draft: z.boolean().default(false),
+  abilities: stringListSchema.default(["None"]),
 });
 
-export type CodexEntry = z.infer<typeof codexEntrySchema> & {
+const spellEntrySchema = commonCodexSchema.extend({
+  category: z.literal("spells"),
+
+  stat: z.string(),
+  school: z.string(),
+  rank: z.string(),
+  caliber: z.string(),
+
+  costs: stringListSchema.default(["None"]),
+  downsides: stringListSchema.default(["None"]),
+  cooldowns: stringListSchema.default(["None"]),
+  requirements: stringListSchema.default(["None"]),
+});
+
+const codexEntrySchema = z.union([creatureEntrySchema, spellEntrySchema]);
+
+export type CodexEntryData = z.infer<typeof codexEntrySchema>;
+
+export type CodexEntry = CodexEntryData & {
   href: string;
   content: string;
 };
 
-export type CodexEntryMeta = Omit<CodexEntry, "content">;
+export type CodexEntryMeta = CodexEntryData & {
+  href: string;
+};
 
 function getMdxFiles(directory: string): string[] {
   if (!fs.existsSync(directory)) {
@@ -69,16 +109,32 @@ function readCodexEntry(filePath: string): CodexEntry {
   const rawFile = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(rawFile);
 
-  const parsed = codexEntrySchema.parse(data);
+  const normalizedData = {
+    ...data,
+    category: String(data.category ?? "").toLowerCase(),
+    slug: String(data.slug ?? "").toLowerCase(),
+  };
 
-  const category = parsed.category.toLowerCase();
-  const slug = parsed.slug;
+  const result = codexEntrySchema.safeParse(normalizedData);
+
+  if (!result.success) {
+    console.error("Invalid codex entry:", filePath);
+    console.error("Frontmatter:", data);
+    console.error("Zod issues:", result.error.issues);
+
+    throw new Error(
+      `Invalid codex frontmatter in ${path.relative(
+        process.cwd(),
+        filePath,
+      )}. Check the terminal for details.`,
+    );
+  }
+
+  const parsed = result.data;
 
   return {
     ...parsed,
-    category,
-    slug,
-    href: `/codex/${category}/${slug}`,
+    href: `/codex/${parsed.category}/${parsed.slug}`,
     content,
   };
 }

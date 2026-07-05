@@ -1,23 +1,50 @@
 // src/components/codex/SearchForm.tsx
 
-import { categories, ranks, locations, dangerLevels, rarities, tameabilities } from "@/lib/codex-options";
+import {
+  categories,
+  ranks,
+  locations,
+  dangerLevels,
+  rarities,
+  tameabilities,
+  spellSchools,
+  techniqueStats,
+  techniqueSchools,
+} from "@/lib/codex-options";
 
 type SearchFormProps = {
   search: string;
   setSearch: (value: string) => void;
+
   category: string;
   setCategory: (value: string) => void;
+
   rank: string;
   setRank: (value: string) => void;
+
   location: string;
   setLocation: (value: string) => void;
+
   dangerLevel: string;
   setDangerLevel: (value: string) => void;
+
   rarity: string;
   setRarity: (value: string) => void;
+
   tameability: string;
   setTameability: (value: string) => void;
+
+  stat: string;
+  setStat: (value: string) => void;
+
+  school: string;
+  setSchool: (value: string) => void;
+
+  caliber: string;
+  setCaliber: (value: string) => void;
 };
+
+
 
 
 
@@ -36,7 +63,25 @@ export default function SearchForm({
   setRarity,
   tameability,
   setTameability,
+  stat,
+  setStat,
+  school,
+  setSchool,
+
 }: SearchFormProps) {
+  const handleCategoryChange = (value: string) => {
+    setCategory(value);
+
+    setRank("All");
+    setLocation("All");
+    setDangerLevel("All");
+    setRarity("All");
+    setTameability("All");
+    setStat("All");
+    setSchool("All");
+
+  };
+
   return (
     <aside className="rounded-xl border border-[#fff48e] bg-[#111120]/75 p-4 backdrop-blur-sm">
       <form
@@ -54,170 +99,119 @@ export default function SearchForm({
           className="w-full border border-white bg-transparent px-3 py-2 text-sm text-white outline-none placeholder:text-white/70 focus:border-[#fff48e]"
         />
 
-        <FieldLabel htmlFor="category">Category</FieldLabel>
-
-        <select
+        <SelectField
           id="category"
+          label="Category"
           value={category}
-          onChange={(event) => setCategory(event.target.value)}
-          className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
-        >
-          {categories.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
+          onChange={handleCategoryChange}
+          options={uniqueOptions(["All", ...categories])}
+        />
 
         {category === "Creatures" && (
           <>
-
-          <FieldLabel htmlFor="Location">Location</FieldLabel>
-
-            <select
-              id="Location"
+            <SelectField
+              id="location"
+              label="Location"
               value={location}
-              onChange={(event) => setLocation(event.target.value)}
-              className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
-            >
-              {locations.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+              onChange={setLocation}
+              options={uniqueOptions(["All", ...locations])}
+            />
 
-            <FieldLabel htmlFor="Danger Level">Danger Level</FieldLabel>
-
-            <select
-              id="Danger Level"
+            <SelectField
+              id="danger-level"
+              label="Danger Level"
               value={dangerLevel}
-              onChange={(event) => setDangerLevel(event.target.value)}
-              className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
-            >
-              {dangerLevels.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+              onChange={setDangerLevel}
+              options={uniqueOptions(["All", ...dangerLevels])}
+            />
 
-            <FieldLabel htmlFor="Rarity">Rarity</FieldLabel>
-
-            <select
-              id="Rarity"
+            <SelectField
+              id="rarity"
+              label="Rarity"
               value={rarity}
-              onChange={(event) => setRarity(event.target.value)}
-              className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
-            >
-              {rarities.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+              onChange={setRarity}
+              options={uniqueOptions(["All", ...rarities])}
+            />
 
-            <FieldLabel htmlFor="Tameability">Tameability</FieldLabel>
-
-
-            <select
-              id="Tameability"
+            <SelectField
+              id="tameability"
+              label="Tameability"
               value={tameability}
-              onChange={(event) => setTameability(event.target.value)}
-              className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
-            >
-              {tameabilities.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+              onChange={setTameability}
+              options={uniqueOptions(["All", ...tameabilities])}
+            />
           </>
         )}
 
         {category === "Flora" && (
           <>
-
-            <FieldLabel htmlFor="Location">Location</FieldLabel>
-
-            <select
-              id="Location"
+            <SelectField
+              id="flora-location"
+              label="Location"
               value={location}
-              onChange={(event) => setLocation(event.target.value)}
-              className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
-            >
-              {locations.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+              onChange={setLocation}
+              options={uniqueOptions(["All", ...locations])}
+            />
 
-            <FieldLabel htmlFor="Rarity">Rarity</FieldLabel>
-
-            <select
-              id="Rarity"
+            <SelectField
+              id="flora-rarity"
+              label="Rarity"
               value={rarity}
-              onChange={(event) => setRarity(event.target.value)}
-              className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
-            >
-              {rarities.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+              onChange={setRarity}
+              options={uniqueOptions(["All", ...rarities])}
+            />
           </>
         )}
-
-
 
         {["Items", "Potions"].includes(category) && (
-
-          <>
-
-          <FieldLabel htmlFor="Rarity">Rarity</FieldLabel>
-
-          <select
-            id="Rarity"
+          <SelectField
+            id="item-rarity"
+            label="Rarity"
             value={rarity}
-            onChange={(event) => setRarity(event.target.value)}
-            className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
-          >
-            {rarities.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-
-          </>
+            onChange={setRarity}
+            options={uniqueOptions(["All", ...rarities])}
+          />
         )}
 
-        {["Spells", "Techniques", "Runes"].includes(category) && (
-
+        {category === "Spells" && (
           <>
+            <SelectField
+              id="spell-stat"
+              label="Stat"
+              value={stat}
+              onChange={setStat}
+              options={techniqueStats}
+            />
 
-          <FieldLabel htmlFor="Rank">Rank</FieldLabel>
+            <SelectField
+              id="spell-school"
+              label="School"
+              value={school}
+              onChange={setSchool}
+              options={spellSchools}
+            />
 
-          <select
-            id="Rank"
-            value={rank}
-            onChange={(event) => setRank(event.target.value)}
-            className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
-          >
-            {ranks.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
+            <SelectField
+              id="spell-rank"
+              label="Rank"
+              value={rank}
+              onChange={setRank}
+              options={uniqueOptions(["All", ...ranks])}
+            />
+
 
           </>
         )}
 
-
-        
+        {["Techniques", "Runes"].includes(category) && (
+          <SelectField
+            id="rank"
+            label="Rank"
+            value={rank}
+            onChange={setRank}
+            options={uniqueOptions(["All", ...ranks])}
+          />
+        )}
 
         <button
           type="submit"
@@ -251,10 +245,14 @@ function SelectField({
   label,
   id,
   options,
+  value,
+  onChange,
 }: {
   label: string;
   id: string;
   options: string[];
+  value: string;
+  onChange: (value: string) => void;
 }) {
   return (
     <>
@@ -262,14 +260,20 @@ function SelectField({
 
       <select
         id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
         className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
       >
         {options.map((option) => (
-          <option key={option} value={option === "All" ? "" : option}>
+          <option key={option} value={option}>
             {option}
           </option>
         ))}
       </select>
     </>
   );
+}
+
+function uniqueOptions(options: string[]) {
+  return Array.from(new Set(options));
 }
