@@ -4,6 +4,7 @@ import Image from "next/image";
 
 export type CreatureEntryData = {
   title: string;
+  author: string;
   image: string;
   imageAlt: string;
   location: string;
@@ -37,6 +38,9 @@ export default function CreatureEntryTemplate({
         <h1 className="font-serif text-3xl font-bold uppercase tracking-wider">
           {entry.title}
         </h1>
+        <p className="text-sm text-muted-foreground">
+          by {entry.author}
+        </p>
 
         <div className="mt-8 space-y-4 text-sm">
           <InfoLine label="Location" value={entry.location} />

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { CodexEntryMeta } from "@/lib/codex";
 import GeneralContentContainer from "../GeneralContentContainer";
 import ItemList from "../ItemList/ItemList";
-import SearchForm from "../searchForm/searchForm";
+import SearchForm from "./searchForm";
 
 type CodexClientProps = {
   initialItems: CodexEntryMeta[];
@@ -23,7 +23,10 @@ export default function CodexClient({ initialItems }: CodexClientProps) {
 
   const [stat, setStat] = useState("All");
   const [school, setSchool] = useState("All");
-  const [caliber, setCaliber] = useState("All");
+
+  const [techniqueSchool, setTechniqueSchool] = useState("All");
+
+  const [mineralType, setMineralType] = useState("All");
 
   const filteredItems = useMemo(() => {
     const query = normalize(search);
@@ -53,7 +56,10 @@ export default function CodexClient({ initialItems }: CodexClientProps) {
 
       const matchesStat = matchesField(item, "stat", stat);
       const matchesSchool = matchesField(item, "school", school);
-      const matchesCaliber = matchesField(item, "caliber", caliber);
+      const matchesTechniqueSchool = matchesField(item, "techniqueSchool", techniqueSchool);
+
+      const matchesMineralType = matchesField(item, "mineralType", mineralType);
+
 
       return (
         matchesSearch &&
@@ -65,7 +71,8 @@ export default function CodexClient({ initialItems }: CodexClientProps) {
         matchesTameability &&
         matchesStat &&
         matchesSchool &&
-        matchesCaliber
+        matchesTechniqueSchool &&
+        matchesMineralType
       );
     });
   }, [
@@ -79,7 +86,8 @@ export default function CodexClient({ initialItems }: CodexClientProps) {
     tameability,
     stat,
     school,
-    caliber,
+    techniqueSchool,
+    mineralType,
   ]);
 
   return (
@@ -113,8 +121,10 @@ export default function CodexClient({ initialItems }: CodexClientProps) {
             setStat={setStat}
             school={school}
             setSchool={setSchool}
-            caliber={caliber}
-            setCaliber={setCaliber}
+            techniqueSchool={techniqueSchool}
+            setTechniqueSchool={setTechniqueSchool}
+            mineralType={mineralType}
+            setMineralType={setMineralType}
           />
         </div>
       </div>

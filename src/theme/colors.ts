@@ -43,3 +43,48 @@ export const vieloraHoverGradients: Record<keyof typeof vieloraGradients, string
   coralVertical:
     "linear-gradient(360deg, #FF999B 0%, #3547D8 62%, rgba(0, 0, 0, 0) 95%)",
 };
+
+export const vieloraHorizontalGradients = {
+  skyBlueHorizontal: `linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, ${vieloraColors.royalBlue} 35%, ${vieloraColors.skyBlue} 100%)`,
+
+  royalBlueHorizontal: `linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, ${vieloraColors.deepBlue} 35%, ${vieloraColors.royalBlue} 100%)`,
+
+  violetHorizontal: `linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, ${vieloraColors.deepBlue} 35%, ${vieloraColors.violet} 100%)`,
+
+  aquaHorizontal: `linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, ${vieloraColors.royalBlue} 35%, ${vieloraColors.aqua} 100%)`,
+
+  parchmentHorizontal: `linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, ${vieloraColors.coral} 30%, ${vieloraColors.parchment} 100%)`,
+
+  coralHorizontal: `linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, ${vieloraColors.royalBlue} 35%, ${vieloraColors.coral} 100%)`,
+
+  roseHorizontal: `linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, ${vieloraColors.royalBlue} 35%, ${vieloraColors.roseRed} 100%)`,
+} as const;
+
+export const vieloraHorizontalHoverGradients: Record<
+  keyof typeof vieloraHorizontalGradients,
+  string
+> = {
+  skyBlueHorizontal:
+    "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, #3547D8 35%, #31D6FF 100%)",
+
+  royalBlueHorizontal:
+    "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, #2525B8 35%, #3547D8 100%)",
+
+  violetHorizontal:
+    "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, #2525B8 35%, #A65CFF 100%)",
+
+  aquaHorizontal:
+    "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, #3547D8 35%, #58F5DA 100%)",
+
+  parchmentHorizontal:
+    "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, #FF999B 30%, #FFF9A8 100%)",
+
+  coralHorizontal:
+    "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, #3547D8 35%, #FF999B 100%)",
+
+  roseHorizontal:
+    "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, #3547D8 35%, #FF3B72 100%)",
+};
+
+export type VieloraHorizontalGradient =
+  keyof typeof vieloraHorizontalGradients;

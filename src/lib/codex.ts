@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { z } from "zod";
+import { mineralTypes } from "./codex-options";
 
 const CODEX_DIR = path.join(process.cwd(), "content/codex");
 
@@ -21,8 +22,11 @@ const stringListSchema = z.preprocess((value) => {
   return value;
 }, z.array(z.string()));
 
+// Schemas for different codex entry types
+
 const commonCodexSchema = z.object({
   title: z.string(),
+  author: z.string(),
   slug: z.string(),
   category: z.string(),
   image: z.string(),
@@ -32,8 +36,6 @@ const commonCodexSchema = z.object({
 
 const creatureEntrySchema = commonCodexSchema.extend({
   category: z.literal("creatures"),
-
-  tags: z.array(z.string()).default([]),
 
   location: z.string(),
   rarity: z.string(),
@@ -56,6 +58,7 @@ const creatureEntrySchema = commonCodexSchema.extend({
   abilities: stringListSchema.default(["None"]),
 });
 
+
 const spellEntrySchema = commonCodexSchema.extend({
   category: z.literal("spells"),
 
@@ -70,7 +73,91 @@ const spellEntrySchema = commonCodexSchema.extend({
   requirements: stringListSchema.default(["None"]),
 });
 
-const codexEntrySchema = z.union([creatureEntrySchema, spellEntrySchema]);
+const techniqueEntrySchema = commonCodexSchema.extend({
+  category: z.literal("techniques"),
+  
+  stat: z.string(),
+  school: z.string(),
+  rank: z.string(),
+  caliber: z.string(),
+
+  costs: stringListSchema.default(["None"]),
+  downsides: stringListSchema.default(["None"]),
+  cooldowns: stringListSchema.default(["None"]),
+  requirements: stringListSchema.default(["None"]),
+});
+
+const FloraEntrySchema = commonCodexSchema.extend({
+  category: z.literal("flora"),
+
+  origin: z.string(),
+  location: z.string(),
+  rarity: z.string(),
+
+  cost: stringListSchema.default(["None"]),
+  Consumption: stringListSchema.default(["None"]),
+  properties: stringListSchema.default(["None"]),
+});
+
+const MineralEntrySchema = commonCodexSchema.extend({
+  category: z.literal("minerals"),
+  
+  location: z.string(),
+  rarity: z.string(),
+  mineralType: z.string(),
+  density: z.string(),
+  hardness: z.string(),
+  solubility: z.string(),
+  reactivity: z.string(),
+  magicalReactivity: z.string(),
+  meltingPoint: z.string(),
+
+  cost: stringListSchema.default(["None"]),
+  properties: stringListSchema.default(["None"]),
+});
+
+const PotionEntrySchema = commonCodexSchema.extend({
+  category: z.literal("potions"),
+
+  availability: z.string(),
+  rarity: z.string(),
+
+  craftability: stringListSchema.default(["None"]),
+  cost: stringListSchema.default(["None"]),
+  downsides: stringListSchema.default(["None"]),
+  cooldowns: stringListSchema.default(["None"]),
+  requirements: stringListSchema.default(["None"]),
+});
+
+const ItemEntrySchema = commonCodexSchema.extend({
+  category: z.literal("items"),
+
+  rarity: z.string(),
+  location: z.string(),
+  availability: z.string(),
+
+  Cost: stringListSchema.default(["None"]),
+  craftability: stringListSchema.default(["None"]),
+});
+
+const RuneEntrySchema = commonCodexSchema.extend({
+  category: z.literal("runes"),
+
+  stat: z.string(),
+  school: z.string(),
+  rank: z.string(),
+  caliber: z.string(),
+
+  costs: stringListSchema.default(["None"]),
+  downsides: stringListSchema.default(["None"]),
+  cooldowns: stringListSchema.default(["None"]),
+  requirements: stringListSchema.default(["None"]),
+
+  duration: z.string(),
+  placement: z.string(),
+});
+
+const codexEntrySchema = z.union([creatureEntrySchema, spellEntrySchema, techniqueEntrySchema, FloraEntrySchema, MineralEntrySchema, PotionEntrySchema, ItemEntrySchema, RuneEntrySchema]);
 
 export type CodexEntryData = z.infer<typeof codexEntrySchema>;
 

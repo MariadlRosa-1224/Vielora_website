@@ -9,8 +9,9 @@ import {
 } from "@/lib/codex-options";
 import { useRef, useState } from "react";
 import GeneralContentContainer from "@/components/GeneralContentContainer";
+import { authClient } from "@/lib/auth-client";
 
-type EntryType = "codex" | "character";
+type EntryType = "codex" | "lore";
 
 type PendingImage = {
   file: File;
@@ -26,6 +27,7 @@ export default function NewEntryForm() {
   const [name, setName] = useState("");
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [markdownImages, setMarkdownImages] = useState<PendingImage[]>([]);
+  const [author, setAuthor] = useState("");
 
   const [tameability, setTameability] = useState("Untameable");
   const [rank, setRank] = useState("E");
@@ -216,7 +218,7 @@ console.log(
 
   const isCodex = entryType === "codex";
 
-  const isCharacter = entryType === "character";
+  const isCharacter = entryType === "lore";
 
   
 
@@ -439,11 +441,6 @@ loot: string;
 title: ${yamlString(input.name)}
 slug: ${yamlString(input.slug)}
 category: creatures
-tags:
-  - Creature
-  - ${yamlString(input.location)}
-  - ${yamlString(input.rarity)}
-  - ${yamlString(input.tameability)}
 image: ${yamlString(input.imagePath)}
 imageAlt: ${yamlString(input.name)}
 location: ${yamlString(input.location)}

@@ -9,6 +9,7 @@ export const categories = [
   "Runes",
   "Items",
   "Potions",
+  "Minerals",
 ];
 
 
@@ -20,6 +21,7 @@ export const rarities = [
   "Special",
   "Legendary",
   "Mythical",
+  "Varying",
 ];
 
 export const locations = [
@@ -32,6 +34,7 @@ export const locations = [
   "Ocean",
   "Ruins",
   "Sky",
+  "Varying",
 ];
 export const ranks = ["All", "D", "C", "B", "A", "S"];
 
@@ -72,7 +75,7 @@ export const spellSchools = [
 
 // Techniques
 
-export const techniqueStats = [
+export const magicStats = [
   "All",
   "Strength",
   "Speed",
@@ -80,12 +83,26 @@ export const techniqueStats = [
   "Magic",
   "Intellect",
   "Senses",
+  "Multiple"
 ];
 
 export const techniqueSchools = [
+  "All",
   "Offensive",
   "Blitz",
   "Stallwart",
   "Attrition",
   "Willpower"
+];
+
+// Minerals
+
+export const mineralTypes = [
+  "All",
+  "Metal",
+  "Gemstone",
+  "Crystal",
+  "Ore",
+  "Stone",
+  "Other"
 ];

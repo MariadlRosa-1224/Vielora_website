@@ -8,8 +8,9 @@ import {
   rarities,
   tameabilities,
   spellSchools,
-  techniqueStats,
+  magicStats,
   techniqueSchools,
+  mineralTypes,
 } from "@/lib/codex-options";
 
 type SearchFormProps = {
@@ -40,8 +41,11 @@ type SearchFormProps = {
   school: string;
   setSchool: (value: string) => void;
 
-  caliber: string;
-  setCaliber: (value: string) => void;
+  techniqueSchool: string;
+  setTechniqueSchool: (value: string) => void;
+
+  mineralType: string;
+  setMineralType: (value: string) => void;
 };
 
 
@@ -67,6 +71,10 @@ export default function SearchForm({
   setStat,
   school,
   setSchool,
+  techniqueSchool,
+  setTechniqueSchool,
+  mineralType,
+  setMineralType,
 
 }: SearchFormProps) {
   const handleCategoryChange = (value: string) => {
@@ -79,7 +87,7 @@ export default function SearchForm({
     setTameability("All");
     setStat("All");
     setSchool("All");
-
+    setTechniqueSchool("All");
   };
 
   return (
@@ -88,6 +96,8 @@ export default function SearchForm({
         className="flex flex-col items-center gap-4"
         onSubmit={(event) => event.preventDefault()}
       >
+        {/* // Search Input */}
+
         <FieldLabel htmlFor="search">Search</FieldLabel>
 
         <input
@@ -99,6 +109,8 @@ export default function SearchForm({
           className="w-full border border-white bg-transparent px-3 py-2 text-sm text-white outline-none placeholder:text-white/70 focus:border-[#fff48e]"
         />
 
+        {/* // Category Select */}
+
         <SelectField
           id="category"
           label="Category"
@@ -107,15 +119,57 @@ export default function SearchForm({
           options={uniqueOptions(["All", ...categories])}
         />
 
+        {/* // Conditional Selects Based on Category */}
+
+            {/* shared : rank , rarity, stat, location */}
+
+            {["Items", "Potions", "Minerals", "Flora", "Creatures", "Minerals"].includes(category) && (
+              <SelectField
+                id="rarity"
+                label="Rarity"
+                value={rarity}
+                onChange={setRarity}
+                options={uniqueOptions(["All", ...rarities])}
+              />
+            )}
+
+            {["Techniques", "Runes", 'Spells', 'Creatures'].includes(category) && (
+              <SelectField
+                id="rank"
+                label="Rank"
+                value={rank}
+                onChange={setRank}
+                options={uniqueOptions(["All", ...ranks])}
+              />
+            )}
+
+            {["Spells", "Techniques", "Runes"].includes(category) && (
+              <SelectField
+                id="stat"
+                label="Stat"
+                value={stat}
+                onChange={setStat}
+                options={uniqueOptions(["All", ...magicStats])}
+              />
+            )}
+
+            {["Items", "Minerals", "Flora", "Creatures", "Minerals"].includes(category) && (
+              <SelectField
+                id="location"
+                label="Location"
+                value={location}
+                onChange={setLocation}
+                options={uniqueOptions(["All", ...locations])}
+              />
+            )}
+
+
+
+            {/* //Creatures : location , danger level , tameability  , rank , rarity */}
+
         {category === "Creatures" && (
           <>
-            <SelectField
-              id="location"
-              label="Location"
-              value={location}
-              onChange={setLocation}
-              options={uniqueOptions(["All", ...locations])}
-            />
+
 
             <SelectField
               id="danger-level"
@@ -123,14 +177,6 @@ export default function SearchForm({
               value={dangerLevel}
               onChange={setDangerLevel}
               options={uniqueOptions(["All", ...dangerLevels])}
-            />
-
-            <SelectField
-              id="rarity"
-              label="Rarity"
-              value={rarity}
-              onChange={setRarity}
-              options={uniqueOptions(["All", ...rarities])}
             />
 
             <SelectField
@@ -143,45 +189,11 @@ export default function SearchForm({
           </>
         )}
 
-        {category === "Flora" && (
-          <>
-            <SelectField
-              id="flora-location"
-              label="Location"
-              value={location}
-              onChange={setLocation}
-              options={uniqueOptions(["All", ...locations])}
-            />
 
-            <SelectField
-              id="flora-rarity"
-              label="Rarity"
-              value={rarity}
-              onChange={setRarity}
-              options={uniqueOptions(["All", ...rarities])}
-            />
-          </>
-        )}
-
-        {["Items", "Potions"].includes(category) && (
-          <SelectField
-            id="item-rarity"
-            label="Rarity"
-            value={rarity}
-            onChange={setRarity}
-            options={uniqueOptions(["All", ...rarities])}
-          />
-        )}
+          {/* // Spells : stat , spell-school , rank */}
 
         {category === "Spells" && (
           <>
-            <SelectField
-              id="spell-stat"
-              label="Stat"
-              value={stat}
-              onChange={setStat}
-              options={techniqueStats}
-            />
 
             <SelectField
               id="spell-school"
@@ -191,27 +203,43 @@ export default function SearchForm({
               options={spellSchools}
             />
 
-            <SelectField
-              id="spell-rank"
-              label="Rank"
-              value={rank}
-              onChange={setRank}
-              options={uniqueOptions(["All", ...ranks])}
-            />
-
 
           </>
         )}
 
-        {["Techniques", "Runes"].includes(category) && (
+          {/* // Techniques : technique-school , rank, stat */}
+
+        {category === "Techniques" && (
+          <>
+
+            <SelectField
+              id="technique-school"
+              label="School"
+              value={techniqueSchool}
+              onChange={setTechniqueSchool}
+              options={techniqueSchools}
+            />
+          </>
+        )}
+
+        {/* // Minerals : mineral-type, rarity, rank */}
+
+        {category === "Minerals" && (
           <SelectField
-            id="rank"
-            label="Rank"
-            value={rank}
-            onChange={setRank}
-            options={uniqueOptions(["All", ...ranks])}
+            id="mineral-type"
+            label="Type"
+            value={mineralType}
+            onChange={setMineralType}
+            options={uniqueOptions(["All", ...mineralTypes])}
           />
         )}
+
+        {/* items: rarity , location */}
+        {/* potions: rarity */}
+        {/* flora: rarity , location */}
+        {/* runes: rank , stat*/}
+
+
 
         <button
           type="submit"

@@ -4,6 +4,12 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import CodexEntryLayout from "@/components/codex/CodexEntryLayout";
 import CreatureEntryTemplate from "@/components/codex/entry-templates/CreatureEntryTemplate";
+import FloraEntryTemplate from "@/components/codex/entry-templates/FloraEntryTemplate";
+import ItemEntryTemplate from "@/components/codex/entry-templates/ItemEntryTemplate";
+import MineralsEntryTemplate from "@/components/codex/entry-templates/MineralsEntryTemplate";
+import PotionEntryTemplate from "@/components/codex/entry-templates/PotionEntryTemplate";
+import RuneEntryTemplate from "@/components/codex/entry-templates/RuneEntryTemplate";
+import TechniqueEntryTemplate from "@/components/codex/entry-templates/TechniqueEntryTemplate";
 import SpellEntryTemplate from "@/components/codex/entry-templates/SpellEntryTemplate";
 import { getAllCodexEntries, getCodexEntry } from "@/lib/codex";
 
@@ -55,6 +61,30 @@ export default async function CodexEntryPage({ params }: PageProps) {
 
     case "spells":
       structuredSection = <SpellEntryTemplate entry={entry} />;
+      break;
+
+    case "techniques":
+      structuredSection = <TechniqueEntryTemplate entry={entry} />;
+      break;
+
+    case "potions":
+      structuredSection = <PotionEntryTemplate entry={entry} />;
+      break;
+
+    case "minerals":
+      structuredSection = <MineralsEntryTemplate entry={entry} />;
+      break;
+
+    case "flora":
+      structuredSection = <FloraEntryTemplate entry={entry} />;
+      break;
+
+    case "runes":
+      structuredSection = <RuneEntryTemplate entry={entry} />;
+      break;
+
+    case "items":
+      structuredSection = <ItemEntryTemplate entry={entry} />;
       break;
 
     default:

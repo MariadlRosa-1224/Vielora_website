@@ -2,6 +2,7 @@ import Image from "next/image";
 
 export type SpellEntryData = {
   title: string;
+  author: string;
   image: string;
   imageAlt: string;
   category: string;
@@ -28,6 +29,9 @@ export default function SpellEntryTemplate({
         <h1 className="font-serif text-3xl font-bold uppercase tracking-wider">
           {entry.title}
         </h1>
+        <p className="text-sm text-muted-foreground">
+          by {entry.author}
+        </p>
 
         <div className="mt-8 space-y-4 text-sm">
           <InfoLine label="Rank" value={entry.rank} />
