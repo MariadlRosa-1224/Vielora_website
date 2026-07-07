@@ -1,5 +1,5 @@
 import {useState, useEffect, use} from "react";
-import Achievement from "../Achievement/Achievement";
+import Achievement from "@/components/milestones/Achievement";
 import styles from './AchievementList.module.scss'
 import { useFetch } from "../useFetch/useFetch";
 
@@ -67,7 +67,7 @@ const AchievementList = () => {
                     key={index} 
                     title={item.name} 
                     image={item.image} 
-                    color="blue"
+                    rarity="medium"
                     description={`This is the ${item.name} achievement.`}
                     state="Unlocked"
                 />

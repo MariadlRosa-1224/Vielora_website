@@ -1,0 +1,8 @@
+<!-- public/images/achievements/star.svg -->
+
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="M32 7L39.3 23.2L57 25.1L43.8 37L47.5 54.4L32 45.5L16.5 54.4L20.2 37L7 25.1L24.7 23.2L32 7Z"
+    fill="currentColor"
+  />
+</svg>
