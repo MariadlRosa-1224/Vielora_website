@@ -1,13 +1,14 @@
-import Image from "next/image";
+// src/app/characters/page.tsx
 
+import CharactersClient from "@/components/characters/CharactersClient";
+import { getAllCharacterEntries } from "@/lib/characters";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center font-sans dark:bg-black">
+export const metadata = {
+  title: "Characters | Isles of Vielora",
+};
 
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        Characters
-      </main>
-    </div>
-  );
+export default function CharactersPage() {
+  const characters = getAllCharacterEntries();
+
+  return <CharactersClient initialCharacters={characters} />;
 }

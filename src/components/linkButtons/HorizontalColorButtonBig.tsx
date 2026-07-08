@@ -50,7 +50,7 @@ export default function HorizontalColorButtonBig({
         }}
       />
 
-      <h4 className="relative z-10 m-0 font-serif text-3xl font-bold uppercase tracking-wider text-white drop-shadow md:text-[32px]">
+      <h4 className="relative z-10 m-0 font-[Spectral_SC] text-3xl font-bold uppercase tracking-wider text-white drop-shadow md:text-[32px]">
         {title}
       </h4>
 

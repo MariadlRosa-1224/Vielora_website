@@ -1,7 +1,7 @@
 // src/app/milestones/page.tsx
 
 import Achievement from "@/components/milestones/Achievement";
-import GeneralContentContainer from "@/components/GeneralContentContainer";
+import GeneralContentContainer from "@/components/locations/GeneralContentContainer";
 
 type AchievementRarity =
   | "easy"
@@ -194,7 +194,7 @@ export default function MilestonesPage() {
   return (
     <main className="min-h-screen bg-[#111120] bg-[url('/images/page-backgrounds/galaxies.jpg')] bg-fixed bg-cover bg-center bg-no-repeat px-6 py-24 text-white">
       <section className="mx-auto flex max-w-6xl flex-col items-center">
-        <h1 className="font-serif text-4xl font-bold uppercase tracking-wider text-white">
+        <h1 className="font-[Spectral_SC] text-4xl font-bold uppercase tracking-wider text-white">
           Milestones
         </h1>
 
@@ -239,7 +239,7 @@ function MilestoneSection({
 }) {
   return (
     <section className="mt-16 w-full">
-      <h2 className="mb-10 text-center font-serif text-4xl font-bold uppercase tracking-wider text-white">
+      <h2 className="mb-10 text-center font-[Spectral_SC] text-4xl font-bold uppercase tracking-wider text-white">
         {title}
       </h2>
 

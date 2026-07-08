@@ -70,6 +70,7 @@ const AchievementList = () => {
                     rarity="medium"
                     description={`This is the ${item.name} achievement.`}
                     state="Unlocked"
+                    author="Unknown"
                 />
             ))}
         </div>

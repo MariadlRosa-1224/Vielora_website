@@ -1,7 +1,7 @@
 // src/app/lore/page.tsx
 
-import HorizontalColorButtonBig from "@/components/HorizontalColorButtonBig";
-import GeneralContainerNoBorder from "@/components/GeneralContainerNoBorder";
+import HorizontalColorButtonBig from "@/components/linkButtons/HorizontalColorButtonBig";
+import GeneralContainerNoBorder from "@/components/containers/GeneralContainerNoBorder";
 import type { VieloraHorizontalGradient } from "@/theme/colors";
 
 type LoreSection = {
@@ -59,7 +59,7 @@ export default function LorePage() {
           <div className="relative z-10 grid min-h-[540px] items-center gap-12 lg:grid-cols-[minmax(0,1fr)_600px]">
             <div className="flex justify-center lg:justify-start">
               <GeneralContainerNoBorder className="flex min-h-[460px] w-full max-w-[520px] flex-col items-center justify-center bg-[#111120]/65 px-10 py-12 text-center backdrop-blur-sm">
-                <h1 className="mb-12 font-serif text-3xl font-bold uppercase tracking-wider text-white">
+                <h1 className="mb-12 font-[Spectral_SC] text-3xl font-bold uppercase tracking-wider text-white">
                   Lore
                 </h1>
 

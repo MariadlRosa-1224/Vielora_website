@@ -25,7 +25,7 @@ export default function PotionEntryTemplate({
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
       <div>
-        <h1 className="font-serif text-3xl font-bold uppercase tracking-wider">
+        <h1 className="font-[Spectral_SC] text-3xl font-bold uppercase tracking-wider">
           {entry.title}
         </h1>
         <p className="text-sm text-muted-foreground">

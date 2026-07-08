@@ -1,5 +1,5 @@
 import {useState, useEffect, use} from "react";
-import CharacterFrame from "../CharacterFrame/CharacterFrame";
+import CharacterFrame from "../characters/CharacterFrame";
 import styles from './CharacterList.module.scss'
 import { useFetch } from "../useFetch/useFetch";
 
@@ -65,7 +65,9 @@ const CharacterList = () => {
                     key={index} 
                     title={item.name} 
                     image={item.image} 
-                    frame="../../assets/frame-placeholder.png" 
+                    imageAlt={item.name}
+                    frame="/images/characters/frame.png" 
+                    href={`/lore/characters/${item.name}`}
                 />
             ))}
         </div>

@@ -91,7 +91,7 @@ export default function SearchForm({
   };
 
   return (
-    <aside className="rounded-xl border border-[#fff48e] bg-[#111120]/75 p-4 backdrop-blur-sm">
+    <aside className="sticky top-20 rounded-xl border border-[#fff48e] bg-[#111120]/75 p-4 backdrop-blur-sm">
       <form
         className="flex flex-col items-center gap-4"
         onSubmit={(event) => event.preventDefault()}
@@ -262,7 +262,7 @@ function FieldLabel({
   return (
     <label
       htmlFor={htmlFor}
-      className="font-serif text-sm font-bold uppercase tracking-wider text-white"
+      className="font-[Spectral_SC] text-sm font-bold uppercase tracking-wider text-white"
     >
       {children}
     </label>

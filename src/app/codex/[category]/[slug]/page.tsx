@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import CodexEntryLayout from "@/components/codex/CodexEntryLayout";
+import DualEntryLayout from "@/components/entry-Layout/DualEntryLayout";
 import CreatureEntryTemplate from "@/components/codex/entry-templates/CreatureEntryTemplate";
 import FloraEntryTemplate from "@/components/codex/entry-templates/FloraEntryTemplate";
 import ItemEntryTemplate from "@/components/codex/entry-templates/ItemEntryTemplate";
@@ -92,7 +92,7 @@ export default async function CodexEntryPage({ params }: PageProps) {
   }
 
   return (
-    <CodexEntryLayout
+    <DualEntryLayout
       structuredSection={structuredSection}
       markdownSection={<MDXRemote source={entry.content} />}
     />

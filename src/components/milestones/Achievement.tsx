@@ -120,7 +120,7 @@ export default function Achievement({
       <div className="flex w-[70%] flex-col text-left">
         <span
           className={[
-            "font-serif text-2xl font-bold uppercase tracking-wide",
+            "font-[Spectral_SC] text-2xl font-bold uppercase tracking-wide",
             palette.title,
           ].join(" ")}
         >

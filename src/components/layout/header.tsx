@@ -23,7 +23,7 @@ export default function Header() {
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
         <Link
           href="/"
-          className="font-serif text-lg font-semibold tracking-wide text-white lg:hidden"
+          className="font-[Spectral_SC] text-lg font-semibold tracking-wide text-white lg:hidden"
         >
           Vielora
         </Link>

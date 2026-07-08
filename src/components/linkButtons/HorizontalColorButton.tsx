@@ -58,7 +58,7 @@ export default function HorizontalColorButton({
           }}
         />
 
-        <span className="relative z-10 font-serif text-lg font-bold uppercase tracking-wider text-white drop-shadow">
+        <span className="relative z-10 font-[Spectral_SC] text-lg font-bold uppercase tracking-wider text-white drop-shadow">
           {title}
         </span>
       </span>

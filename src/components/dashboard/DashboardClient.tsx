@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import GeneralContentContainer from "@/components/GeneralContentContainer";
+import GeneralContentContainer from "@/components/locations/GeneralContentContainer";
 import DashboardSearchForm from "@/components/dashboard/DashboardSearchForm";
 
 type DashboardRole = "user" | "admin";
@@ -226,7 +226,7 @@ export default function DashboardClient({
                   {role === "admin" ? "Admin" : "User"}
                 </p>
 
-                <h1 className="font-serif text-4xl font-bold uppercase tracking-wide text-white">
+                <h1 className="font-[Spectral_SC] text-4xl font-bold uppercase tracking-wide text-white">
                   Dashboard
                 </h1>
               </div>
@@ -245,7 +245,7 @@ export default function DashboardClient({
             />
 
             <section className="mt-10">
-              <h2 className="mb-4 font-serif text-lg font-bold uppercase tracking-wider text-white">
+              <h2 className="mb-4 font-[Spectral_SC] text-lg font-bold uppercase tracking-wider text-white">
                 Local Drafts
               </h2>
 
@@ -298,7 +298,7 @@ function DashboardTable({
     <div className="overflow-x-auto">
       <table className="min-w-[780px] border-collapse text-left text-xs">
         <thead>
-          <tr className="font-serif uppercase tracking-wider text-white">
+          <tr className="font-[Spectral_SC] uppercase tracking-wider text-white">
             <TableHead>Title</TableHead>
             <TableHead>Author</TableHead>
             <TableHead>Type of Entry</TableHead>
@@ -400,7 +400,7 @@ function LocalDraftList({ drafts }: { drafts: LocalDraft[] }) {
           className="flex flex-col gap-3 rounded-md border border-[#fff48e] bg-[#111120]/60 px-4 py-3 text-xs md:flex-row md:items-center md:justify-between"
         >
           <div className="flex flex-wrap gap-3">
-            <h3 className="font-serif uppercase tracking-wider text-white">
+            <h3 className="font-[Spectral_SC] uppercase tracking-wider text-white">
               {draft.title}:
             </h3>
 

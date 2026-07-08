@@ -75,7 +75,7 @@ export default function TransparentDropdown({
   return (
     <div
       ref={dropdownRef}
-      className={`relative max-w-full font-serif ${className}`}
+      className={`relative max-w-full font-[Spectral_SC] ${className}`}
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >

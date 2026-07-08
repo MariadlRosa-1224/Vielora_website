@@ -218,7 +218,7 @@ function FieldLabel({
   return (
     <label
       htmlFor={htmlFor}
-      className="font-serif text-sm font-bold uppercase tracking-wider text-white"
+      className="font-[Spectral_SC] text-sm font-bold uppercase tracking-wider text-white"
     >
       {children}
     </label>

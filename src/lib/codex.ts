@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { z } from "zod";
-import { mineralTypes } from "./codex-options";
+
 
 const CODEX_DIR = path.join(process.cwd(), "content/codex");
 

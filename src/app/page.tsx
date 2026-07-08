@@ -71,14 +71,14 @@ export default function Home() {
             text="Dive into the rich history and stories of Vielora, uncovering secrets and legends."
             image="/images/Deyanira.png"
             imageAlt="Lore Image"
-            variant="purple"
+            variant="aqua"
           />
           <InfoCard
             title="Explore the Lore"
             text="Dive into the rich history and stories of Vielora, uncovering secrets and legends."
             image="/images/Emerald_old.png"
             imageAlt="Lore Image"
-            variant="blue"
+            variant="cyan"
             reverse={true}
           />
                     <InfoCard
@@ -86,14 +86,14 @@ export default function Home() {
             text="Dive into the rich history and stories of Vielora, uncovering secrets and legends."
             image="/images/Emerald_old.png"
             imageAlt="Lore Image"
-            variant="cyan"
+            variant="blue"
           />
                     <InfoCard
             title="Explore the Lore"
             text="Dive into the rich history and stories of Vielora, uncovering secrets and legends."
             image="/images/Emerald_old.png"
             imageAlt="Lore Image"
-            variant="pink"
+            variant="purple"
             reverse={true}
           />
 

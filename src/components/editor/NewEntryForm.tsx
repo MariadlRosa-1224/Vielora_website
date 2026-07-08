@@ -8,7 +8,7 @@ import {
   tameabilities,
 } from "@/lib/codex-options";
 import { useRef, useState } from "react";
-import GeneralContentContainer from "@/components/GeneralContentContainer";
+import GeneralContentContainer from "@/components/locations/GeneralContentContainer";
 import { authClient } from "@/lib/auth-client";
 
 type EntryType = "codex" | "lore";
@@ -226,7 +226,7 @@ console.log(
     <main className="min-h-screen bg-[#111120] bg-[url('/images/galaxies.jpg')] bg-fixed bg-cover bg-center bg-no-repeat px-6 py-24 text-white">
       <form onSubmit={handleSubmit} className="mx-auto max-w-7xl space-y-6">
         <GeneralContentContainer>
-          <h1 className="mb-8 font-serif text-3xl font-bold uppercase tracking-wider">
+          <h1 className="mb-8 font-[Spectral_SC] text-3xl font-bold uppercase tracking-wider">
             New Entry
           </h1>
 
@@ -315,7 +315,7 @@ console.log(
 
               {isCodex && (
                 <div className="pt-4">
-                  <h2 className="mb-4 border-b border-white/40 pb-2 font-serif text-xl font-bold uppercase tracking-wider">
+                  <h2 className="mb-4 border-b border-white/40 pb-2 font-[Spectral_SC] text-xl font-bold uppercase tracking-wider">
                     Stats
                   </h2>
 
@@ -368,7 +368,7 @@ console.log(
         </GeneralContentContainer>
 
         <GeneralContentContainer>
-          <h2 className="mb-6 font-serif text-2xl font-bold uppercase tracking-wider">
+          <h2 className="mb-6 font-[Spectral_SC] text-2xl font-bold uppercase tracking-wider">
             Custom Markdown
           </h2>
 
@@ -401,7 +401,7 @@ console.log(
 <button
   type="submit"
   disabled={isSubmitting}
-  className="w-full max-w-md rounded-md border-2 border-[#fff48e] px-8 py-3 font-serif text-lg uppercase tracking-wider transition hover:bg-[#fff48e] hover:text-[#111120] disabled:cursor-not-allowed disabled:opacity-50"
+  className="w-full max-w-md rounded-md border-2 border-[#fff48e] px-8 py-3 font-[Spectral_SC] text-lg uppercase tracking-wider transition hover:bg-[#fff48e] hover:text-[#111120] disabled:cursor-not-allowed disabled:opacity-50"
 >
   {isSubmitting ? "Submitting..." : "Submit"}
 </button>
@@ -501,7 +501,7 @@ function TextField({
 }) {
   return (
     <label className="grid items-center gap-3 md:grid-cols-[160px_1fr]">
-      <span className="font-serif text-lg font-bold uppercase tracking-wider">
+      <span className="font-[Spectral_SC] text-lg font-bold uppercase tracking-wider">
         {label}
       </span>
 
@@ -525,7 +525,7 @@ function NumberField({
 }) {
   return (
     <label className="grid items-center gap-3 md:grid-cols-[160px_1fr]">
-      <span className="font-serif text-sm font-bold uppercase tracking-wider">
+      <span className="font-[Spectral_SC] text-sm font-bold uppercase tracking-wider">
         {label}
       </span>
 
@@ -554,7 +554,7 @@ function SelectField({
 }) {
   return (
     <label className="grid items-center gap-3 md:grid-cols-[160px_1fr]">
-      <span className="font-serif text-lg font-bold uppercase tracking-wider">
+      <span className="font-[Spectral_SC] text-lg font-bold uppercase tracking-wider">
         {label}
       </span>
 
@@ -586,7 +586,7 @@ function TextareaField({
 }) {
   return (
     <label className="block">
-      <span className="mb-3 block font-serif text-xl font-bold uppercase tracking-wider">
+      <span className="mb-3 block font-[Spectral_SC] text-xl font-bold uppercase tracking-wider">
         {label}
       </span>
 
@@ -611,7 +611,7 @@ function ImageUploadField({
 }) {
   return (
     <label className="grid items-center gap-3 md:grid-cols-[160px_1fr]">
-      <span className="font-serif text-lg font-bold uppercase tracking-wider">
+      <span className="font-[Spectral_SC] text-lg font-bold uppercase tracking-wider">
         {label}
       </span>
 

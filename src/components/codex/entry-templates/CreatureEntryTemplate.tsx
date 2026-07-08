@@ -35,7 +35,7 @@ export default function CreatureEntryTemplate({
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
       <div>
-        <h1 className="font-serif text-3xl font-bold uppercase tracking-wider">
+        <h1 className="font-[Spectral_SC] text-3xl font-bold uppercase tracking-wider">
           {entry.title}
         </h1>
         <p className="text-sm text-muted-foreground">
@@ -70,7 +70,7 @@ export default function CreatureEntryTemplate({
 
         <div className="mt-8 grid gap-6 border-t border-white/40 pt-4 md:grid-cols-2">
           <div>
-            <h2 className="mb-3 border-b border-white/40 pb-2 font-serif text-sm uppercase tracking-wider">
+            <h2 className="mb-3 border-b border-white/40 pb-2 font-[Spectral_SC] text-sm uppercase tracking-wider">
               Stats:
             </h2>
 
@@ -85,7 +85,7 @@ export default function CreatureEntryTemplate({
           </div>
 
           <div>
-            <h2 className="mb-3 border-b border-white/40 pb-2 font-serif text-sm uppercase tracking-wider">
+            <h2 className="mb-3 border-b border-white/40 pb-2 font-[Spectral_SC] text-sm uppercase tracking-wider">
               Abilities:
             </h2>
 

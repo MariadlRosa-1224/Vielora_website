@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CodexEntryMeta } from "@/lib/codex";
-import GeneralContentContainer from "../GeneralContentContainer";
+import GeneralContentContainer from "../locations/GeneralContentContainer";
 import ItemList from "../ItemList/ItemList";
 import SearchForm from "./searchForm";
 
@@ -93,7 +93,7 @@ export default function CodexClient({ initialItems }: CodexClientProps) {
   return (
     <main className="min-h-screen bg-[#111120] bg-[url('/images/page-backgrounds/galaxies.jpg')] bg-fixed bg-cover bg-center bg-no-repeat px-8 py-24 text-white">
       <div className="mx-auto max-w-7xl">
-        <h1 className="mb-8 font-serif text-3xl font-bold uppercase tracking-wider">
+        <h1 className="mb-8 font-[Spectral_SC] text-3xl font-bold uppercase tracking-wider">
           Codex
         </h1>
 

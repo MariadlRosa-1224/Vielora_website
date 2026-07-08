@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import TransparentDropdown, {
   TransparentDropdownItem,
-} from "@/components/Lore/TransparentDropdown";
+} from "@/components/lore/TransparentDropdown";
 
 type LocationEntry = {
   id: string;
@@ -149,7 +149,7 @@ export default function LocationsPage() {
     <main className="min-h-screen bg-[#111120] bg-[url('/images/page-backgrounds/galaxies.jpg')] bg-fixed bg-cover bg-center bg-no-repeat px-6 py-20 text-white">
       <section className="mx-auto grid max-w-7xl items-start gap-12 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div>
-          <h1 className="mb-10 font-serif text-3xl font-bold uppercase tracking-wider text-white">
+          <h1 className="mb-10 font-[Spectral_SC] text-3xl font-bold uppercase tracking-wider text-white">
             Locations
           </h1>
 

@@ -8,6 +8,7 @@ export const vieloraColors = {
   roseRed: "#FF1D57",
   coral: "#FB8082",
   aqua: "#3FD7BC",
+  blue: "#3547D8",
 
   violet: "#8E48D8",
   deepBlue: "#161687",

@@ -1,6 +1,6 @@
 import Link from "next/dist/client/link";
 import Image from "next/image";
-import VerticalColorButton from "@/components/VerticalColorButton";
+import VerticalColorButton from "@/components/linkButtons/VerticalColorButton";
 
 
 

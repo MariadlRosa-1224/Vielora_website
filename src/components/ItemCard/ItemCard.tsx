@@ -22,7 +22,7 @@ export default function ItemCard({ item }: ItemCardProps) {
       <div className="absolute inset-0 z-10 bg-[#0d0f89]/35 transition-opacity duration-500 group-hover:opacity-0" />
 
       <div className="relative z-20 flex h-full flex-col justify-end p-4">
-        <h2 className="font-serif text-base font-bold text-white">
+        <h2 className="font-[Spectral_SC] text-base font-bold text-white">
           {item.title}
         </h2>
 

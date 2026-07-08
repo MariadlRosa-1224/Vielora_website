@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import HorizontalColorButton from "@/components/HorizontalColorButton";
-import GeneralContainerNoBorder from "@/components/GeneralContainerNoBorder";
+import HorizontalColorButton from "@/components/linkButtons/HorizontalColorButton";
+import GeneralContainerNoBorder from "@/components/containers/GeneralContainerNoBorder";
 import type { VieloraHorizontalGradient } from "@/theme/colors";
 
 type RaceCard = {
@@ -124,7 +124,7 @@ export default function RacesPage() {
           <div className="relative z-10 grid min-h-screen items-center justify-center gap-10 lg:grid-cols-[minmax(0,1fr)_430px] px-18">
             <div className="flex justify-center">
               <GeneralContainerNoBorder className="max-w-full bg-[#111120]/65 px-10 py-12 text-center backdrop-blur-sm">
-                <h1 className="mb-8 font-serif text-2xl font-bold uppercase tracking-wider text-white">
+                <h1 className="mb-8 font-[Spectral_SC] text-2xl font-bold uppercase tracking-wider text-white">
                   {selectedRace.name}
                 </h1>
 

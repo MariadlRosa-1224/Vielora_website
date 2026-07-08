@@ -36,7 +36,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-white/10 bg-[#111120] px-8 py-10 text-white">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <p className="font-serif text-sm uppercase tracking-wider text-white/70">
+        <p className="font-[Spectral_SC] text-sm uppercase tracking-wider text-white/70">
           Isles of Vielora
         </p>
 
