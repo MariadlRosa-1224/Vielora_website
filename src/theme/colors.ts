@@ -16,6 +16,15 @@ export const vieloraColors = {
   royalBlue: "#2D38A5",
 } as const;
 
+export const VieloraColorstreeBranches: Record<string, string> = {
+  "path-blue": vieloraColors.blue,
+  "path-violet": vieloraColors.violet,
+  "path-aqua": vieloraColors.aqua,
+  "path-rose": vieloraColors.roseRed,
+  "path-coral": vieloraColors.coral,
+  "path-yellow": vieloraColors.parchment,
+};
+
 export const vieloraGradients = {
   blueVertical: `linear-gradient(360deg, ${vieloraColors.skyBlue} 0%, ${vieloraColors.royalBlue} 50%, rgba(0, 0, 0, 0) 80%)`,
 
