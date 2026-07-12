@@ -1,0 +1,283 @@
+---
+title: "Living Toy"
+slug: "living-toy"
+category: races
+origin: "Remnants"
+size: "Small / Variable"
+lifespan: "Unaging"
+
+image: "/images/codex/races/living-toy/living-toy.jpg"
+imageAlt: "Living Toy"
+
+draft: false
+
+summary: >-
+  Living Toys are animated dolls, plushies, toys, or crafted companions brought
+  to life through mana. As long as their core remains intact, their bodies can be
+  repaired, modified, and even rebuilt.
+
+description: >-
+  Living Toys take the appearance of toys, dolls, plushies, and other crafted
+  objects. Generally they are small, but their size is based on their creator and
+  the type of toy they were made from. Aside from the usual appearance of the toy
+  they are based on, they have a small core incrusted somewhere in their body or
+  worn as an accessory.
+
+weaknesses:
+  - id: core
+    title: "Core"
+    description: >-
+      If the core is destroyed, the Living Toy will die. Their body can be
+      repaired or replaced, but the core itself is their true vital point.
+
+  - id: soulless
+    title: "Soulless"
+    description: >-
+      For good or bad, most Living Toys are unaffected by soul effects. This can
+      protect them from certain abilities, but it also prevents them from
+      benefiting from effects that require a soul.
+
+history: >-
+  Living Toys are a very old race, said to have first been created in the times
+  of humans, when powerful mages started experimenting with mana and giving life
+  to inanimate objects, such as toys.
+
+  This practice, although very rare and only done by experienced mages, is still
+  done nowadays. Toys are usually made as companions for children of rich
+  families or as loyal servants of a fun size. This gives them a kind and
+  playful nature that, added to their cuteness, makes them a well-liked race.
+  Despite their origin, they are treated normally.
+
+  Some Living Toys, however, are made with an actual soul. These ones do not
+  remember their previous lives or only have very vague memories. This practice
+  is heavily prohibited and taboo, making it very unlikely to find a toy made in
+  this way.
+
+abilityTree:
+  levels:
+    - id: base
+      label: "Base Racials"
+    - id: "5"
+      label: "Level 5"
+    - id: "15"
+      label: "Level 15"
+    - id: "25"
+      label: "Level 25"
+    - id: "30"
+      label: "Level 30"
+    - id: "40"
+      label: "Level 40"
+
+  abilities:
+    - id: core
+      name: "Core"
+      level: base
+      branch:
+        - path-yellow
+        - path-blue
+      order: 1
+      requires: []
+      requiresMode: all
+      follows:
+        - patchwork-bond
+
+      description: >-
+        As long as their core remains intact, a Living Toy can have any wound
+        repaired. Their body may be damaged, torn, or broken, but the core allows
+        them to recover.
+
+    - id: modification
+      name: "Modification"
+      level: base
+      branch:
+        - path-yellow
+        - path-blue
+      order: 2
+      requires: []
+      requiresMode: all
+      follows: 
+        - patchwork-bond
+      description: >-
+        A Living Toy can get their body modified with new pieces and add-ons,
+        allowing their form and capabilities to be altered over time.
+
+    - id: painless
+      name: "Painless"
+      level: base
+      branch:
+        - path-yellow
+        - path-blue
+      order: 3
+      requires: []
+      requiresMode: all
+      follows:
+        - patchwork-bond
+      description: >-
+        Because of how they are made, Living Toys are unable to feel physical
+        pain or tiredness. They can be torn apart or left in many pieces, and as
+        long as their core is intact they can recover and continue moving. They
+        may even control independently torn parts of themselves.
+
+    - id: patchwork-bond
+      name: "Patchwork Bond"
+      level: "5"
+      branch:
+        - path-blue
+      order: 1
+      requires: []
+      requiresMode: all
+      follows:
+        - puffed-with-air
+        - velcro-grip
+        - voice-mimic
+      description: >-
+        Most Living Toys can form a magical link with a person they deeply care
+        for. This link allows them to feel their bonded partner’s emotions even
+        at a distance, and they instinctively know when that person is in danger.
+        While near them, the toy becomes more durable, gaining x2 in physical and
+        magical durability, and their presence can reduce the pain or fear their
+        partner feels. It is not unusual for such toys to glow faintly when
+        protecting their bonded person.
+
+    - id: puffed-with-air
+      name: "Puffed with Air"
+      level: "15"
+      branch:
+        - path-blue
+      order: 1
+      requires: []
+      requiresMode: all
+      follows:
+        - nursing
+        - mana-surge
+        - hide-and-seek
+      description: >-
+        Some Toys are so light that they can float a short distance when thrown
+        or fall very slowly, gently gliding like a feather. If caught by wind or
+        magic, they might even spin in the air like a leaf.
+
+    - id: velcro-grip
+      name: "Velcro Grip"
+      level: "15"
+      branch:
+        - path-blue
+      order: 2
+      requires: []
+      requiresMode: all
+      follows:
+        - nursing
+        - mana-surge
+        - hide-and-seek
+      description: >-
+        This Toy sticks to things a little too well, attaching to almost any
+        surface. They will not fall unless they want to or are pulled by
+        something with twice their strength.
+
+    - id: voice-mimic
+      name: "Voice Mimic"
+      level: "15"
+      branch:
+        - path-blue
+      order: 3
+      requires: []
+      requiresMode: all
+      follows:
+        - nursing
+        - mana-surge
+        - hide-and-seek
+      description: >-
+        Some Living Toys can perfectly imitate any voice they have heard before.
+        This can be used for mimicry, trickery, or comfort. A Toy might replicate
+        a loved one’s voice to calm someone, or play eerie tricks by speaking as
+        someone long gone.
+
+    - id: nursing
+      name: "Nursing"
+      level: "25"
+      branch:
+        - path-blue
+      order: 1
+      requires: []
+      requiresMode: all
+      follows:
+        - toy-creator
+      description: >-
+        Some Toys can pull their mana outwards to create a healing area.
+        Everyone inside it will have their wounds healed and their minds calmed
+        over the course of 2 turns, healing minor and moderate wounds. After the
+        second turn, it consumes 3 charges per turn.
+
+    - id: hide-and-seek
+      name: "Hide and Seek"
+      level: "25"
+      branch:
+        - path-blue
+      order: 2
+      requires: []
+      requiresMode: all
+      follows:
+        - toy-creator
+      description: >-
+        Some Toys are able to teleport small distances, up to 15 meters, within
+        sight, as long as there are no obstacles in between. This is useful for
+        dodging attacks or reaching places they normally could not. These Toys
+        are also nearly undetectable in their movement, making no sound and
+        hiding under C-rank detection or lower. Each time they teleport, they
+        spend 5 charges and cannot attack on the same turn they teleport.
+
+    - id: mana-surge
+      name: "Mana Surge"
+      level: "25"
+      branch:
+        - path-blue
+      order: 3
+      requires: []
+      requiresMode: all
+      follows:
+        - toy-creator
+      description: >-
+        Living Toys are not made for combat, but some are able to overcharge
+        their core with mana to greatly increase their capabilities temporarily,
+        gaining x6 in speed, strength, and reaction speed. This lasts for 6
+        turns and has a 10-turn cooldown. The sight of these Toys fighting is
+        quite comical.
+
+    - id: toy-creator
+      name: "Toy Creator"
+      level: "30"
+      branch:
+        - path-yellow
+        - path-blue
+
+      order: 1
+      requires: []
+      requiresMode: all
+      follows:
+        - soul-toy
+      description: >-
+        Some Living Toys can create and manipulate up to 8 toys of their liking,
+        or manipulate toys around them. These toys do not have any will of their
+        own except to obey their creator, and can be made of any material and
+        given upgrades by their creator.
+
+    - id: soul-toy
+      name: "Soul Toy"
+      level: "40"
+      branch:
+        - path-yellow
+        - path-blue
+      order: 1
+      requires: []
+      requiresMode: all
+      follows: []
+      description: >-
+        Some Toys, even if they were not made with one, develop a soul naturally
+        over time. These Toys gain new capabilities, such as being able to see
+        lingering spirits and people's true nature, and they gain a x4 boost in
+        magic.
+---
+
+# Living Toy
+
+Additional lore, variants, creation methods, famous Living Toys, cultural notes,
+or roleplay examples can go here.

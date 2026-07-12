@@ -20,7 +20,7 @@ export const raceOrigins: RaceOrigin[] = [
   {
     slug: "remnants",
     title: "Remnants",
-    origin: "Remnant",
+    origin: "Remnants",
     backgroundImage: "/images/races/remnants/remnants.jpg",
     description:
       "Remnants are the last of their kind, carrying the weight of their past and the mystery of their origins.",

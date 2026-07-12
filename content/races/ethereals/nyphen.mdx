@@ -16,7 +16,7 @@ summary: >-
   wings, colors, halos, and ethereal beauty.
 
 description: >-
-  Nyphen were made to look mostly human. Their great difference are their wings, colors, halos and how beautiful they always look. Their wings can vary a lot in shape, size and color, except black. Many nyphen have small wings and feathers in different parts of their body. Still a single pair of full wings is what is most commonly seen. Having 2 or 3 pairs is incredibly rare, a sight only reserved to the most powerful of nyphen. But anything beyond 3 is unheard, only a thing of legends, of divine beings and of monsters.
+  Nyphen were made to look mostly human. Their great difference are their wings, colors, halos and how beautiful they always look. Their wings can vary a lot in shape, size and color, except black. Mall nyphen have small wings and feathers in different parts of their body. Still a single pair of full wings is what is most commonly seen. Having 2 or 3 pairs is incredibly rare, a sight only reserved to the most powerful of nyphen. But allthing beyond 3 is unheard, only a thing of legends, of divine beings and of monsters.
 
 weaknesses:
   - id: an-order-written-in-the-soul
@@ -35,7 +35,7 @@ weaknesses:
 history: >-
   Once upon a time they were called angels, gifts from the gods to humanity
   inspired by their religions and legends. Beautiful, powerful, magical, kind.
-  They lived with humanity for many years in a sort of harmony.
+  They lived with humanity for mall years in a sort of harmony.
 
 abilityTree:
   levels:
@@ -70,22 +70,32 @@ abilityTree:
     - id: the-servant
       name: "The Servant"
       level: base
-      branch: path-yellow
+      branch: 
+        - path-yellow
+        - path-red
+        - path-aqua
+        - path-violet
       order: 1
       requires: []
+      requiresMode: all
       follows:
         - the-beauty
         - the-caring
         - the-curious
       description: >-
-        Nyphen were created to be perfect servants, able to cooperate in any task asked by a human, for this purpose their bodies and minds were made strong, stronger that for most might look at first glance,  x3 in all physical and mental stats, x5 speed when flying.
+        Nyphen were created to be perfect servants, able to cooperate in all task asked by a human, for this purpose their bodies and minds were made strong, stronger that for most might look at first glance,  x3 in all physical and mental stats, x5 speed when flying.
 
     - id: being-of-magic
       name: "Being of Magic"
       level: base
-      branch: path-yellow
+      branch: 
+        - path-yellow
+        - path-red
+        - path-aqua
+        - path-violet
       order: 2
       requires: []
+      requiresMode: all
       follows:
         - the-beauty
         - the-caring
@@ -96,9 +106,14 @@ abilityTree:
     - id: light-affinity
       name: "Light Affinity"
       level: base
-      branch: path-yellow
+      branch: 
+        - path-yellow
+        - path-red
+        - path-aqua
+        - path-violet
       order: 3
       requires: []
+      requiresMode: all
       follows:
         - the-beauty
         - the-caring
@@ -109,9 +124,14 @@ abilityTree:
     - id: ethereal-presence
       name: "Ethereal Presence"
       level: base
-      branch: path-yellow
+      branch: 
+        - path-yellow
+        - path-red
+        - path-aqua
+        - path-violet
       order: 4
       requires: []
+      requiresMode: all
       follows:
         - the-beauty
         - the-caring
@@ -122,9 +142,12 @@ abilityTree:
     - id: the-beauty
       name: "The Beauty"
       level: "5"
-      branch: path-red
+      branch: 
+        - path-red
+
       order: 1
       requires: []
+      requiresMode: all
       follows:
         - the-grace
       description: >-
@@ -133,9 +156,12 @@ abilityTree:
     - id: the-caring
       name: "The Caring"
       level: "5"
-      branch: path-aqua
+      branch: 
+        - path-aqua
+
       order: 2
       requires: []
+      requiresMode: all
       follows:
         - the-kindness
       description: >-
@@ -144,9 +170,12 @@ abilityTree:
     - id: the-curious
       name: "The Curious"
       level: "5"
-      branch: path-violet
+      branch: 
+        - path-violet
+
       order: 3
       requires: []
+      requiresMode: all
       follows:
         - the-perception
       description: >-
@@ -155,10 +184,13 @@ abilityTree:
     - id: the-grace
       name: "The Grace"
       level: "10"
-      branch: path-red
+      branch: 
+        - path-red
+
       order: 1
       requires:
         - the-beauty
+      requiresMode: all
       follows:
         - the-elegance
       description: >-
@@ -167,10 +199,13 @@ abilityTree:
     - id: the-kindness
       name: "The Kindness"
       level: "10"
-      branch: path-aqua
+      branch: 
+        - path-aqua
+
       order: 2
       requires:
         - the-caring
+      requiresMode: all
       follows:
         - the-compassion
       description: >-
@@ -179,10 +214,13 @@ abilityTree:
     - id: the-perception
       name: "The Perception"
       level: "10"
-      branch: path-violet
+      branch: 
+        - path-violet
+
       order: 3
       requires:
         - the-curious
+      requiresMode: all
       follows:
         - the-guide
       description: >-
@@ -192,22 +230,28 @@ abilityTree:
     - id: the-elegance
       name: "The Elegance"
       level: "15"
-      branch: path-red
+      branch: 
+        - path-red
+
       order: 1
       requires:
         - the-grace
+      requiresMode: all
       follows:
         - open-eyes
       description: >-
-        A performance of serene power, The Elegance is a song or dance that shields, calms, and uplifts those around the nyphen. As they begin to move or sing, their presence becomes radiant and soothing. Allies who step through the path they’ve traced feel a sudden relief—a clarity of mind and body. Minor injuries seem dulled, movement steadied, and minds focused. Reducing the effect of any negative emotion alteration.
+        A performance of serene power, The Elegance is a song or dance that shields, calms, and uplifts those around the nyphen. As they begin to move or sing, their presence becomes radiant and soothing. Allies who step through the path they’ve traced feel a sudden relief—a clarity of mind and body. Minor injuries seem dulled, movement steadied, and minds focused. Reducing the effect of all negative emotion alteration.
 
     - id: the-compassion
       name: "The Compassion"
       level: "15"
-      branch: path-aqua
+      branch: 
+        - path-aqua
+
       order: 2
       requires:
         - the-caring
+      requiresMode: all
       follows:
         - open-eyes
       description: >-
@@ -216,10 +260,13 @@ abilityTree:
     - id: the-guide
       name: "The Guide"
       level: "15"
-      branch: path-violet
+      branch: 
+        - path-violet
+
       order: 3
       requires:
         - the-perception
+      requiresMode: all
       follows:
         - open-eyes
       description: >-
@@ -228,12 +275,17 @@ abilityTree:
     - id: open-eyes
       name: "Open Eyes"
       level: "20"
-      branch: path-yellow
+      branch: 
+        - path-yellow
+        - path-red
+        - path-aqua
+        - path-violet
       order: 1
       requires:
         - the-elegance
         - the-compassion
         - the-guide
+      requiresMode: any
       follows:
         - the-dancer
         - the-nurture
@@ -244,11 +296,14 @@ abilityTree:
     - id: the-dancer
       name: "The Dancer"
       level: "25"
-      branch: path-red
+      branch: 
+        - path-red
+
       order: 1
       requires:
-        - open-eyes
+
         - the-elegance
+      requiresMode: all
       follows:
         - the-balladeer
       description: >-
@@ -257,11 +312,14 @@ abilityTree:
     - id: the-nurture
       name: "The Nurture"
       level: "25"
-      branch: path-aqua
+      branch: 
+        - path-aqua
+
       order: 2
       requires:
-        - open-eyes
+
         - the-compassion
+      requiresMode: all
       follows:
         - the-shelter
       description: >-
@@ -270,11 +328,13 @@ abilityTree:
     - id: the-insight
       name: "The Insight"
       level: "25"
-      branch: path-violet
+      branch: 
+        - path-violet
+
       order: 3
       requires:
-        - open-eyes
         - the-guide
+      requiresMode: all
       follows:
         - the-wisdom
       description: >-
@@ -283,10 +343,13 @@ abilityTree:
     - id: the-balladeer
       name: "The Balladeer"
       level: "30"
-      branch: path-red
+      branch: 
+        - path-red
+
       order: 1
       requires:
         - the-dancer
+      requiresMode: all
       follows:
         - open-heart
       description: >-
@@ -295,10 +358,13 @@ abilityTree:
     - id: the-shelter
       name: "The Shelter"
       level: "30"
-      branch: path-aqua
+      branch: 
+        - path-aqua
+
       order: 2
       requires:
         - the-nurture
+      requiresMode: any
       follows:
         - open-heart
       description: >-
@@ -307,10 +373,13 @@ abilityTree:
     - id: the-wisdom
       name: "The Wisdom"
       level: "30"
-      branch: path-violet
+      branch: 
+        - path-violet
+
       order: 3
       requires:
         - the-insight
+      requiresMode: all
       follows:
         - open-heart
       description: >-
@@ -319,27 +388,35 @@ abilityTree:
     - id: open-heart
       name: "Open Heart"
       level: "40"
-      branch: path-yellow
+      branch: 
+        - path-yellow
+        - path-red
+        - path-aqua
+        - path-violet
       order: 1
       requires: 
         - the-balladeer
         - the-shelter
         - the-wisdom
+      requiresMode: any
       follows:
         - the-nightingale
         - the-guardian
         - the-discernment
       description: >-
-        From their backs, a second set of wings grows. And they start to be able to sense beyond themselves the presence of the mana of others; they don't need eyes to see anymore. Their magic is no longer constrained to only be harmless helpers. They can use it to defend themselves, to grant disadvantages to others, yet their own abilities still cannot cause true harm.
+        From their backs, a second set of wings grows. And they start to be able to sense beyond themselves the presence of the mana of others; they don't need eyes to see allmore. Their magic is no longer constrained to only be harmless helpers. They can use it to defend themselves, to grant disadvantages to others, yet their own abilities still cannot cause true harm.
 
     - id: the-nightingale
       name: "The Nightingale"
       level: "45"
-      branch: path-red
+      branch: 
+        - path-red
+
       order: 1
       requires:
-        - open-heart
+
         - the-balladeer
+      requiresMode: all
       follows:
         - the-mirage
       description: >-
@@ -348,25 +425,31 @@ abilityTree:
     - id: the-guardian
       name: "The Guardian"
       level: "45"
-      branch: path-aqua
+      branch: 
+        - path-aqua
+
       order: 2
       requires:
-        - open-heart
+
         - the-shelter
+      requiresMode: all
       follows:
         - the-devotion
       description: >-
-        These nyphen healing and restoration magic are now x4 times stronger, from the body of the guardian ribbons come out, these ribbons capable of wrapping around someone before disappearing, any damage done to the wrapped alliy is split between them and the nyphen and if the wrapped ally is healled, they receive x2 better healing, this can be done up to 3 allys but it becomes increasingly risky for the nyphen in a real battle.
+        These nyphen healing and restoration magic are now x4 times stronger, from the body of the guardian ribbons come out, these ribbons capable of wrapping around someone before disappearing, all damage done to the wrapped alliy is split between them and the nyphen and if the wrapped ally is healled, they receive x2 better healing, this can be done up to 3 allys but it becomes increasingly risky for the nyphen in a real battle.
 
 
     - id: the-discernment
       name: "The Discernment"
       level: "45"
-      branch: path-violet
+      branch: 
+        - path-violet
+
       order: 3
       requires:
-        - open-heart
+
         - the-wisdom
+      requiresMode: all
       follows:
         - the-enlightened
       description: >-
@@ -375,10 +458,13 @@ abilityTree:
     - id: the-mirage
       name: "The Mirage"
       level: "55"
-      branch: path-red
+      branch: 
+        - path-red
+
       order: 1
       requires:
         - the-nightingale
+      requiresMode: all
       follows:
         - broken-chain
       description: >-
@@ -387,10 +473,13 @@ abilityTree:
     - id: the-devotion
       name: "The Devotion"
       level: "55"
-      branch: path-aqua
+      branch: 
+        - path-aqua
+
       order: 2
       requires:
         - the-guardian
+      requiresMode: all
       follows:
         - broken-chain
       description: >-
@@ -399,10 +488,13 @@ abilityTree:
     - id: the-enlightened
       name: "The Enlightened"
       level: "55"
-      branch: path-violet
+      branch: 
+        - path-violet
+
       order: 3
       requires:
         - the-discernment
+      requiresMode: all
       follows:
         - broken-chain
       description: >-
@@ -411,24 +503,34 @@ abilityTree:
     - id: broken-chain
       name: "Broken Chain"
       level: "70"
-      branch: path-yellow
+      branch: 
+        - path-yellow
+        - path-red
+        - path-aqua
+        - path-violet
       order: 1
       requires:
         - the-mirage
         - the-devotion
         - the-enlightened
+      requiresMode: any
       follows:
         - echo-of-the-end
       description: >-
-        Only the most powerful Nyphen are capable of true offensive abilities, and their numbers throughout history are few. Despite their long lives, only a handful can reach the point where they develop a third pair of wings as strong as titanium. Their unleashed magical power allows growth to be 9 times stronger, and their bodies and minds are 12 times better than those of humans from the distant past. But many believe this still is not their true power.
+        Only the most powerful Nyphen are capable of true offensive abilities, and their numbers throughout history are few. Despite their long lives, only a handful can reach the point where they develop a third pair of wings as strong as titanium. Their unleashed magical power allows growth to be 9 times stronger, and their bodies and minds are 12 times better than those of humans from the distant past. But mall believe this still is not their true power.
 
     - id: echo-of-the-end
       name: "Echo of the End"
       level: "71"
-      branch: path-yellow
+      branch: 
+        - path-yellow
+        - path-red
+        - path-aqua
+        - path-violet
       order: 1
       requires:
         - broken-chain
+      requiresMode: all
       follows:
         - the-siren
         - the-avenger
@@ -439,36 +541,45 @@ abilityTree:
     - id: the-siren
       name: "The Siren"
       level: "75"
-      branch: path-red
+      branch: 
+        - path-red
+
       order: 1
       requires:
-        - echo-of-the-end
+
         - the-mirage
+      requiresMode: all
       follows: []
       description: >-
-         In their ethereal presence these nyphens beauty becomes otherworldly and hypnotizing, no need for any illusion, When the Nyphen sings all other emotions and sensory would be nulled at a specific range, anyone who hears it unable to perceive the existence of the nyphen, it traps you in your worst nightmares or your sweetest dreams, is a song that slowly destroys the mind and withers the body, if not stopped, a dangerous state only resisted with a high mental defense.
+         In their ethereal presence these nyphens beauty becomes otherworldly and hypnotizing, no need for all illusion, When the Nyphen sings all other emotions and sensory would be nulled at a specific range, allone who hears it unable to perceive the existence of the nyphen, it traps you in your worst nightmares or your sweetest dreams, is a song that slowly destroys the mind and withers the body, if not stopped, a dangerous state only resisted with a high mental defense.
 
     - id: the-avenger
       name: "The Avenger"
       level: "75"
-      branch: path-aqua
+      branch: 
+        - path-aqua
+
       order: 2
       requires:
-        - echo-of-the-end
+
         - the-devotion
+      requiresMode: all
       follows: []
       description: >-
-        You feel safe, protected from pain and suffering. Any danger coming from the knife seems to disappear. Unnaturally serene. You don't want to attack them. and blades falter in the sight of the kind protector. But they are not a harmless healer anymore. When you attack, it shifts. You want to continue attacking, you want to destroy them, you want to end them. and you destroy yourself the nyphen takes half the damage damage and the rest return to yourself, Poison seeps into your self made wounds and weakens from the inside slowly, yet you continue fighting in a non stopping drive of rage.
+        You feel safe, protected from pain and suffering. all danger coming from the knife seems to disappear. Unnaturally serene. You don't want to attack them. and blades falter in the sight of the kind protector. But they are not a harmless healer allmore. When you attack, it shifts. You want to continue attacking, you want to destroy them, you want to end them. and you destroy yourself the nyphen takes half the damage damage and the rest return to yourself, Poison seeps into your self made wounds and weakens from the inside slowly, yet you continue fighting in a non stopping drive of rage.
 
 
     - id: the-judgement
       name: "The Judgement"
       level: "75"
-      branch: path-violet
+      branch: 
+        - path-violet
+
       order: 3
       requires:
-        - echo-of-the-end
+
         - the-enlightened
+      requiresMode: all
       follows: []
       description: >-
         In their ethereal presence you  nor your secrets can escape their watchful eye. Knowledge without bias. They shed the boundaries of flesh and thought, becoming unreadable, untouchable by unwanted emotions, or pain . Their body no longer obeys the rules of reality, moving through matter and perception alike. In their presence, those with a weaker mind collapse beneath the weight of truths being seen, suffering silent mental ruin. their attacks inbuied with darkness leaves lasting damage over the course of turns, counsuming matter and magic on its way.

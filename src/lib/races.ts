@@ -8,6 +8,22 @@ import { raceOrigins } from "@/lib/race-origins";
 
 const RACES_DIR = path.join(process.cwd(), "content/races");
 
+const stringArraySchema = z.preprocess((value) => {
+  if (value === undefined || value === null || value === "") {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(String);
+  }
+
+  if (typeof value === "string") {
+    return [value];
+  }
+
+  return value;
+}, z.array(z.string()));
+
 const raceWeaknessSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -29,14 +45,25 @@ const raceSectionSchema = z.object({
   ]),
 });
 
+
+
 const raceAbilitySchema = z.object({
   id: z.string(),
   name: z.string(),
   level: z.union([z.string(), z.number()]).transform(String),
-  branch: z.string(),
+  branch: stringArraySchema.default([]),
   order: z.coerce.number(),
-  requires: z.array(z.string()).default([]),
-  follows: z.array(z.string()).default([]),
+
+  // Requisitos reales para desbloquear.
+  requires: stringArraySchema.default([]),
+
+  // "all" = necesita todas.
+  // "any" = necesita una de ellas.
+  requiresMode: z.enum(["all", "any"]).default("all"),
+
+  // Conexiones visuales del árbol.
+  follows: stringArraySchema.default([]),
+
   description: z.string(),
 });
 

@@ -37,96 +37,155 @@ export default function RaceAbilityTree({
     );
   }, [tree.abilities]);
 
-  const activeAbilityIds = useMemo(() => {
-    if (!hoveredAbilityId) return new Set<string>();
+  // Build a map of ability IDs to their parent IDs for quick lookup
 
-    const active = new Set<string>();
+  const parentsById = useMemo(() => {
+    const parents: Record<string, string[]> = {};
 
-    function visit(id: string) {
-      if (active.has(id)) return;
-
-      active.add(id);
-
-      const ability = abilityById[id];
-
-      if (!ability) return;
-
-
-      ability.requires.forEach(visit);
-    }
-
-    visit(hoveredAbilityId);
-
-    return active;
-  }, [hoveredAbilityId, abilityById]);
-
-  const activeEdgeIds = useMemo(() => {
-    const active = new Set<string>();
-
-    activeAbilityIds.forEach((id) => {
-      const ability = abilityById[id];
-
-      if (!ability) return;
-
-      ability.requires.forEach((requiredId) => {
-        if (activeAbilityIds.has(requiredId)) {
-          active.add(`${requiredId}->${id}`);
-        }
+    tree.abilities.forEach((ability) => {
+      ability.follows.forEach((nextId) => {
+        parents[nextId] ??= [];
+        parents[nextId].push(ability.id);
       });
     });
 
-    return active;
-  }, [activeAbilityIds, abilityById]);
+    return parents;
+  }, [tree.abilities]);
+  
+
+  function getPathBranches(ability: RaceAbility) {
+  return ability.branch.filter((branch) => branch !== "path-yellow");
+}
+
+    // This funtion cheks if two abilities include the same branches
+  function sharesBranchPath(abilityA: RaceAbility, abilityB: RaceAbility) {
+  const branchesA = getPathBranches(abilityA);
+  const branchesB = getPathBranches(abilityB);
+
+  if (branchesA.length === 0 || branchesB.length === 0) {
+    return abilityA.branch.some((branch) => abilityB.branch.includes(branch));
+  }
+
+  return branchesA.some((branch) => branchesB.includes(branch));
+}
+
+/*   function sharesBranchPath(abilityA: RaceAbility, abilityB: RaceAbility) {
+    if (!abilityA || !abilityB) return false;
+
+    const branchesA = new Set(abilityA.branch);
+    const branchesB = new Set(abilityB.branch);
+
+    console.log(branchesA, branchesB);
+
+    const longestBranch = branchesA.size >= branchesB.size ? branchesA : branchesB;
+    const shortestBranch = branchesA.size < branchesB.size ? branchesA : branchesB;
+
+    for (const branch of shortestBranch) {
+      if (!longestBranch.has(branch)) {
+        return false;
+      }
+    }
+
+    return true;
+  } */
+
+
+const activeAbilityIds = useMemo(() => {
+  if (!hoveredAbilityId) return new Set<string>();
+
+  const active = new Set<string>();
+  const hoveredAbility = abilityById[hoveredAbilityId];
+
+  if (!hoveredAbility) return active;
+
+  function visit(id: string) {
+    if (active.has(id)) return;
+
+    const ability = abilityById[id];
+
+    if (!ability) return;
+
+    if (!sharesBranchPath(hoveredAbility, ability)) return;
+
+    active.add(id);
+
+    const parents = parentsById[id] ?? [];
+
+    parents.forEach(visit);
+  }
+
+  visit(hoveredAbilityId);
+
+  return active;
+}, [hoveredAbilityId, abilityById, parentsById]);
+
+// Build a set of active edge IDs based on the active abilities
+
+const activeEdgeIds = useMemo(() => {
+  const active = new Set<string>();
+
+  edges.forEach((edge) => {
+    if (activeAbilityIds.has(edge.from) && activeAbilityIds.has(edge.to)) {
+      active.add(`${edge.from}->${edge.to}`);
+    }
+  });
+
+  return active;
+}, [edges, activeAbilityIds]);
+
+
+
 
   const measureEdges = useCallback(() => {
     const container = containerRef.current;
 
     if (!container) return;
 
+    // Get the bounding rectangle of the container to calculate positions relative to it
     const containerRect = container.getBoundingClientRect();
-
     const nextEdges: Edge[] = [];
 
     tree.abilities.forEach((ability) => {
-      const toNode = nodeRefs.current[ability.id];
+    const fromNode = nodeRefs.current[ability.id];
 
-      if (!toNode) return;
+    if (!fromNode) return;
+
+    const fromRect = fromNode.getBoundingClientRect();
+
+    const fromX = fromRect.left + fromRect.width / 2 - containerRect.left;
+    const fromY = fromRect.bottom - containerRect.top;
+
+    ability.follows.forEach((nextId) => {
+      const nextAbility = abilityById[nextId];
+      const toNode = nodeRefs.current[nextId];
+
+      if (!nextAbility || !toNode) return;
 
       const toRect = toNode.getBoundingClientRect();
 
       const toX = toRect.left + toRect.width / 2 - containerRect.left;
       const toY = toRect.top - containerRect.top;
 
-      ability.requires.forEach((requiredId) => {
-        const fromNode = nodeRefs.current[requiredId];
+      const middleY = fromY + (toY - fromY) / 2;
 
-        if (!fromNode) return;
+      const path = [
+        `M ${fromX} ${fromY}`,
+        `L ${fromX} ${middleY}`,
+        `L ${toX} ${middleY}`,
+        `L ${toX} ${toY}`,
+      ].join(" ");
 
-        const fromRect = fromNode.getBoundingClientRect();
-
-        const fromX = fromRect.left + fromRect.width / 2 - containerRect.left;
-        const fromY = fromRect.bottom - containerRect.top;
-
-        const middleY = fromY + (toY - fromY) / 2;
-
-        const path = [
-          `M ${fromX} ${fromY}`,
-          `L ${fromX} ${middleY}`,
-          `L ${toX} ${middleY}`,
-          `L ${toX} ${toY}`,
-        ].join(" ");
-
-        nextEdges.push({
-          from: requiredId,
-          to: ability.id,
-          path,
-          color: getBranchColor(ability.branch),
-        });
+      nextEdges.push({
+        from: ability.id,
+        to: nextId,
+        path,
+        color: getEdgeColor(ability, nextAbility),
       });
     });
+  });
 
-    setEdges(nextEdges);
-  }, [tree.abilities]);
+  setEdges(nextEdges);
+}, [tree.abilities, abilityById]);
 
   useLayoutEffect(() => {
     measureEdges();
@@ -198,11 +257,11 @@ export default function RaceAbilityTree({
           })}
         </svg>
 
-        <div className="relative z-10 min-w-[850px]">
+        <div className="relative z-10 min-w-[70vw]">
           {abilitiesByLevel.map((level, levelIndex) => (
             <div key={level.id} className="relative">
               {levelIndex > 0 && (
-                <div className="my-12 border-y border-white/50 bg-white/10 py-5 text-center backdrop-blur-sm">
+                <div className="my-12 border border-white/50 bg-white/5 py-5 text-center backdrop-blur-sm rounded-lg">
                   <h3 className="font-['Spectral_SC'] text-2xl font-bold uppercase tracking-wider text-white">
                     {level.label}
                   </h3>
@@ -230,7 +289,7 @@ export default function RaceAbilityTree({
                       onClick={() => setSelectedAbility(ability)}
                       className={[
                         "relative min-h-[58px] w-[150px] rounded-md border px-4 py-3",
-                        "bg-[#252642]/95 text-center font-['Spectral_SC'] text-sm font-bold uppercase tracking-wider text-white",
+                        "!bg-[#252642]/95 text-center font-['Spectral_SC'] text-sm font-bold uppercase tracking-wider text-white",
                         "transition duration-200 hover:-translate-y-1 hover:border-[#fff48e]",
                         "focus:outline-none focus:ring-2 focus:ring-[#fff48e]",
                         isActive
@@ -240,7 +299,7 @@ export default function RaceAbilityTree({
                       ].join(" ")}
                       style={{
                         boxShadow: isActive
-                          ? `0 0 18px ${getBranchColor(ability.branch)}`
+                          ? `0 0 18px ${getEdgeColor(ability, ability)}`
                           : undefined,
                       }}
                     >
@@ -275,9 +334,17 @@ function AbilityModal({
   onClose: () => void;
 }) {
   const requiredAbilities = ability.requires
-    .map((id) => abilityById[id])
-    .filter(Boolean);
+  .map((id) => abilityById[id])
+  .filter(Boolean);
 
+const requirementLabel =
+  ability.requires.length === 0
+    ? "Required abilities"
+    : ability.requiresMode === "any"
+      ? "Requires one of"
+      : ability.requires.length === 1
+        ? "Requires"
+        : "Requires all of";
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6"
@@ -307,7 +374,7 @@ function AbilityModal({
 
         <div className="mt-6 border-t border-white/20 pt-4">
           <p className="font-['Spectral_SC'] text-sm font-bold uppercase tracking-wider text-white/70">
-            Required abilities
+            {requirementLabel}
           </p>
 
           {requiredAbilities.length > 0 ? (
@@ -330,14 +397,36 @@ function AbilityModal({
   );
 }
 
+function getEdgeColor(fromAbility: RaceAbility, toAbility: RaceAbility) {
+  const sharedBranches = fromAbility.branch.filter((branch) =>
+    toAbility.branch.includes(branch),
+  );
+
+  // If there are no shared branches, we can use the first branch of the "to" ability as a fallback.
+  // If the "to" ability has no branches, we can use the first branch of the "from" ability as a fallback.
+  // If both abilities have no branches, we can use a default color.
+
+  const preferredBranch =
+    sharedBranches[0] === "path-yellow"
+      ? "path-yellow"
+      : sharedBranches.find((branch) => branch !== "path-yellow") ??
+        sharedBranches[0] ??
+        toAbility.branch.find((branch) => branch !== "path-yellow") ??
+        toAbility.branch[0] ??
+        fromAbility.branch[0] ??
+        "path-yellow";
+
+  return getBranchColor(preferredBranch);
+}
+
 function getBranchColor(branch: string) {
   const colors: Record<string, string> = {
-  "path-blue": vieloraColors.blue,
-  "path-violet": vieloraColors.violet,
-  "path-aqua": vieloraColors.aqua,
-  "path-rose": vieloraColors.roseRed,
-  "path-coral": vieloraColors.coral,
-  "path-yellow": vieloraColors.parchment,
+    "path-blue": vieloraColors.blue,
+    "path-violet": vieloraColors.violet,
+    "path-aqua": vieloraColors.aqua,
+    "path-red": vieloraColors.roseRed,
+    "path-coral": vieloraColors.coral,
+    "path-yellow": vieloraColors.parchment,
   };
 
   return colors[branch] ?? "#fff48e";
