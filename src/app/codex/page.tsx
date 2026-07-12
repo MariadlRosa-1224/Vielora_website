@@ -6,3 +6,4 @@ export default function CodexPage() {
 
   return <CodexClient initialItems={entries} />;
 }
+

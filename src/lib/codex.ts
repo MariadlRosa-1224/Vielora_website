@@ -170,6 +170,7 @@ export type CodexEntryMeta = CodexEntryData & {
   href: string;
 };
 
+// function to recursively get all .mdx files in a directory
 function getMdxFiles(directory: string): string[] {
   if (!fs.existsSync(directory)) {
     return [];

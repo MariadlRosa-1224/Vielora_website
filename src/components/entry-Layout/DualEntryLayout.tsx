@@ -1,6 +1,6 @@
 // src/components/codex/DualEntryLayout.tsx
 
-import GeneralContentContainer from "../locations/GeneralContentContainer";
+import GeneralContentContainer from "../containers/GeneralContentContainer";
 
 type DualEntryLayoutProps = {
   structuredSection: React.ReactNode;

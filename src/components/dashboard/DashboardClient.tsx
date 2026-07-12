@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import GeneralContentContainer from "@/components/locations/GeneralContentContainer";
+import GeneralContentContainer from "@/components/containers/GeneralContentContainer";
 import DashboardSearchForm from "@/components/dashboard/DashboardSearchForm";
 
 type DashboardRole = "user" | "admin";

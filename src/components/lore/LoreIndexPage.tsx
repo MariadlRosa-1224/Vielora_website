@@ -2,6 +2,8 @@
 
 import LoreLinkCard, { LoreCardVariant } from "./LoreLinkCard";
 
+export type { LoreCardVariant };
+
 export type LoreIndexEntry = {
   id: string;
   title: string;

@@ -18,6 +18,12 @@ type Edge = {
   path: string;
 };
 
+type AbilityLevelGroup = {
+  id: string;
+  label: string;
+  abilities: RaceAbility[];
+};
+
 export default function RaceAbilityTree({
   tree,
   className = "",
@@ -37,8 +43,6 @@ export default function RaceAbilityTree({
     );
   }, [tree.abilities]);
 
-  // Build a map of ability IDs to their parent IDs for quick lookup
-
   const parentsById = useMemo(() => {
     const parents: Record<string, string[]> = {};
 
@@ -51,144 +55,99 @@ export default function RaceAbilityTree({
 
     return parents;
   }, [tree.abilities]);
-  
 
-  function getPathBranches(ability: RaceAbility) {
-  return ability.branch.filter((branch) => branch !== "path-yellow");
-}
+  const activeAbilityIds = useMemo(() => {
+    if (!hoveredAbilityId) return new Set<string>();
 
-    // This funtion cheks if two abilities include the same branches
-  function sharesBranchPath(abilityA: RaceAbility, abilityB: RaceAbility) {
-  const branchesA = getPathBranches(abilityA);
-  const branchesB = getPathBranches(abilityB);
+    const active = new Set<string>();
+    const hoveredAbility = abilityById[hoveredAbilityId];
 
-  if (branchesA.length === 0 || branchesB.length === 0) {
-    return abilityA.branch.some((branch) => abilityB.branch.includes(branch));
-  }
+    if (!hoveredAbility) return active;
 
-  return branchesA.some((branch) => branchesB.includes(branch));
-}
+    function visit(id: string) {
+      if (active.has(id)) return;
 
-/*   function sharesBranchPath(abilityA: RaceAbility, abilityB: RaceAbility) {
-    if (!abilityA || !abilityB) return false;
+      const ability = abilityById[id];
 
-    const branchesA = new Set(abilityA.branch);
-    const branchesB = new Set(abilityB.branch);
+      if (!ability) return;
 
-    console.log(branchesA, branchesB);
+      if (!sharesBranchPath(hoveredAbility, ability)) return;
 
-    const longestBranch = branchesA.size >= branchesB.size ? branchesA : branchesB;
-    const shortestBranch = branchesA.size < branchesB.size ? branchesA : branchesB;
+      active.add(id);
 
-    for (const branch of shortestBranch) {
-      if (!longestBranch.has(branch)) {
-        return false;
+      const parents = parentsById[id] ?? [];
+      parents.forEach(visit);
+    }
+
+    visit(hoveredAbilityId);
+
+    return active;
+  }, [hoveredAbilityId, abilityById, parentsById]);
+
+  const activeEdgeIds = useMemo(() => {
+    const active = new Set<string>();
+
+    edges.forEach((edge) => {
+      if (activeAbilityIds.has(edge.from) && activeAbilityIds.has(edge.to)) {
+        active.add(`${edge.from}->${edge.to}`);
       }
-    }
+    });
 
-    return true;
-  } */
-
-
-const activeAbilityIds = useMemo(() => {
-  if (!hoveredAbilityId) return new Set<string>();
-
-  const active = new Set<string>();
-  const hoveredAbility = abilityById[hoveredAbilityId];
-
-  if (!hoveredAbility) return active;
-
-  function visit(id: string) {
-    if (active.has(id)) return;
-
-    const ability = abilityById[id];
-
-    if (!ability) return;
-
-    if (!sharesBranchPath(hoveredAbility, ability)) return;
-
-    active.add(id);
-
-    const parents = parentsById[id] ?? [];
-
-    parents.forEach(visit);
-  }
-
-  visit(hoveredAbilityId);
-
-  return active;
-}, [hoveredAbilityId, abilityById, parentsById]);
-
-// Build a set of active edge IDs based on the active abilities
-
-const activeEdgeIds = useMemo(() => {
-  const active = new Set<string>();
-
-  edges.forEach((edge) => {
-    if (activeAbilityIds.has(edge.from) && activeAbilityIds.has(edge.to)) {
-      active.add(`${edge.from}->${edge.to}`);
-    }
-  });
-
-  return active;
-}, [edges, activeAbilityIds]);
-
-
-
+    return active;
+  }, [edges, activeAbilityIds]);
 
   const measureEdges = useCallback(() => {
     const container = containerRef.current;
 
     if (!container) return;
 
-    // Get the bounding rectangle of the container to calculate positions relative to it
     const containerRect = container.getBoundingClientRect();
     const nextEdges: Edge[] = [];
 
     tree.abilities.forEach((ability) => {
-    const fromNode = nodeRefs.current[ability.id];
+      const fromNode = nodeRefs.current[ability.id];
 
-    if (!fromNode) return;
+      if (!fromNode) return;
 
-    const fromRect = fromNode.getBoundingClientRect();
+      const fromRect = fromNode.getBoundingClientRect();
 
-    const fromX = fromRect.left + fromRect.width / 2 - containerRect.left;
-    const fromY = fromRect.bottom - containerRect.top;
+      const fromX = fromRect.left + fromRect.width / 2 - containerRect.left;
+      const fromY = fromRect.bottom - containerRect.top;
 
-    ability.follows.forEach((nextId) => {
-      const nextAbility = abilityById[nextId];
-      const toNode = nodeRefs.current[nextId];
+      ability.follows.forEach((nextId) => {
+        const nextAbility = abilityById[nextId];
+        const toNode = nodeRefs.current[nextId];
 
-      if (!nextAbility || !toNode) return;
+        if (!nextAbility || !toNode) return;
 
-      const toRect = toNode.getBoundingClientRect();
+        const toRect = toNode.getBoundingClientRect();
 
-      const toX = toRect.left + toRect.width / 2 - containerRect.left;
-      const toY = toRect.top - containerRect.top;
+        const toX = toRect.left + toRect.width / 2 - containerRect.left;
+        const toY = toRect.top - containerRect.top;
 
-      const middleY = fromY + (toY - fromY) / 2;
+        const middleY = fromY + (toY - fromY) / 2;
 
-      const path = [
-        `M ${fromX} ${fromY}`,
-        `L ${fromX} ${middleY}`,
-        `L ${toX} ${middleY}`,
-        `L ${toX} ${toY}`,
-      ].join(" ");
+        const path = [
+          `M ${fromX} ${fromY}`,
+          `L ${fromX} ${middleY}`,
+          `L ${toX} ${middleY}`,
+          `L ${toX} ${toY}`,
+        ].join(" ");
 
-      nextEdges.push({
-        from: ability.id,
-        to: nextId,
-        path,
-        color: getEdgeColor(ability, nextAbility),
+        nextEdges.push({
+          from: ability.id,
+          to: nextId,
+          path,
+          color: getEdgeColor(ability, nextAbility),
+        });
       });
     });
-  });
 
-  setEdges(nextEdges);
-}, [tree.abilities, abilityById]);
+    setEdges(nextEdges);
+  }, [tree.abilities, abilityById]);
 
   useLayoutEffect(() => {
-    measureEdges();
+    const frame = requestAnimationFrame(measureEdges);
 
     const observer = new ResizeObserver(() => {
       measureEdges();
@@ -201,12 +160,13 @@ const activeEdgeIds = useMemo(() => {
     window.addEventListener("resize", measureEdges);
 
     return () => {
+      cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener("resize", measureEdges);
     };
   }, [measureEdges]);
 
-  const abilitiesByLevel = useMemo(() => {
+  const abilitiesByLevel = useMemo<AbilityLevelGroup[]>(() => {
     return tree.levels.map((level) => {
       const abilities = tree.abilities
         .filter((ability) => ability.level === level.id)
@@ -221,95 +181,116 @@ const activeEdgeIds = useMemo(() => {
 
   return (
     <section className={className}>
-      <h2 className="mb-8 text-center font-['Spectral_SC'] text-3xl font-bold uppercase tracking-wider text-white">
+      <h2 className="mb-4 text-center font-['Spectral_SC'] text-2xl font-bold uppercase tracking-wider text-white sm:text-3xl">
         Base Abilities
       </h2>
 
-      <div
-        ref={containerRef}
-        className="relative overflow-x-auto px-4 pb-20 pt-4"
-      >
-        <svg
-          className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible"
-          aria-hidden="true"
+      <p className="mx-auto mb-6 max-w-xl text-center text-xs text-white/60 md:hidden">
+        Tap an ability to see its description and requirements.
+      </p>
+
+      <div className="md:hidden">
+        <MobileAbilityList
+          levels={abilitiesByLevel}
+          abilityById={abilityById}
+          onSelect={setSelectedAbility}
+        />
+      </div>
+
+      <div className="hidden md:block">
+        <p className="mb-4 text-center text-xs text-white/50 lg:hidden">
+          Swipe horizontally if the tree is wider than the screen.
+        </p>
+
+        <div
+          ref={containerRef}
+          className="relative overflow-x-auto px-3 pb-20 pt-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#fff48e]/50 lg:px-4"
         >
-          {edges.map((edge) => {
-            const edgeId = `${edge.from}->${edge.to}`;
-            const isActive = activeEdgeIds.has(edgeId);
+          <svg
+            className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible"
+            aria-hidden="true"
+          >
+            {edges.map((edge) => {
+              const edgeId = `${edge.from}->${edge.to}`;
+              const isActive = activeEdgeIds.has(edgeId);
 
-            return (
-              <path
-                key={edgeId}
-                d={edge.path}
-                fill="none"
-                stroke={isActive ? edge.color : "rgba(255,255,255,0.28)"}
-                strokeWidth={isActive ? 4 : 2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="transition-all duration-200"
-                style={{
-                  filter: isActive
-                    ? `drop-shadow(0 0 8px ${edge.color})`
-                    : "none",
-                }}
-              />
-            );
-          })}
-        </svg>
+              return (
+                <path
+                  key={edgeId}
+                  d={edge.path}
+                  fill="none"
+                  stroke={isActive ? edge.color : "rgba(255,255,255,0.28)"}
+                  strokeWidth={isActive ? 4 : 2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="transition-all duration-200"
+                  style={{
+                    filter: isActive
+                      ? `drop-shadow(0 0 8px ${edge.color})`
+                      : "none",
+                  }}
+                />
+              );
+            })}
+          </svg>
 
-        <div className="relative z-10 min-w-[70vw]">
-          {abilitiesByLevel.map((level, levelIndex) => (
-            <div key={level.id} className="relative">
-              {levelIndex > 0 && (
-                <div className="my-12 border border-white/50 bg-white/5 py-5 text-center backdrop-blur-sm rounded-lg">
-                  <h3 className="font-['Spectral_SC'] text-2xl font-bold uppercase tracking-wider text-white">
-                    {level.label}
-                  </h3>
+          <div className="relative z-10 min-w-[760px] lg:min-w-[900px] xl:min-w-[1020px]">
+            {abilitiesByLevel.map((level, levelIndex) => (
+              <div key={level.id} className="relative">
+                {levelIndex > 0 && (
+                  <div className="my-10 rounded-lg border border-white/50 bg-white/5 py-4 text-center backdrop-blur-sm lg:my-12 lg:py-5">
+                    <h3 className="font-['Spectral_SC'] text-xl font-bold uppercase tracking-wider text-white lg:text-2xl">
+                      {level.label}
+                    </h3>
+                  </div>
+                )}
+
+                {levelIndex === 0 && (
+                  <div className="mb-8 border-t border-white/50 lg:mb-10" />
+                )}
+
+                <div className="flex min-h-[76px] items-center justify-center gap-6 lg:min-h-[80px] lg:gap-10 xl:gap-12">
+                  {level.abilities.map((ability) => {
+                    const isActive = activeAbilityIds.has(ability.id);
+                    const isHovered = hoveredAbilityId === ability.id;
+
+                    return (
+                      <button
+                        key={ability.id}
+                        ref={(node) => {
+                          nodeRefs.current[ability.id] = node;
+                        }}
+                        type="button"
+                        onMouseEnter={() => setHoveredAbilityId(ability.id)}
+                        onMouseLeave={() => setHoveredAbilityId(null)}
+                        onFocus={() => setHoveredAbilityId(ability.id)}
+                        onBlur={() => setHoveredAbilityId(null)}
+                        onClick={() => setSelectedAbility(ability)}
+                        className={[
+                          "relative min-h-[54px] w-32 rounded-md border px-3 py-2",
+                          "!bg-[#252642]/95 text-center font-['Spectral_SC'] text-xs font-bold uppercase tracking-wider text-white",
+                          "transition duration-200 hover:-translate-y-1 hover:border-[#fff48e]",
+                          "focus:outline-none focus:ring-2 focus:ring-[#fff48e]",
+                          "lg:min-h-[58px] lg:w-[150px] lg:px-4 lg:py-3 lg:text-sm",
+                          isActive
+                            ? "border-[#fff48e] shadow-[0_0_18px_rgba(255,244,142,0.55)]"
+                            : "border-white/10",
+                          isHovered ? "scale-105" : "",
+                        ].join(" ")}
+                        style={{
+                          boxShadow: isActive
+                            ? `0 0 18px ${getEdgeColor(ability, ability)}`
+                            : undefined,
+                        }}
+                      >
+                        {ability.name}
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
-
-              {levelIndex === 0 && (
-                <div className="mb-10 border-t border-white/50" />
-              )}
-
-              <div className="flex min-h-[80px] items-center justify-center gap-12">
-                {level.abilities.map((ability) => {
-                  const isActive = activeAbilityIds.has(ability.id);
-                  const isHovered = hoveredAbilityId === ability.id;
-
-                  return (
-                    <button
-                      key={ability.id}
-                      ref={(node) => {
-                        nodeRefs.current[ability.id] = node;
-                      }}
-                      type="button"
-                      onMouseEnter={() => setHoveredAbilityId(ability.id)}
-                      onMouseLeave={() => setHoveredAbilityId(null)}
-                      onClick={() => setSelectedAbility(ability)}
-                      className={[
-                        "relative min-h-[58px] w-[150px] rounded-md border px-4 py-3",
-                        "!bg-[#252642]/95 text-center font-['Spectral_SC'] text-sm font-bold uppercase tracking-wider text-white",
-                        "transition duration-200 hover:-translate-y-1 hover:border-[#fff48e]",
-                        "focus:outline-none focus:ring-2 focus:ring-[#fff48e]",
-                        isActive
-                          ? "border-[#fff48e] shadow-[0_0_18px_rgba(255,244,142,0.55)]"
-                          : "border-white/10",
-                        isHovered ? "scale-105" : "",
-                      ].join(" ")}
-                      style={{
-                        boxShadow: isActive
-                          ? `0 0 18px ${getEdgeColor(ability, ability)}`
-                          : undefined,
-                      }}
-                    >
-                      {ability.name}
-                    </button>
-                  );
-                })}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
@@ -324,6 +305,85 @@ const activeEdgeIds = useMemo(() => {
   );
 }
 
+function MobileAbilityList({
+  levels,
+  abilityById,
+  onSelect,
+}: {
+  levels: AbilityLevelGroup[];
+  abilityById: Record<string, RaceAbility>;
+  onSelect: (ability: RaceAbility) => void;
+}) {
+  return (
+    <div className="space-y-6">
+      {levels.map((level) => {
+        if (level.abilities.length === 0) return null;
+
+        return (
+          <section
+            key={level.id}
+            className="rounded-xl border border-white/20 bg-[#111120]/50 p-4 backdrop-blur-sm"
+          >
+            <h3 className="mb-4 text-center font-['Spectral_SC'] text-xl font-bold uppercase tracking-wider text-white">
+              {level.label}
+            </h3>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {level.abilities.map((ability) => {
+                const requiredAbilities = ability.requires
+                  .map((id) => abilityById[id])
+                  .filter(Boolean);
+
+                const color = getBranchColor(
+                  ability.branch[0] === "path-yellow"
+                    ? "path-yellow"
+                    :
+                  ability.branch.find((branch) => branch !== "path-yellow") ??
+                    ability.branch[0] ??
+                    "path-yellow",
+                );
+
+                return (
+                  <button
+                    key={ability.id}
+                    type="button"
+                    onClick={() => onSelect(ability)}
+                    className="rounded-lg border border-white/15 bg-[#252642]/90 p-4 text-left transition hover:border-[#fff48e] focus:outline-none focus:ring-2 focus:ring-[#fff48e]"
+                    style={{
+                      boxShadow: `inset 4px 0 0 ${color}`,
+                    }}
+                  >
+                    <span className="block font-['Spectral_SC'] text-base font-bold uppercase tracking-wider text-white">
+                      {ability.name}
+                    </span>
+
+                    <span className="mt-2 line-clamp-2 block text-xs leading-relaxed text-white/60">
+                      {ability.description}
+                    </span>
+
+                    {requiredAbilities.length > 0 && (
+                      <span className="mt-3 block text-[11px] uppercase tracking-wider text-[#fff48e]/80">
+                        {ability.requiresMode === "any"
+                          ? "Requires one of: "
+                          : ability.requires.length > 1
+                            ? "Requires all of: "
+                            : "Requires: "}
+                        {requiredAbilities
+                          .map((required) => required.name)
+                          .join(", ")}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
 function AbilityModal({
   ability,
   abilityById,
@@ -334,35 +394,36 @@ function AbilityModal({
   onClose: () => void;
 }) {
   const requiredAbilities = ability.requires
-  .map((id) => abilityById[id])
-  .filter(Boolean);
+    .map((id) => abilityById[id])
+    .filter(Boolean);
 
-const requirementLabel =
-  ability.requires.length === 0
-    ? "Required abilities"
-    : ability.requiresMode === "any"
-      ? "Requires one of"
-      : ability.requires.length === 1
-        ? "Requires"
-        : "Requires all of";
+  const requirementLabel =
+    ability.requires.length === 0
+      ? "Required abilities"
+      : ability.requiresMode === "any"
+        ? "Requires one of"
+        : ability.requires.length === 1
+          ? "Requires"
+          : "Requires all of";
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 px-3 py-4 sm:items-center sm:px-6"
       onClick={onClose}
     >
       <article
-        className="max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-[#fff48e] bg-[#111120] p-8 text-white shadow-2xl"
+        className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-[#fff48e] bg-[#111120] p-5 text-white shadow-2xl sm:p-8"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-8">
-          <h3 className="font-['Spectral_SC'] text-3xl font-bold uppercase tracking-wider text-[#fff48e]">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+          <h3 className="font-['Spectral_SC'] text-2xl font-bold uppercase tracking-wider text-[#fff48e] sm:text-3xl">
             {ability.name}
           </h3>
 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md border border-white/30 bg-transparent px-3 py-1 text-sm text-white hover:border-[#fff48e] hover:text-[#fff48e]"
+            className="w-fit rounded-md border border-white/30 bg-transparent px-3 py-1 text-sm text-white hover:border-[#fff48e] hover:text-[#fff48e]"
           >
             Close
           </button>
@@ -397,14 +458,25 @@ const requirementLabel =
   );
 }
 
+function getPathBranches(ability: RaceAbility) {
+  return ability.branch.filter((branch) => branch !== "path-yellow");
+}
+
+function sharesBranchPath(abilityA: RaceAbility, abilityB: RaceAbility) {
+  const branchesA = getPathBranches(abilityA);
+  const branchesB = getPathBranches(abilityB);
+
+  if (branchesA.length === 0 || branchesB.length === 0) {
+    return abilityA.branch.some((branch) => abilityB.branch.includes(branch));
+  }
+
+  return branchesA.some((branch) => branchesB.includes(branch));
+}
+
 function getEdgeColor(fromAbility: RaceAbility, toAbility: RaceAbility) {
   const sharedBranches = fromAbility.branch.filter((branch) =>
     toAbility.branch.includes(branch),
   );
-
-  // If there are no shared branches, we can use the first branch of the "to" ability as a fallback.
-  // If the "to" ability has no branches, we can use the first branch of the "from" ability as a fallback.
-  // If both abilities have no branches, we can use a default color.
 
   const preferredBranch =
     sharedBranches[0] === "path-yellow"

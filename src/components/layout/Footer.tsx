@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 const footerLinks = [
   { href: "/", label: "Home" },
   { href: "/codex", label: "Codex" },
-  { href: "/characters", label: "Characters" },
   { href: "/editor/new-entry", label: "Create entry" },
   { href: "/dashboard", label: "Dashboard" },
 ];

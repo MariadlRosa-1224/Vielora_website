@@ -1,6 +1,6 @@
 // src/components/codex/SingleEntryLayout.tsx
 
-import GeneralContentContainer from "../locations/GeneralContentContainer";
+import GeneralContentContainer from "../containers/GeneralContentContainer";
 
 type SingleEntryLayoutProps = {
   structuredSection: React.ReactNode;

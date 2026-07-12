@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CodexEntryMeta } from "@/lib/codex";
-import GeneralContentContainer from "../locations/GeneralContentContainer";
+import GeneralContentContainer from "../containers/GeneralContentContainer";
 import ItemList from "../ItemList/ItemList";
 import SearchForm from "./searchForm";
 

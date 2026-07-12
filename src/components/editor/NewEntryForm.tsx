@@ -8,8 +8,18 @@ import {
   tameabilities,
 } from "@/lib/codex-options";
 import { useRef, useState } from "react";
-import GeneralContentContainer from "@/components/locations/GeneralContentContainer";
+import GeneralContentContainer from "@/components/containers/GeneralContentContainer";
 import { authClient } from "@/lib/auth-client";
+import {
+  newEntryFormats,
+  getEntryFormat,
+  getInitialFieldValues,
+  getEntryImageFolder,
+  getEntryContentFolder,
+  getEntryFixedFields,
+  type NewEntryType,
+  type EntryFieldValue,
+} from "@/lib/new-entry-format";
 
 type EntryType = "codex" | "lore";
 
