@@ -241,14 +241,40 @@ const handleSubmit = async (event: React.FormEvent) => {
       body: payloadText,
     });
 
-    const result = await response.json();
+const responseText = await response.text();
 
-    if (!response.ok) {
-      console.error(result);
-      setSubmitMessage(result.error ?? "Could not create entry.");
-      alert(result.error ?? "Could not create entry.");
-      return;
-    }
+let result: {
+  error?: string;
+  message?: string;
+  [key: string]: unknown;
+} = {};
+
+try {
+  result = responseText ? JSON.parse(responseText) : {};
+} catch {
+  result = {
+    error: responseText || "Response was not valid JSON.",
+  };
+}
+
+if (!response.ok) {
+  const message =
+    result.error ??
+    result.message ??
+    `Request failed with status ${response.status}.`;
+
+  console.warn("Create entry failed:", {
+    status: response.status,
+    result,
+    responseText,
+  });
+
+  setSubmitMessage(message);
+  alert(message);
+  return;
+}
+
+console.log("Entry created:", result);
 
     console.log(result);
 

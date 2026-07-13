@@ -5,16 +5,143 @@ import {
 
 const secrets = new SecretsManagerClient({});
 
-const entryTypes = {
+const staticEntryTypes = {
   "codex.creature": {
     mdxDir: "content/codex/creatures",
     imageDir: "public/images/codex/creatures",
-    kind: "creature",
+    routePrefix: "/codex/creatures",
+    mainImageRequired: true,
+    requiresAuthor: true,
+    fixedFields: {
+      category: "creatures",
+    },
   },
+  "codex.spell": {
+    mdxDir: "content/codex/spells",
+    imageDir: "public/images/codex/spells",
+    routePrefix: "/codex/spells",
+    mainImageRequired: true,
+    requiresAuthor: true,
+    fixedFields: {
+      category: "spells",
+    },
+  },
+  "codex.technique": {
+    mdxDir: "content/codex/techniques",
+    imageDir: "public/images/codex/techniques",
+    routePrefix: "/codex/techniques",
+    mainImageRequired: true,
+    requiresAuthor: true,
+    fixedFields: {
+      category: "techniques",
+    },
+  },
+  "codex.flora": {
+    mdxDir: "content/codex/flora",
+    imageDir: "public/images/codex/flora",
+    routePrefix: "/codex/flora",
+    mainImageRequired: true,
+    requiresAuthor: true,
+    fixedFields: {
+      category: "flora",
+    },
+  },
+  "codex.mineral": {
+    mdxDir: "content/codex/minerals",
+    imageDir: "public/images/codex/minerals",
+    routePrefix: "/codex/minerals",
+    mainImageRequired: true,
+    requiresAuthor: true,
+    fixedFields: {
+      category: "minerals",
+    },
+  },
+  "codex.potion": {
+    mdxDir: "content/codex/potions",
+    imageDir: "public/images/codex/potions",
+    routePrefix: "/codex/potions",
+    mainImageRequired: true,
+    requiresAuthor: true,
+    fixedFields: {
+      category: "potions",
+    },
+  },
+  "codex.item": {
+    mdxDir: "content/codex/items",
+    imageDir: "public/images/codex/items",
+    routePrefix: "/codex/items",
+    mainImageRequired: true,
+    requiresAuthor: true,
+    fixedFields: {
+      category: "items",
+    },
+  },
+  "codex.rune": {
+    mdxDir: "content/codex/runes",
+    imageDir: "public/images/codex/runes",
+    routePrefix: "/codex/runes",
+    mainImageRequired: true,
+    requiresAuthor: true,
+    fixedFields: {
+      category: "runes",
+    },
+  },
+
+  race: {
+    mdxDir: "content/races",
+    imageDir: "public/images/races",
+    routePrefix: "/races",
+    mainImageRequired: true,
+    requiresAuthor: false,
+    fixedFields: {},
+  },
+
   "lore.character": {
     mdxDir: "content/lore/characters",
     imageDir: "public/images/lore/characters",
-    kind: "character",
+    routePrefix: "/lore/characters",
+    mainImageRequired: true,
+    requiresAuthor: false,
+    fixedFields: {},
+  },
+  "lore.timeline": {
+    mdxDir: "content/lore/timeline",
+    imageDir: "public/images/lore/timeline",
+    routePrefix: "/lore/timeline",
+    mainImageRequired: true,
+    requiresAuthor: false,
+    fixedFields: {
+      kind: "timeline",
+    },
+  },
+  "lore.extra": {
+    mdxDir: "content/lore/extras",
+    imageDir: "public/images/lore/extras",
+    routePrefix: "/lore/extras",
+    mainImageRequired: true,
+    requiresAuthor: false,
+    fixedFields: {
+      kind: "extras",
+    },
+  },
+  "lore.legend": {
+    mdxDir: "content/lore/legends-and-folklore",
+    imageDir: "public/images/lore/legends-and-folklore",
+    routePrefix: "/lore/legends-and-folklore",
+    mainImageRequired: true,
+    requiresAuthor: false,
+    fixedFields: {
+      kind: "legends-and-folklore",
+    },
+  },
+
+  "world-information": {
+    mdxDir: "content/world-information",
+    imageDir: "public/images/world-information",
+    routePrefix: "/world-information",
+    mainImageRequired: true,
+    requiresAuthor: false,
+    fixedFields: {},
   },
 };
 
@@ -38,28 +165,59 @@ export async function handler(event) {
   }
 }
 
-async function createEntry(input) {
-  const entryType = entryTypes[input.entryType];
+function getEntryTypeConfig(input) {
+  if (input.entryType === "location.entry") {
+    const fields = input.fields ?? {};
+    const location = slugify(requiredString(fields.location, "fields.location"));
 
-  if (!entryType) {
-    throw httpError(400, "Invalid entry type.");
+    return {
+      mdxDir: `content/locations/${location}`,
+      imageDir: `public/images/locations/${location}`,
+      routePrefix: `/locations/${location}`,
+      mainImageRequired: false,
+      requiresAuthor: false,
+      fixedFields: {},
+    };
   }
+
+  const config = staticEntryTypes[input.entryType];
+
+  if (!config) {
+    throw httpError(400, `Invalid entry type: ${input.entryType}`);
+  }
+
+  return config;
+}
+
+
+
+async function createEntry(input) {
+  const entryType = getEntryTypeConfig(input);
 
   const title = requiredString(input.title, "title");
   const slug = slugify(input.slug || title);
+
+  if (entryType.requiresAuthor) {
+    requiredString(input.author, "author");
+  }
 
   const imageFolder = `${entryType.imageDir}/${slug}`;
   const mdxPath = `${entryType.mdxDir}/${slug}.mdx`;
 
   const mainImage = input.mainImage;
 
-  if (!mainImage?.fileName || !mainImage?.base64) {
+  if (entryType.mainImageRequired && (!mainImage?.fileName || !mainImage?.base64)) {
     throw httpError(400, "mainImage is required.");
   }
 
-  const mainImageName = sanitizeFileName(mainImage.fileName);
-  const mainImagePath = `${imageFolder}/${mainImageName}`;
-  const publicMainImagePath = stripPublic(mainImagePath);
+  let mainImagePath = null;
+  let publicMainImagePath = null;
+
+  if (mainImage?.fileName && mainImage?.base64) {
+    const mainImageName = sanitizeFileName(mainImage.fileName);
+    mainImagePath = `${imageFolder}/${mainImageName}`;
+    publicMainImagePath = stripPublic(mainImagePath);
+  }
 
   const markdownImages = Array.isArray(input.markdownImages)
     ? input.markdownImages
@@ -76,20 +234,13 @@ async function createEntry(input) {
     };
   });
 
-  const mdx =
-    entryType.kind === "creature"
-      ? buildCreatureMdx({
-          ...input,
-          title,
-          slug,
-          imagePath: publicMainImagePath,
-        })
-      : buildCharacterMdx({
-          ...input,
-          title,
-          slug,
-          imagePath: publicMainImagePath,
-        });
+  const mdx = buildGenericMdx({
+    input,
+    config: entryType,
+    title,
+    slug,
+    imagePath: publicMainImagePath,
+  });
 
   const token = await getGithubToken();
 
@@ -97,37 +248,41 @@ async function createEntry(input) {
 
   const commitMessage = `feat(content): add ${title}`;
 
-const writtenFiles = [];
+  const writtenFiles = [];
 
-const mdxResult = await putGithubFile({
-  path: mdxPath,
-  content: mdx,
-  message: commitMessage,
-  token,
-});
+  const mdxResult = await putGithubFile({
+    path: mdxPath,
+    content: mdx,
+    message: commitMessage,
+    token,
+  });
 
-writtenFiles.push({
-  path: mdxPath,
-  htmlUrl: mdxResult.content?.html_url,
-  commitUrl: mdxResult.commit?.html_url,
-});
+  writtenFiles.push({
+    path: mdxPath,
+    htmlUrl: mdxResult.content?.html_url,
+    commitUrl: mdxResult.commit?.html_url,
+  });
 
-const mainImageResult = await putGithubFile({
-  path: mainImagePath,
-  contentBase64: mainImage.base64,
-  message: commitMessage,
-  token,
-  alreadyBase64: true,
-});
+  if (mainImagePath && mainImage?.base64) {
+    const mainImageResult = await putGithubFile({
+      path: mainImagePath,
+      contentBase64: mainImage.base64,
+      message: commitMessage,
+      token,
+      alreadyBase64: true,
+    });
 
-writtenFiles.push({
-  path: mainImagePath,
-  htmlUrl: mainImageResult.content?.html_url,
-  commitUrl: mainImageResult.commit?.html_url,
-});
+    writtenFiles.push({
+      path: mainImagePath,
+      htmlUrl: mainImageResult.content?.html_url,
+      commitUrl: mainImageResult.commit?.html_url,
+    });
+  }
 
   for (const image of extraImages) {
-    await putGithubFile({
+    if (!image.base64) continue;
+
+    const imageResult = await putGithubFile({
       path: image.repoPath,
       contentBase64: image.base64,
       message: commitMessage,
@@ -135,81 +290,61 @@ writtenFiles.push({
       alreadyBase64: true,
     });
 
-      writtenFiles.push({
-    path: image.repoPath,
-    htmlUrl: imageResult.content?.html_url,
-    commitUrl: imageResult.commit?.html_url,
-  });
+    writtenFiles.push({
+      path: image.repoPath,
+      htmlUrl: imageResult.content?.html_url,
+      commitUrl: imageResult.commit?.html_url,
+    });
   }
 
   return {
     ok: true,
-        mdxPath,
-        mainImagePath,
-        writtenFiles,
-    entryUrl:
-      entryType.kind === "creature"
-        ? `/codex/creatures/${slug}`
-        : `/lore/characters/${slug}`,
+    mdxPath,
+    mainImagePath,
+    writtenFiles,
+    entryUrl: `${entryType.routePrefix}/${slug}`,
   };
 }
 
-function buildCreatureMdx(input) {
+function buildGenericMdx({ input, config, title, slug, imagePath }) {
   const fields = input.fields ?? {};
-  const stats = fields.stats ?? {};
+  const markdown = input.markdown?.trim() ?? "";
+
+  const frontmatterLines = [];
+
+  frontmatterLines.push(`title: ${yamlString(title)}`);
+  frontmatterLines.push(`slug: ${yamlString(slug)}`);
+
+  if (config.requiresAuthor) {
+    frontmatterLines.push(`author: ${yamlString(input.author)}`);
+  }
+
+  for (const [key, value] of Object.entries(config.fixedFields ?? {})) {
+    frontmatterLines.push(`${key}: ${yamlValue(value)}`);
+  }
+
+  if (imagePath) {
+    frontmatterLines.push(`image: ${yamlString(imagePath)}`);
+    frontmatterLines.push(
+      `imageAlt: ${yamlString(input.imageAlt || title)}`,
+    );
+  }
+
+  for (const [key, value] of Object.entries(fields)) {
+    if (shouldSkipField(key, value, config)) continue;
+
+    frontmatterLines.push(yamlField(key, value));
+  }
+
+  frontmatterLines.push("draft: false");
 
   return `---
-title: ${yamlString(input.title)}
-slug: ${yamlString(input.slug)}
-category: creatures
-tags:
-  - Creature
-  - ${yamlString(fields.location ?? "Anywhere")}
-  - ${yamlString(fields.rarity ?? "Special")}
-  - ${yamlString(fields.tameability ?? "Untameable")}
-image: ${yamlString(input.imagePath)}
-imageAlt: ${yamlString(input.title)}
-location: ${yamlString(fields.location ?? "Anywhere")}
-rarity: ${yamlString(fields.rarity ?? "Special")}
-tameability: ${yamlString(fields.tameability ?? "Untameable")}
-rank: ${yamlString(fields.rank ?? "E")}
-dangerLevel: ${yamlString(fields.dangerLevel ?? "All")}
-aspects:
-${yamlList(fields.aspects ?? [])}
-loot:
-${yamlList(fields.loot ?? [])}
-stats:
-  strength: ${numberOrDefault(stats.strength, 1)}
-  speed: ${numberOrDefault(stats.speed, 1)}
-  durability: ${numberOrDefault(stats.durability, 1)}
-  magic: ${numberOrDefault(stats.magic, 1)}
-  intellect: ${numberOrDefault(stats.intellect, 1)}
-  senses: ${numberOrDefault(stats.senses, 1)}
-abilities:
-${yamlList(fields.abilities ?? [])}
-draft: false
+${frontmatterLines.join("\n")}
 ---
 
-# ${input.title}
+# ${title}
 
-${input.markdown?.trim() ?? ""}
-`;
-}
-
-function buildCharacterMdx(input) {
-  return `---
-title: ${yamlString(input.title)}
-slug: ${yamlString(input.slug)}
-image: ${yamlString(input.imagePath)}
-imageAlt: ${yamlString(input.title)}
-draft: false
----
-
-# ${input.title}
-
-![${input.title}](${input.imagePath})
-
-${input.markdown?.trim() ?? ""}
+${markdown}
 `;
 }
 
@@ -311,6 +446,111 @@ function requiredString(value, name) {
   return value.trim();
 }
 
+// YAML helpers
+
+const rawYamlFields = new Set([
+  "weaknesses",
+  "galleryImages",
+  "abilityTree",
+]);
+
+const optionalEmptyFields = new Set([
+  "href",
+]);
+
+function shouldSkipField(key, value, config) {
+  if (key in (config.fixedFields ?? {})) return true;
+
+  if (
+    key === "title" ||
+    key === "slug" ||
+    key === "image" ||
+    key === "imageAlt" ||
+    key === "draft" ||
+    key === "author"
+  ) {
+    return true;
+  }
+
+  if (value === undefined || value === null) return true;
+
+  if (
+    optionalEmptyFields.has(key) &&
+    typeof value === "string" &&
+    value.trim() === ""
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function yamlField(key, value) {
+  if (rawYamlFields.has(key)) {
+    return yamlRawField(key, value);
+  }
+
+  if (Array.isArray(value)) {
+    return `${key}:\n${yamlList(value)}`;
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return `${key}:\n${yamlObject(value, 2)}`;
+  }
+
+  return `${key}: ${yamlValue(value)}`;
+}
+
+function yamlValue(value) {
+  if (typeof value === "number") return String(value);
+  if (typeof value === "boolean") return String(value);
+  return yamlString(value);
+}
+
+function yamlObject(value, spaces = 2) {
+  const indent = " ".repeat(spaces);
+
+  return Object.entries(value)
+    .map(([key, nestedValue]) => {
+      if (Array.isArray(nestedValue)) {
+        return `${indent}${key}:\n${yamlList(nestedValue, spaces + 2)}`;
+      }
+
+      if (typeof nestedValue === "object" && nestedValue !== null) {
+        return `${indent}${key}:\n${yamlObject(nestedValue, spaces + 2)}`;
+      }
+
+      return `${indent}${key}: ${yamlValue(nestedValue)}`;
+    })
+    .join("\n");
+}
+
+function yamlRawField(key, value) {
+  const text = String(value ?? "").trim();
+
+  if (!text) {
+    return `${key}: []`;
+  }
+
+  if (text === "[]" || text === "{}") {
+    return `${key}: ${text}`;
+  }
+
+  return `${key}:\n${indentYaml(text, 2)}`;
+}
+
+function indentYaml(value, spaces = 2) {
+  const indent = " ".repeat(spaces);
+
+  return String(value)
+    .split("\n")
+    .map((line) => `${indent}${line}`)
+    .join("\n");
+}
+
+// Utility functions
+
+
 function httpError(statusCode, message) {
   const error = new Error(message);
   error.statusCode = statusCode;
@@ -350,18 +590,20 @@ function yamlString(value) {
   return JSON.stringify(String(value));
 }
 
-function yamlList(values) {
+function yamlList(values, spaces = 2) {
+  const indent = " ".repeat(spaces);
+
   if (!Array.isArray(values) || values.length === 0) {
-    return "  - None";
+    return `${indent}- None`;
   }
 
-  return values.map((value) => `  - ${yamlString(value)}`).join("\n");
+  return values.map((value) => `${indent}- ${yamlString(value)}`).join("\n");
 }
 
-function numberOrDefault(value, fallback) {
+/* function numberOrDefault(value, fallback) {
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
-}
+} */
 
 function normalizeBase64(value) {
   return String(value).replace(/^data:[^;]+;base64,/, "");
