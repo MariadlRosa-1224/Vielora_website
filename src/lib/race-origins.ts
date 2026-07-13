@@ -8,6 +8,16 @@ export type RaceOrigin = {
   backgroundImage: string;
 };
 
+export const racesOriginsList = [
+  "remnants",
+  "ethereals",
+  "wilders",
+  "nyxkins",
+  "graveborns",
+  "interwined",
+  "dysphorians",
+]
+
 export const raceOrigins: RaceOrigin[] = [
   {
     slug: "ethereals",

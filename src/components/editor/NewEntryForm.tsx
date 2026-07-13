@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  ranks,
-  locations,
-  dangerLevels,
-  rarities,
-  tameabilities,
-} from "@/lib/codex-options";
-import { useRef, useState } from "react";
+
+import { useMemo, useRef, useState } from "react";
 import GeneralContentContainer from "@/components/containers/GeneralContentContainer";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -18,55 +12,62 @@ import {
   getEntryContentFolder,
   getEntryFixedFields,
   type NewEntryType,
+  type EntryFieldConfig,
   type EntryFieldValue,
 } from "@/lib/new-entry-format";
 
-type EntryType = "codex" | "lore";
+
+
 
 type PendingImage = {
   file: File;
   publicPath: string;
 };
 
-
+const DEFAULT_ENTRY_TYPE: NewEntryType = "codex.creature";
+const DEFAULT_FORMAT = getEntryFormat(DEFAULT_ENTRY_TYPE);
 
 export default function NewEntryForm() {
   const markdownRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const [entryType, setEntryType] = useState<EntryType>("codex");
-  const [name, setName] = useState("");
-  const [mainImage, setMainImage] = useState<File | null>(null);
-  const [markdownImages, setMarkdownImages] = useState<PendingImage[]>([]);
-  const [author, setAuthor] = useState("");
 
-  const [tameability, setTameability] = useState("Untameable");
-  const [rank, setRank] = useState("E");
-  const [dangerLevel, setDangerLevel] = useState("All");
-  const [rarity, setRarity] = useState("Special");
-  const [location, setLocation] = useState("Anywhere");
-  const [aspects, setAspects] = useState("");
-  const [abilities, setAbilities] = useState("");
-  const [loot, setLoot] = useState("");
-  const [markdown, setMarkdown] = useState("");
 
-  const [stats, setStats] = useState({
-    strength: 1,
-    speed: 1,
-    durability: 1,
-    magic: 1,
-    intellect: 1,
-    senses: 1,
-  });
+const [entryType, setEntryType] =
+  useState<NewEntryType>(DEFAULT_ENTRY_TYPE);
+
+const selectedFormat = useMemo(() => {
+  return getEntryFormat(entryType);
+}, [entryType]);
+
+const [title, setTitle] = useState("");
+const [author, setAuthor] = useState("");
+const [imageAlt, setImageAlt] = useState("");
+const [mainImage, setMainImage] = useState<File | null>(null);
+const [markdownImages, setMarkdownImages] = useState<PendingImage[]>([]);
+const [markdown, setMarkdown] = useState("");
+
+
+const [fields, setFields] = useState<Record<string, EntryFieldValue>>(() =>
+  getInitialFieldValues(DEFAULT_FORMAT),
+);
+
+
+
+
+
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
-  const slug = slugify(name || "new-entry");
+const slug = slugify(title || "new-entry");
 
-const baseImageFolder =
-  entryType === "codex"
-    ? `/images/codex/creatures/${slug}`
-    : `/images/lore/characters/${slug}`;
+const baseImageFolder = useMemo(() => {
+  return getEntryImageFolder({
+    entryType,
+    slug,
+    fields,
+  });
+}, [entryType, slug, fields]);
 
   const mainImagePath = mainImage
     ? `${baseImageFolder}/${sanitizeFileName(mainImage.name)}`
@@ -116,18 +117,56 @@ const baseImageFolder =
     });
   };
 
+
+  const handleEntryTypeChange = (value: string) => {
+  const nextEntryType = value as NewEntryType;
+  const nextFormat = getEntryFormat(nextEntryType);
+
+  setEntryType(nextEntryType);
+  setFields(getInitialFieldValues(nextFormat));
+
+  setMainImage(null);
+  setMarkdownImages([]);
+  setMarkdown("");
+  setImageAlt("");
+  setSubmitMessage(null);
+};
+
+
 const handleSubmit = async (event: React.FormEvent) => {
   event.preventDefault();
 
   if (isSubmitting) return;
 
-  if (!name.trim()) {
-    alert("Entry name is required.");
+  if (!title.trim()) {
+    alert("Entry title is required.");
     return;
   }
 
-  if (!mainImage) {
-    alert("Main image is required.");
+  if (selectedFormat.requiresAuthor && !author.trim()) {
+    alert("Author is required for this entry type.");
+    return;
+  }
+
+  if (selectedFormat.mainImageRequired && !mainImage) {
+    alert("Main image is required for this entry type.");
+    return;
+  }
+
+  const missingField = selectedFormat.fields.find((field) => {
+    if (!field.required) return false;
+
+    const value = fields[field.name];
+
+    if (value === undefined || value === null) return true;
+    if (typeof value === "string" && value.trim() === "") return true;
+    if (Array.isArray(value) && value.length === 0) return true;
+
+    return false;
+  });
+
+  if (missingField) {
+    alert(`${missingField.label} is required.`);
     return;
   }
 
@@ -142,7 +181,18 @@ const handleSubmit = async (event: React.FormEvent) => {
   setSubmitMessage(null);
 
   try {
-    const mainImageBase64 = await fileToBase64(mainImage);
+    const imageFolder = getEntryImageFolder({
+      entryType,
+      slug,
+      fields,
+    });
+
+    const contentFolder = getEntryContentFolder({
+      entryType,
+      fields,
+    });
+
+    const mainImageBase64 = mainImage ? await fileToBase64(mainImage) : null;
 
     const markdownImagesPayload = await Promise.all(
       markdownImages.map(async (image) => ({
@@ -151,54 +201,44 @@ const handleSubmit = async (event: React.FormEvent) => {
       })),
     );
 
-    const payload =
-      entryType === "codex"
+    const payload = {
+      entryType,
+      title,
+      slug,
+
+      author: selectedFormat.requiresAuthor ? author : undefined,
+      imageAlt: imageAlt.trim() || title,
+
+      contentFolder,
+      imageFolder,
+      fixedFields: getEntryFixedFields(entryType),
+
+      fields,
+      markdown,
+
+      mainImage: mainImage
         ? {
-            entryType: "codex.creature",
-            title: name,
-            slug,
-            mainImage: {
-              fileName: mainImage.name,
-              base64: mainImageBase64,
-            },
-            markdownImages: markdownImagesPayload,
-            fields: {
-              location,
-              rarity,
-              tameability,
-              rank,
-              dangerLevel,
-              aspects: splitCommaList(aspects),
-              abilities: splitCommaList(abilities),
-              loot: splitCommaList(loot),
-              stats,
-            },
-            markdown,
+            fileName: mainImage.name,
+            base64: mainImageBase64,
           }
-        : {
-            entryType: "lore.character",
-            title: name,
-            slug,
-            mainImage: {
-              fileName: mainImage.name,
-              base64: mainImageBase64,
-            },
-            markdownImages: markdownImagesPayload,
-            markdown,
-          };
+        : null,
+
+      markdownImages: markdownImagesPayload,
+    };
 
     const payloadText = JSON.stringify(payload);
 
-console.log(
-  "Payload size MB:",
-  new Blob([payloadText]).size / 1024 / 1024,
-);
+    console.log(
+      "Payload size MB:",
+      new Blob([payloadText]).size / 1024 / 1024,
+    );
+
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: payloadText,
     });
 
     const result = await response.json();
@@ -226,9 +266,6 @@ console.log(
 
 
 
-  const isCodex = entryType === "codex";
-
-  const isCharacter = entryType === "lore";
 
   
 
@@ -239,266 +276,121 @@ console.log(
           <h1 className="mb-8 font-[Spectral_SC] text-3xl font-bold uppercase tracking-wider">
             New Entry
           </h1>
+          <div className="space-y-10">
+  <div className="grid gap-5 lg:grid-cols-2">
+    <TextField label="Title" value={title} onChange={setTitle} />
 
-          <div className="grid gap-10 lg:grid-cols-2">
-            <div className="space-y-5">
-              <TextField label="Name" value={name} onChange={setName} />
+    <SelectField
+      label="Type of entry"
+      value={entryType}
+      onChange={handleEntryTypeChange}
+      options={newEntryFormats.map((format) => ({
+        label: `${format.group} — ${format.label}`,
+        value: format.entryType,
+      }))}
+    />
 
-              <SelectField
-                label="Type of entry"
-                value={entryType}
-                onChange={(value) => setEntryType(value as EntryType)}
-                options={[
-                  { label: "Codex", value: "codex" },
-                  { label: "Character", value: "character" },
-                ]}
-              />
+    {selectedFormat.requiresAuthor && (
+      <TextField label="Author" value={author} onChange={setAuthor} />
+    )}
 
-              {isCodex && (
-                <>
+    {selectedFormat.usesMainImage && (
+      <>
+        <TextField
+          label="Image Alt"
+          value={imageAlt}
+          onChange={setImageAlt}
+        />
 
+        <ImageUploadField
+          label={
+            selectedFormat.mainImageRequired
+              ? "Main Image"
+              : "Main Image Optional"
+          }
+          file={mainImage}
+          onChange={setMainImage}
+        />
 
-                  <SelectField
-                    label="Category"
-                    value="Creatures"
-                    onChange={() => {}}
-                    options={[{ label: "Creatures", value: "Creatures" }]}
-                  />
+        {mainImagePath && (
+          <p className="text-sm text-white/60 lg:col-span-2">
+            Image path:{" "}
+            <span className="text-[#fff48e]">{mainImagePath}</span>
+          </p>
+        )}
+      </>
+    )}
+  </div>
 
-                  <SelectField
-                    label="Location"
-                    value={location}
-                    onChange={setLocation}
-                    options={locations.map((item) => ({
-                      label: item,
-                      value: item,
-                    }))}
-                  />
-
-                  <SelectField
-                    label="Rarity"
-                    value={rarity}
-                    onChange={setRarity}
-                    options={rarities.map((item) => ({
-                      label: item,
-                      value: item,
-                    }))}
-                  />
-
-                  <SelectField
-                    label="Tameability"
-                    value={tameability}
-                    onChange={setTameability}
-                    options={tameabilities.map((item) => ({
-                      label: item,
-                      value: item,
-                    }))}
-                  />
-
-                  <SelectField
-                    label="Rank"
-                    value={rank}
-                    onChange={setRank}
-                    options={ranks.map((item) => ({
-                      label: item,
-                      value: item,
-                    }))}
-                  />
-
-                  <SelectField
-                    label="Danger Level"
-                    value={dangerLevel}
-                    onChange={setDangerLevel}
-                    options={dangerLevels.map((item) => ({
-                      label: item,
-                      value: item,
-                    }))}
-                  />
-                </>
-              )}
-
-              <ImageUploadField
-                label="Image"
-                file={mainImage}
-                onChange={setMainImage}
-              />
-
-              {isCodex && (
-                <div className="pt-4">
-                  <h2 className="mb-4 border-b border-white/40 pb-2 font-[Spectral_SC] text-xl font-bold uppercase tracking-wider">
-                    Stats
-                  </h2>
-
-                  <div className="space-y-3">
-                    {Object.entries(stats).map(([key, value]) => (
-                      <NumberField
-                        key={key}
-                        label={capitalize(key)}
-                        value={value}
-                        onChange={(newValue) =>
-                          setStats((current) => ({
-                            ...current,
-                            [key]: newValue,
-                          }))
-                        }
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {isCodex && (
-              <div className="space-y-8">
-                <TextareaField
-                  label="Aspects"
-                  placeholder="Separate each aspect with a comma"
-                  value={aspects}
-                  onChange={setAspects}
-                />
-
-                <TextareaField
-                  label="Abilities"
-                  placeholder="Separate each ability with a comma"
-                  value={abilities}
-                  onChange={setAbilities}
-                />
-
-                <TextareaField
-                  label="Loot"
-                  placeholder="Separate each loot item with a comma"
-                  value={loot}
-                  onChange={setLoot}
-                />
-
-
-              </div>
-            )}
-          </div>
+  <div className="grid items-start gap-8 lg:grid-cols-2">
+    {selectedFormat.fields.map((field) => (
+      <div key={field.name} className={getDynamicFieldClassName(field)}>
+        <DynamicEntryField
+          field={field}
+          value={fields[field.name]}
+          onChange={(value) =>
+            setFields((current) => ({
+              ...current,
+              [field.name]: value,
+            }))
+          }
+        />
+      </div>
+    ))}
+  </div>
+</div>
+          
         </GeneralContentContainer>
 
-        <GeneralContentContainer>
-          <h2 className="mb-6 font-[Spectral_SC] text-2xl font-bold uppercase tracking-wider">
-            Custom Markdown
-          </h2>
+{selectedFormat.usesMarkdown && (
+  <GeneralContentContainer>
+    <h2 className="mb-6 font-[Spectral_SC] text-2xl font-bold uppercase tracking-wider">
+      Custom Markdown
+    </h2>
 
-          <textarea
-            ref={markdownRef}
-            value={markdown}
-            onChange={(event) => setMarkdown(event.target.value)}
-            onDrop={handleMarkdownDrop}
-            onDragOver={(event) => event.preventDefault()}
-            placeholder="Write the free Markdown section here. You can drag images into this box."
-            className="min-h-[360px] w-full rounded-md border border-[#fff48e]/80 bg-[#111120]/60 p-4 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#fff48e]"
-          />
+    <textarea
+      ref={markdownRef}
+      value={markdown}
+      onChange={(event) => setMarkdown(event.target.value)}
+      onDrop={handleMarkdownDrop}
+      onDragOver={(event) => event.preventDefault()}
+      placeholder="Write the free Markdown section here. You can drag images into this box."
+      className="min-h-[360px] w-full rounded-md border border-[#fff48e]/80 bg-[#111120]/60 p-4 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#fff48e]"
+    />
 
-          {markdownImages.length > 0 && (
-            <div className="mt-4 text-sm text-white/70">
-              <p className="mb-2 font-bold text-white">Pending markdown images:</p>
+    {markdownImages.length > 0 && (
+      <div className="mt-4 text-sm text-white/70">
+        <p className="mb-2 font-bold text-white">
+          Pending markdown images:
+        </p>
 
-              <ul className="list-disc space-y-1 pl-6">
-                {markdownImages.map((image) => (
-                  <li key={image.publicPath}>
-                    {image.file.name} →{" "}
-                    <span className="text-[#fff48e]">{image.publicPath}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+        <ul className="list-disc space-y-1 pl-6">
+          {markdownImages.map((image) => (
+            <li key={image.publicPath}>
+              {image.file.name} →{" "}
+              <span className="text-[#fff48e]">
+                {image.publicPath}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
 
-          <div className="mt-8 flex justify-center">
-<button
-  type="submit"
-  disabled={isSubmitting}
-  className="w-full max-w-md rounded-md border-2 border-[#fff48e] px-8 py-3 font-[Spectral_SC] text-lg uppercase tracking-wider transition hover:bg-[#fff48e] hover:text-[#111120] disabled:cursor-not-allowed disabled:opacity-50"
->
-  {isSubmitting ? "Submitting..." : "Submit"}
-</button>
+  </GeneralContentContainer>
+)}
 
-  {submitMessage && (
-    <p className="mt-4 text-center text-sm text-[#fff48e]">
-      {submitMessage}
-    </p>
-  )}
-          </div>
-        </GeneralContentContainer>
+    <GeneralContentContainer>
+  <SubmitSection
+    isSubmitting={isSubmitting}
+    submitMessage={submitMessage}
+  />
+</GeneralContentContainer>
       </form>
     </main>
   );
 }
 
-function buildCreatureMdx(input: {
-  name: string;
-  slug: string;
-  imagePath: string;
-  location: string;
-  rarity: string;
-  tameability: string;
-  rank: string;
-  dangerLevel: string;
-  aspects: string;
-  abilities: string;
-loot: string;
-  stats: Record<string, number>;
-  markdown: string;
-}) {
-  const aspects = splitCommaList(input.aspects);
-  const abilities = splitCommaList(input.abilities);
-  const loot = splitCommaList(input.loot);
-
-  return `---
-title: ${yamlString(input.name)}
-slug: ${yamlString(input.slug)}
-category: creatures
-image: ${yamlString(input.imagePath)}
-imageAlt: ${yamlString(input.name)}
-location: ${yamlString(input.location)}
-rarity: ${yamlString(input.rarity)}
-tameability: ${yamlString(input.tameability)}
-rank: ${yamlString(input.rank)}
-dangerLevel: ${yamlString(input.dangerLevel)}
-aspects:
-${yamlList(aspects)}
-loot:
-${yamlList(loot)}
-stats:
-  strength: ${input.stats.strength}
-  speed: ${input.stats.speed}
-  durability: ${input.stats.durability}
-  magic: ${input.stats.magic}
-  intellect: ${input.stats.intellect}
-  senses: ${input.stats.senses}
-abilities:
-${yamlList(abilities)}
-draft: false
----
-
-
-${input.markdown.trim()}
-`;
-}
-
-function buildCharacterMdx(input: {
-  name: string;
-  slug: string;
-  imagePath: string;
-  markdown: string;
-}) {
-  return `---
-title: ${yamlString(input.name)}
-slug: ${yamlString(input.slug)}
-image: ${yamlString(input.imagePath)}
-imageAlt: ${yamlString(input.name)}
-draft: false
----
-
-
-![${input.name}](${input.imagePath})
-
-${input.markdown.trim()}
-`;
-}
 
 function TextField({
   label,
@@ -528,10 +420,14 @@ function NumberField({
   label,
   value,
   onChange,
+  min = 0,
+  max,
 }: {
   label: string;
   value: number;
   onChange: (value: number) => void;
+  min?: number;
+  max?: number;
 }) {
   return (
     <label className="grid items-center gap-3 md:grid-cols-[160px_1fr]">
@@ -541,8 +437,8 @@ function NumberField({
 
       <input
         type="number"
-        min={0}
-        max={5}
+        min={min}
+        max={max}
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
         className="border-0 border-b border-white/50 bg-transparent px-2 py-1 text-sm text-white outline-none focus:border-[#fff48e]"
@@ -641,6 +537,171 @@ function ImageUploadField({
   );
 }
 
+// DynamicEntryField
+
+function DynamicEntryField({
+  field,
+  value,
+  onChange,
+}: {
+  field: EntryFieldConfig;
+  value: EntryFieldValue | undefined;
+  onChange: (value: EntryFieldValue) => void;
+}) {
+  if (field.kind === "textarea" || field.kind === "yaml") {
+    return (
+      <FieldWrapper helpText={field.helpText}>
+        <TextareaField
+          label={field.label}
+          placeholder={field.placeholder ?? ""}
+          value={String(value ?? "")}
+          onChange={(nextValue) => onChange(nextValue)}
+        />
+      </FieldWrapper>
+    );
+  }
+
+  if (field.kind === "select") {
+    return (
+      <FieldWrapper helpText={field.helpText}>
+        <SelectField
+          label={field.label}
+          value={String(value ?? "")}
+          onChange={(nextValue) => onChange(nextValue)}
+          options={(field.options ?? []).map((option) => ({
+            label: option,
+            value: option,
+          }))}
+        />
+      </FieldWrapper>
+    );
+  }
+
+  if (field.kind === "number") {
+    return (
+      <FieldWrapper helpText={field.helpText}>
+        <NumberField
+          label={field.label}
+          value={Number(value ?? 0)}
+          onChange={(nextValue) => onChange(nextValue)}
+          min={field.min}
+          max={field.max}
+        />
+      </FieldWrapper>
+    );
+  }
+
+  if (field.kind === "boolean") {
+    return (
+      <FieldWrapper helpText={field.helpText}>
+        <label className="grid items-center gap-3 md:grid-cols-[160px_1fr]">
+          <span className="font-[Spectral_SC] text-lg font-bold uppercase tracking-wider">
+            {field.label}
+          </span>
+
+          <input
+            type="checkbox"
+            checked={Boolean(value)}
+            onChange={(event) => onChange(event.target.checked)}
+            className="h-5 w-5 accent-[#fff48e]"
+          />
+        </label>
+      </FieldWrapper>
+    );
+  }
+
+  if (field.kind === "list") {
+    return (
+      <FieldWrapper helpText={field.helpText}>
+        <TextareaField
+          label={field.label}
+          placeholder={field.placeholder ?? "Separate values with commas"}
+          value={Array.isArray(value) ? value.join(", ") : String(value ?? "")}
+          onChange={(nextValue) => onChange(splitCommaList(nextValue))}
+        />
+      </FieldWrapper>
+    );
+  }
+
+  if (field.kind === "stats") {
+    const fallbackStats = {
+      strength: 1,
+      speed: 1,
+      durability: 1,
+      magic: 1,
+      intellect: 1,
+      senses: 1,
+    };
+
+    const stats =
+      typeof value === "object" && value !== null && !Array.isArray(value)
+        ? (value as Record<string, number>)
+        : fallbackStats;
+
+    return (
+      <FieldWrapper helpText={field.helpText}>
+        <div className="pt-4">
+          <h2 className="mb-4 border-b border-white/40 pb-2 font-[Spectral_SC] text-xl font-bold uppercase tracking-wider">
+            {field.label}
+          </h2>
+
+          <div className="space-y-3">
+            {Object.entries(stats).map(([key, statValue]) => (
+              <NumberField
+                key={key}
+                label={capitalize(key)}
+                value={Number(statValue)}
+                onChange={(newValue) =>
+                  onChange({
+                    ...stats,
+                    [key]: newValue,
+                  })
+                }
+              />
+            ))}
+          </div>
+        </div>
+      </FieldWrapper>
+    );
+  }
+
+  return (
+    <FieldWrapper helpText={field.helpText}>
+      <TextField
+        label={field.label}
+        value={String(value ?? "")}
+        onChange={(nextValue) => onChange(nextValue)}
+      />
+    </FieldWrapper>
+  );
+}
+
+// FirldWrapper
+
+function FieldWrapper({
+  children,
+  helpText,
+}: {
+  children: React.ReactNode;
+  helpText?: string;
+}) {
+  return (
+    <div>
+      {children}
+
+      {helpText && (
+        <p className="mt-2 text-xs leading-relaxed text-white/50">
+          {helpText}
+        </p>
+      )}
+    </div>
+  );
+}
+
+
+
+//helper functions
+
 function slugify(value: string) {
   return value
     .trim()
@@ -670,32 +731,11 @@ function splitCommaList(value: string) {
     .filter(Boolean);
 }
 
-function yamlString(value: string) {
-  return JSON.stringify(value);
-}
 
-function yamlList(values: string[]) {
-  if (values.length === 0) {
-    return "  - None";
-  }
 
-  return values.map((value) => `  - ${yamlString(value)}`).join("\n");
-}
 
-function publicPathToZipPath(publicPath: string) {
-  return `public${publicPath}`;
-}
 
-function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
 
-  link.href = url;
-  link.download = filename;
-  link.click();
-
-  URL.revokeObjectURL(url);
-}
 
 function capitalize(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
@@ -724,3 +764,41 @@ function fileToBase64(file: File): Promise<string> {
   });
 }
 
+function SubmitSection({
+  isSubmitting,
+  submitMessage,
+}: {
+  isSubmitting: boolean;
+  submitMessage: string | null;
+}) {
+  return (
+    <div className="mt-8 flex flex-col items-center">
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full max-w-md rounded-md border-2 border-[#fff48e] px-8 py-3 font-[Spectral_SC] text-lg uppercase tracking-wider transition hover:bg-[#fff48e] hover:text-[#111120] disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {isSubmitting ? "Submitting..." : "Submit"}
+      </button>
+
+      {submitMessage && (
+        <p className="mt-4 text-center text-sm text-[#fff48e]">
+          {submitMessage}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function getDynamicFieldClassName(field: EntryFieldConfig) {
+  if (
+    field.kind === "textarea" ||
+    field.kind === "yaml" ||
+    field.kind === "stats" ||
+    field.kind === "list"
+  ) {
+    return "lg:col-span-2";
+  }
+
+  return "";
+}

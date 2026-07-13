@@ -1,6 +1,16 @@
 // src/lib/new-entry-format.ts
 
 import { vieloraGradients } from "@/theme/colors";
+import { rarities, ranks, locations, dangerLevels, tameabilities, spellSchools, magicStats, techniqueSchools, mineralTypes } from "./codex-options";
+import { racesOriginsList } from "./race-origins";
+
+
+const raceImageFolder = ({
+  slug,
+}: {
+  slug: string;
+  fields: Record<string, EntryFieldValue>;
+}) => `/images/races/${slug}`;
 
 export type NewEntryType =
   | "codex.creature"
@@ -92,23 +102,18 @@ const spellLikeFields: EntryFieldConfig[] = [
   {
     name: "stat",
     label: "Stat",
-    kind: "text",
+    kind: "select",
     required: true,
     defaultValue: "Magic",
-  },
-  {
-    name: "school",
-    label: "School",
-    kind: "text",
-    required: true,
-    defaultValue: "Unknown",
+    options: magicStats,
   },
   {
     name: "rank",
     label: "Rank",
-    kind: "text",
+    kind: "select",
     required: true,
     defaultValue: "E",
+    options: ranks,
   },
   {
     name: "caliber",
@@ -162,37 +167,42 @@ export const newEntryFormats: EntryFormatConfig[] = [
       {
         name: "location",
         label: "Location",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Anywhere",
+        options: locations,
       },
       {
         name: "rarity",
         label: "Rarity",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Special",
+        options: rarities,
       },
       {
         name: "tameability",
         label: "Tameability",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Untameable",
+        options: tameabilities,
       },
       {
         name: "rank",
         label: "Rank",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "E",
+        options: ranks,
       },
       {
         name: "dangerLevel",
         label: "Danger Level",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "All",
+        options: dangerLevels,
       },
       {
         name: "aspects",
@@ -238,7 +248,13 @@ export const newEntryFormats: EntryFormatConfig[] = [
       category: "spells",
     },
     ...commonCodexSettings,
-    fields: spellLikeFields,
+    fields: [{    name: "school",
+    label: "School",
+    kind: "select",
+    required: true,
+    defaultValue: "Unknown",
+    options: spellSchools,},
+    ...spellLikeFields,], 
   },
 
   {
@@ -251,7 +267,13 @@ export const newEntryFormats: EntryFormatConfig[] = [
       category: "techniques",
     },
     ...commonCodexSettings,
-    fields: spellLikeFields,
+    fields: [{    name: "school",
+    label: "School",
+    kind: "select",
+    required: true,
+    defaultValue: "Unknown",
+    options: techniqueSchools,},
+    ...spellLikeFields,], 
   },
 
   {
@@ -275,16 +297,18 @@ export const newEntryFormats: EntryFormatConfig[] = [
       {
         name: "location",
         label: "Location",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Unknown",
+        options: locations,
       },
       {
         name: "rarity",
         label: "Rarity",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Common",
+        options: rarities,
       },
       {
         name: "cost",
@@ -323,23 +347,26 @@ export const newEntryFormats: EntryFormatConfig[] = [
       {
         name: "location",
         label: "Location",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Unknown",
+        options: locations,
       },
       {
         name: "rarity",
         label: "Rarity",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Common",
+        options: rarities,
       },
       {
         name: "mineralType",
         label: "Mineral Type",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Unknown",
+        options: mineralTypes,
       },
       {
         name: "density",
@@ -419,9 +446,10 @@ export const newEntryFormats: EntryFormatConfig[] = [
       {
         name: "rarity",
         label: "Rarity",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Common",
+        options: rarities,
       },
       {
         name: "craftability",
@@ -470,16 +498,18 @@ export const newEntryFormats: EntryFormatConfig[] = [
       {
         name: "rarity",
         label: "Rarity",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Common",
+        options: rarities,
       },
       {
         name: "location",
         label: "Location",
-        kind: "text",
+        kind: "select",
         required: true,
         defaultValue: "Unknown",
+        options: locations,
       },
       {
         name: "availability",
@@ -493,8 +523,7 @@ export const newEntryFormats: EntryFormatConfig[] = [
         label: "Cost",
         kind: "list",
         defaultValue: ["None"],
-        helpText:
-          "This field is capitalized because the current schema expects Cost.",
+        
       },
       {
         name: "craftability",
@@ -513,6 +542,7 @@ export const newEntryFormats: EntryFormatConfig[] = [
     imageFolder: codexImageFolder("runes"),
     fixedFields: {
       category: "runes",
+      school: "Runic"
     },
     ...commonCodexSettings,
     fields: [
@@ -536,76 +566,76 @@ export const newEntryFormats: EntryFormatConfig[] = [
 
   {
     entryType: "race",
-    label: "Race",
-    group: "Codex",
-    contentFolder: "content/codex/races",
-    imageFolder: codexImageFolder("races"),
-    usesMainImage: true,
-    mainImageRequired: true,
-    usesMarkdown: true,
-    fixedFields: {
-      category: "races",
+  label: "Race",
+  group: "Races",
+
+  contentFolder: "content/races",
+  imageFolder: raceImageFolder,
+
+  usesMainImage: true,
+  mainImageRequired: true,
+  usesMarkdown: true,
+
+  fields: [
+    {
+      name: "origin",
+      label: "Origin",
+      kind: "text",
+      required: true,
+      defaultValue: "Unknown",
     },
-    fields: [
-      {
-        name: "origin",
-        label: "Origin",
-        kind: "text",
-        required: true,
-        defaultValue: "Unknown",
-      },
-      {
-        name: "size",
-        label: "Size",
-        kind: "text",
-        defaultValue: "Unknown",
-      },
-      {
-        name: "lifespan",
-        label: "Lifespan",
-        kind: "text",
-        defaultValue: "Unknown",
-      },
-      {
-        name: "summary",
-        label: "Summary",
-        kind: "textarea",
-        defaultValue: "",
-      },
-      {
-        name: "description",
-        label: "Description",
-        kind: "textarea",
-        required: true,
-        defaultValue: "",
-      },
-      {
-        name: "weaknesses",
-        label: "Weaknesses YAML",
-        kind: "yaml",
-        defaultValue: `- id: weakness-id
+    {
+      name: "size",
+      label: "Size",
+      kind: "text",
+      defaultValue: "Unknown",
+    },
+    {
+      name: "lifespan",
+      label: "Lifespan",
+      kind: "text",
+      defaultValue: "Unknown",
+    },
+    {
+      name: "summary",
+      label: "Summary",
+      kind: "textarea",
+      defaultValue: "",
+    },
+    {
+      name: "description",
+      label: "Description",
+      kind: "textarea",
+      required: true,
+      defaultValue: "",
+    },
+    {
+      name: "weaknesses",
+      label: "Weaknesses YAML",
+      kind: "yaml",
+      defaultValue: `- id: weakness-id
   title: "Weakness title"
   description: >-
     Weakness description.`,
-      },
-      {
-        name: "history",
-        label: "History",
-        kind: "textarea",
-        defaultValue: "",
-      },
-      {
-        name: "galleryImages",
-        label: "Gallery Images YAML",
-        kind: "yaml",
-        defaultValue: "[]",
-      },
-      {
-        name: "abilityTree",
-        label: "Ability Tree YAML",
-        kind: "yaml",
-        required: true,
-        defaultValue: `levels:
+    },
+    {
+      name: "history",
+      label: "History",
+      kind: "textarea",
+      defaultValue: "",
+    },
+    {
+      name: "galleryImages",
+      label: "Gallery Images YAML",
+      kind: "yaml",
+      defaultValue: "[]",
+    },
+    {
+      name: "abilityTree",
+      label: "Ability Tree YAML",
+      kind: "yaml",
+      required: true,
+      defaultValue: `levels:
   - id: base
     label: "Base Racials"
 
@@ -621,9 +651,9 @@ abilities:
     follows: []
     description: >-
       Ability description.`,
-      },
-    ],
-  },
+    },
+  ],
+},
 
   {
     entryType: "lore.character",
@@ -868,7 +898,7 @@ abilities:
       },
       {
         name: "href",
-        label: "External/Internal Href",
+        label: "pageHref",
         kind: "text",
         defaultValue: "",
         helpText:
@@ -892,7 +922,7 @@ abilities:
     fields: [
       {
         name: "location",
-        label: "Parent Location Slug",
+        label: "Parent Location",
         kind: "text",
         required: true,
         defaultValue: "the-ruins",
@@ -956,6 +986,8 @@ export function getInitialFieldValues(format: EntryFormatConfig) {
 
   return values;
 }
+
+
 
 export function getEntryImageFolder(input: {
   entryType: NewEntryType;

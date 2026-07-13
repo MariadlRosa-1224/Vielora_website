@@ -8,6 +8,8 @@ import { raceOrigins } from "@/lib/race-origins";
 
 const RACES_DIR = path.join(process.cwd(), "content/races");
 
+
+
 const stringArraySchema = z.preprocess((value) => {
   if (value === undefined || value === null || value === "") {
     return [];
