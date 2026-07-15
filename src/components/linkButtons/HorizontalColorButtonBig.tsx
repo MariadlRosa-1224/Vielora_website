@@ -21,16 +21,17 @@ export default function HorizontalColorButtonBig({
   title,
   description,
   gradient,
-  className,
+  className = "",
   active = false,
 }: HorizontalColorButtonBigProps) {
   const content = (
     <div
       className={[
-        "group relative flex min-h-[150px] w-full max-w-[600px] cursor-pointer flex-col items-end justify-center overflow-hidden px-8 py-6 text-right",
+        "group relative flex min-h-[130px] w-full max-w-[600px] cursor-pointer flex-col items-center justify-center overflow-hidden px-5 py-6 text-center",
+        "sm:min-h-[150px] sm:items-end sm:px-8 sm:text-right",
         "transition-opacity duration-300 hover:opacity-90",
         active ? "opacity-100" : "",
-        className || "",
+        className,
       ].join(" ")}
     >
       <span
@@ -50,11 +51,11 @@ export default function HorizontalColorButtonBig({
         }}
       />
 
-      <h4 className="relative z-10 m-0 font-[Spectral_SC] text-3xl font-bold uppercase tracking-wider text-white drop-shadow md:text-[32px]">
+      <h4 className="relative z-10 m-0 font-[Spectral_SC] text-2xl font-bold uppercase tracking-wider text-white drop-shadow sm:text-3xl md:text-[32px]">
         {title}
       </h4>
 
-      <p className="relative z-10 mt-2 max-w-[440px] text-sm leading-5 text-white/85">
+      <p className="relative z-10 mt-2 max-w-[440px] text-sm leading-6 text-white/85">
         {description}
       </p>
     </div>
@@ -62,7 +63,7 @@ export default function HorizontalColorButtonBig({
 
   if (href) {
     return (
-      <Link href={href} className="block w-fit">
+      <Link href={href} className="block w-full max-w-[600px]">
         {content}
       </Link>
     );

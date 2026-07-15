@@ -8,6 +8,8 @@ const db = client.db(process.env.MONGODB_DB_NAME!);
 export const auth = betterAuth({
   database: mongodbAdapter(db, {}),
 
+
+
     user: {
         additionalFields: {
             sub: {
@@ -17,6 +19,11 @@ export const auth = betterAuth({
             username: {
                 type: "string",
                 required: true,
+            },
+            role: {
+                type: "string",
+                required: true,
+                default: "user",
             },
         },
     },
@@ -51,6 +58,7 @@ export const auth = betterAuth({
           email: userInfo.email,
           picture: userInfo.picture,
           emailVerified: userInfo.email_verified === "true" || false,
+          role: userInfo["custom:role"] || "user", // Default to "user" if not provided
         },
         data: userInfo,
       };

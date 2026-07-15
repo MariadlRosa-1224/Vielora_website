@@ -1,7 +1,6 @@
 // src/components/buttons/HorizontalColorButton.tsx
 
 import Link from "next/link";
-import type { ReactNode } from "react";
 import {
   vieloraHorizontalGradients,
   vieloraHorizontalHoverGradients,
@@ -22,28 +21,33 @@ export default function HorizontalColorButton({
   title,
   gradient,
   image,
-  className,
+  className = "",
   active = false,
 }: HorizontalColorButtonProps) {
   return (
     <Link
       href={href}
-      className={`group grid grid-cols-[56px_minmax(0,1fr)] items-center ${className || ""}`}
+      aria-current={active ? "page" : undefined}
+      className={[
+        "group grid w-full max-w-[360px] grid-cols-[48px_minmax(0,1fr)] items-center",
+        "sm:max-w-[420px] sm:grid-cols-[56px_minmax(0,1fr)]",
+        className,
+      ].join(" ")}
     >
-      <span className="flex h-14 w-14 items-center justify-center text-white">
-              <img
-        src={image}
-        alt={title}
-        className={[
-          "relative z-10 h-[50px] w-[50px] object-contain",
-          "transition-transform duration-300 ease-out",
-          "group-hover:scale-110",
-          active ? "scale-110" : "",
-        ].join(" ")}
-      />
+      <span className="flex h-12 w-12 items-center justify-center text-white sm:h-14 sm:w-14">
+        <img
+          src={image}
+          alt={title}
+          className={[
+            "relative z-10 h-10 w-10 object-contain sm:h-[50px] sm:w-[50px]",
+            "transition-transform duration-300 ease-out",
+            "group-hover:scale-110",
+            active ? "scale-110" : "",
+          ].join(" ")}
+        />
       </span>
 
-      <span className="relative flex h-12 min-w-[230px] items-center justify-end overflow-hidden px-6">
+      <span className="relative flex h-11 min-w-0 items-center justify-end overflow-hidden px-4 sm:h-12 sm:px-6">
         <span
           className="absolute inset-0 transition-opacity duration-300"
           style={{
@@ -58,7 +62,7 @@ export default function HorizontalColorButton({
           }}
         />
 
-        <span className="relative z-10 font-[Spectral_SC] text-lg font-bold uppercase tracking-wider text-white drop-shadow">
+        <span className="relative z-10 truncate font-[Spectral_SC] text-sm font-bold uppercase tracking-wider text-white drop-shadow sm:text-lg">
           {title}
         </span>
       </span>

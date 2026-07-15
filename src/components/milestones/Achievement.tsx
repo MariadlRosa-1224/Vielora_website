@@ -95,7 +95,9 @@ export default function Achievement({
   return (
     <article
       className={[
-        "group flex min-h-[150px] w-full max-w-[500px] cursor-pointer items-center justify-between gap-5 rounded-[10px] border-4 px-5 py-4 transition duration-200",
+        "group flex w-full max-w-[500px] cursor-pointer rounded-[10px] border-4 transition duration-200",
+        "flex-col items-center justify-center gap-4 px-4 py-5 text-center",
+        "sm:min-h-[150px] sm:flex-row sm:justify-between sm:gap-5 sm:px-5 sm:py-4 sm:text-left",
         "hover:-translate-y-0.5 hover:opacity-85 hover:shadow-lg",
         palette.card,
       ].join(" ")}
@@ -103,7 +105,9 @@ export default function Achievement({
     >
       <div
         className={[
-          "flex h-[100px] w-[100px] shrink-0 items-center justify-center rounded-full border-4 transition duration-200",
+          "flex shrink-0 items-center justify-center rounded-full border-4 transition duration-200",
+          "h-[82px] w-[82px]",
+          "sm:h-[100px] sm:w-[100px]",
           "group-hover:scale-105",
           palette.circle,
         ].join(" ")}
@@ -113,31 +117,34 @@ export default function Achievement({
           alt={title}
           width={48}
           height={48}
-          className="h-12 w-12 object-contain"
+          className="h-10 w-10 object-contain sm:h-12 sm:w-12"
         />
       </div>
 
-      <div className="flex w-[70%] flex-col text-left">
+      <div className="flex min-w-0 flex-1 flex-col items-center sm:items-start">
         <span
           className={[
-            "font-[Spectral_SC] text-2xl font-bold uppercase tracking-wide",
+            "font-[Spectral_SC] font-bold uppercase tracking-wide",
+            "text-xl sm:text-2xl",
+            "break-words",
             palette.title,
           ].join(" ")}
         >
           {title}
         </span>
 
-        <p className="mt-2 text-sm leading-snug text-white/80">
+        <p className="mt-2 text-sm leading-relaxed text-white/80">
           {description}
         </p>
 
         <p
           className={[
             "mt-2 text-sm font-semibold italic underline underline-offset-4",
+            "break-words",
             palette.accent,
           ].join(" ")}
         >
-          {locked ? "Locked" : state + " by " + author}
+          {locked ? "Locked" : `${state} by ${author ?? "Unknown"}`}
         </p>
       </div>
     </article>

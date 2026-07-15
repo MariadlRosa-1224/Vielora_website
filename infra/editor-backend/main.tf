@@ -20,6 +20,8 @@ provider "aws" {
   region = var.aws_region
 }
 
+// Create a zip archive of the Lambda function code
+
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_dir  = "${path.module}/../../lambda/editor-entry-writer"

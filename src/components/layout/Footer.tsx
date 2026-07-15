@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-lib/auth-client";
 import { useRouter } from "next/navigation";
 
 const footerLinks = [
@@ -52,7 +52,7 @@ export default function Footer() {
           {sessionData && (
             <button
               onClick={handleLogout}
-              className="text-white/70 transition hover:text-[#fff48e]"
+              className="text-white/70 transition hover:text-[#fff48e] !p-0 !m-0 !bg-transparent border !border-none"
             >
               Logout
             </button>

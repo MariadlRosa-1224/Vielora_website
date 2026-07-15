@@ -53,20 +53,29 @@ export default function LoreLinkCard({
       href={href}
       className={[
         "group mx-auto flex w-full max-w-5xl overflow-hidden rounded-[10px]",
-        "bg-gradient-to-r shadow-lg transition duration-200",
+        "bg-gradient-to-b shadow-lg transition duration-200 sm:bg-gradient-to-r",
         "hover:-translate-y-1 hover:shadow-xl hover:brightness-110",
         "focus:outline-none focus:ring-2 focus:ring-[#fff48e]",
+
         reverse ? gradientReverse[variant] : gradients[variant],
-        "min-h-[120px]",
-        reverse ? "flex-row-reverse" : "flex-row",
+
+        // Mobile: stacked card.
+        "flex-col",
+
+        // Tablet/Desktop: horizontal card.
+        reverse ? "sm:flex-row-reverse" : "sm:flex-row",
       ].join(" ")}
     >
       <div
         className={[
-          "relative h-[120px] w-[180px] shrink-0 md:w-[220px]",
+          "relative h-[180px] w-full shrink-0",
+          "sm:h-[140px] sm:w-[180px]",
+          "md:h-[150px] md:w-[220px]",
+
+          // Masks only from sm upward because stacked mobile cards look better without them.
           reverse
-            ? "mask-l-from-70% mask-l-to-95%"
-            : "mask-r-from-70% mask-r-to-95%",
+            ? "sm:mask-l-from-70% sm:mask-l-to-95%"
+            : "sm:mask-r-from-70% sm:mask-r-to-95%",
         ].join(" ")}
       >
         <Image
@@ -74,21 +83,23 @@ export default function LoreLinkCard({
           alt={imageAlt}
           fill
           className="object-cover transition duration-300 group-hover:scale-105"
-          sizes="220px"
+          sizes="(max-width: 640px) 100vw, 220px"
         />
       </div>
 
       <div
         className={[
-          "flex flex-1 flex-col justify-center px-6 py-5 md:px-10",
-          reverse ? "text-left" : "text-right",
+          "flex flex-1 flex-col justify-center px-6 py-6",
+          "md:px-10",
+          "text-center",
+          reverse ? "sm:text-left" : "sm:text-right",
         ].join(" ")}
       >
         <h3 className="font-[Spectral_SC] text-lg font-bold uppercase tracking-wide text-white md:text-xl">
           {title}
         </h3>
 
-        <p className="mt-3 line-clamp-3 text-xs leading-relaxed text-white md:text-sm">
+        <p className="mt-3 line-clamp-4 text-xs leading-relaxed text-white sm:line-clamp-3 md:text-sm">
           {text}
         </p>
       </div>

@@ -1,6 +1,6 @@
 // src/components/lore/LoreIndexPage.tsx
 
-import LoreLinkCard, { LoreCardVariant } from "./LoreLinkCard";
+import LoreLinkCard, { LoreCardVariant } from "../linkButtons/LoreLinkCard";
 
 export type { LoreCardVariant };
 

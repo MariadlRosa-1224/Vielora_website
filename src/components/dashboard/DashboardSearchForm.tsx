@@ -1,205 +1,161 @@
 "use client";
 
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 import {
-  categories,
-  ranks,
-  locations,
-  dangerLevels,
-  rarities,
-  tameabilities,
-} from "@/lib/codex-options";
+  getEntryFormat,
+  newEntryFormats,
+  type NewEntryType,
+} from "@/lib/new-entry-format";
+import type { DashboardFilters, EntryStatus } from "@/lib/dashboard-types";
 
-type DashboardSearchFormProps = {
-  search: string;
-  setSearch: (value: string) => void;
-
-  entryState: string;
-  setEntryState: (value: string) => void;
-
-  entryType: string;
-  setEntryType: (value: string) => void;
-
-  category: string;
-  setCategory: (value: string) => void;
-
-  rank: string;
-  setRank: (value: string) => void;
-
-  location: string;
-  setLocation: (value: string) => void;
-
-  dangerLevel: string;
-  setDangerLevel: (value: string) => void;
-
-  rarity: string;
-  setRarity: (value: string) => void;
-
-  tameability: string;
-  setTameability: (value: string) => void;
+type FieldFilterOption = {
+  name: string;
+  label: string;
+  options: string[];
 };
 
-const entryStates = [
+type DashboardSearchFormProps = {
+  filters: DashboardFilters;
+  setFilters: Dispatch<SetStateAction<DashboardFilters>>;
+  fieldFilterOptions: FieldFilterOption[];
+  className?: string;
+};
+
+const entryStates: Array<EntryStatus | "All Entries"> = [
   "All Entries",
   "Pending",
   "Approved",
   "Published",
   "Rejected",
+  "Edit Requested",
 ];
 
-const entryTypes = ["All Entries", "Codex", "Lore"];
-
-const categoryOptions = uniqueOptions([
+const entryGroups = [
   "All Entries",
-  ...categories,
-  "Characters",
-]);
+  ...Array.from(new Set(newEntryFormats.map((format) => format.group))),
+];
 
 export default function DashboardSearchForm({
-  search,
-  setSearch,
-  entryState,
-  setEntryState,
-  entryType,
-  setEntryType,
-  category,
-  setCategory,
-  rank,
-  setRank,
-  location,
-  setLocation,
-  dangerLevel,
-  setDangerLevel,
-  rarity,
-  setRarity,
-  tameability,
-  setTameability,
+  filters,
+  setFilters,
+  fieldFilterOptions,
+  className = "",
 }: DashboardSearchFormProps) {
+  const visibleFormats =
+    filters.entryGroup === "All Entries"
+      ? newEntryFormats
+      : newEntryFormats.filter((format) => format.group === filters.entryGroup);
+
+  function updateFilter<K extends keyof DashboardFilters>(
+    key: K,
+    value: DashboardFilters[K],
+  ) {
+    setFilters((current) => ({
+      ...current,
+      [key]: value,
+    }));
+  }
+
+  function handleEntryGroupChange(value: string) {
+    setFilters((current) => ({
+      ...current,
+      entryGroup: value,
+      entryFormat: "All Entries",
+      fieldFilters: {},
+    }));
+  }
+
+  function handleEntryFormatChange(value: string) {
+    setFilters((current) => ({
+      ...current,
+      entryFormat: value as NewEntryType | "All Entries",
+      fieldFilters: {},
+    }));
+  }
+
+  function updateFieldFilter(name: string, value: string) {
+    setFilters((current) => ({
+      ...current,
+      fieldFilters: {
+        ...current.fieldFilters,
+        [name]: value,
+      },
+    }));
+  }
+
   return (
-    <aside className="rounded-xl border border-[#fff48e] bg-[#111120]/75 p-4 backdrop-blur-sm">
+    <aside
+      className={[
+        "w-full rounded-xl border border-[#fff48e] bg-[#111120]/80 p-4 backdrop-blur-sm",
+        "lg:sticky lg:top-24 lg:self-start",
+        className,
+      ].join(" ")}
+    >
       <form
-        className="flex flex-col items-center gap-4"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1"
         onSubmit={(event) => event.preventDefault()}
       >
-        <FieldLabel htmlFor="dashboard-search">Search</FieldLabel>
+        <div className="sm:col-span-2 lg:col-span-1">
+          <FieldLabel htmlFor="dashboard-search">Search</FieldLabel>
 
-        <input
-          id="dashboard-search"
-          type="text"
-          value={search}
-          placeholder="Search"
-          onChange={(event) => setSearch(event.target.value)}
-          className="w-full border border-white bg-transparent px-3 py-2 text-sm text-white outline-none placeholder:text-white/70 focus:border-[#fff48e]"
-        />
+          <input
+            id="dashboard-search"
+            type="text"
+            value={filters.search}
+            placeholder="Search"
+            onChange={(event) => updateFilter("search", event.target.value)}
+            className="mt-2 w-full min-w-0 border border-white bg-transparent px-3 py-2 text-sm text-white outline-none placeholder:text-white/70 focus:border-[#fff48e]"
+          />
+        </div>
 
         <SelectField
           id="entry-state"
           label="Entry State"
-          value={entryState}
-          onChange={setEntryState}
+          value={filters.entryState}
+          onChange={(value) =>
+            updateFilter("entryState", value as EntryStatus | "All Entries")
+          }
           options={entryStates}
         />
 
         <SelectField
-          id="entry-type"
-          label="Type of Entry"
-          value={entryType}
-          onChange={setEntryType}
-          options={entryTypes}
+          id="entry-group"
+          label="Entry Group"
+          value={filters.entryGroup}
+          onChange={handleEntryGroupChange}
+          options={entryGroups}
         />
 
         <SelectField
-          id="category"
-          label="Category"
-          value={category}
-          onChange={setCategory}
-          options={categoryOptions}
+          id="entry-format"
+          label="Entry Format"
+          value={filters.entryFormat}
+          onChange={handleEntryFormatChange}
+          options={[
+            "All Entries",
+            ...visibleFormats.map((format) => format.entryType),
+          ]}
+          getOptionLabel={(value) =>
+            value === "All Entries"
+              ? "All Entries"
+              : getEntryFormat(value as NewEntryType).label
+          }
         />
 
-        {category === "Creatures" && (
-          <>
-            <SelectField
-              id="location"
-              label="Location"
-              value={location}
-              onChange={setLocation}
-              options={withAll(locations)}
-            />
-
-            <SelectField
-              id="danger-level"
-              label="Danger Level"
-              value={dangerLevel}
-              onChange={setDangerLevel}
-              options={withAll(dangerLevels)}
-            />
-
-            <SelectField
-              id="rarity"
-              label="Rarity"
-              value={rarity}
-              onChange={setRarity}
-              options={withAll(rarities)}
-            />
-
-            <SelectField
-              id="tameability"
-              label="Tameability"
-              value={tameability}
-              onChange={setTameability}
-              options={withAll(tameabilities)}
-            />
-          </>
-        )}
-
-        {category === "Flora" && (
-          <>
-            <SelectField
-              id="flora-location"
-              label="Location"
-              value={location}
-              onChange={setLocation}
-              options={withAll(locations)}
-            />
-
-            <SelectField
-              id="flora-rarity"
-              label="Rarity"
-              value={rarity}
-              onChange={setRarity}
-              options={withAll(rarities)}
-            />
-          </>
-        )}
-
-        {["Items", "Potions"].includes(category) && (
+        {fieldFilterOptions.map((field) => (
           <SelectField
-            id="item-rarity"
-            label="Rarity"
-            value={rarity}
-            onChange={setRarity}
-            options={withAll(rarities)}
+            key={field.name}
+            id={`field-filter-${field.name}`}
+            label={field.label}
+            value={filters.fieldFilters[field.name] ?? "All"}
+            onChange={(value) => updateFieldFilter(field.name, value)}
+            options={["All", ...field.options]}
           />
-        )}
-
-        {["Spells", "Techniques", "Runes"].includes(category) && (
-          <SelectField
-            id="rank"
-            label="Rank"
-            value={rank}
-            onChange={setRank}
-            options={withAll(ranks)}
-          />
-        )}
-
-        {category === "Characters" && (
-          <p className="text-center text-xs text-white/60">
-            Character-specific filters can be added here later.
-          </p>
-        )}
+        ))}
 
         <button
           type="submit"
-          className="mt-2 w-full rounded-md border border-[#fff48e] px-4 py-2 text-sm text-white transition-colors hover:bg-[#fff48e] hover:text-[#111120]"
+          className="w-full rounded-md border border-[#fff48e] px-4 py-2 text-sm text-white transition-colors hover:bg-[#fff48e] hover:text-[#111120] sm:col-span-2 lg:col-span-1"
         >
           Search
         </button>
@@ -213,12 +169,12 @@ function FieldLabel({
   children,
 }: {
   htmlFor: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <label
       htmlFor={htmlFor}
-      className="font-[Spectral_SC] text-sm font-bold uppercase tracking-wider text-white"
+      className="block font-[Spectral_SC] text-sm font-bold uppercase tracking-wider text-white"
     >
       {children}
     </label>
@@ -231,37 +187,31 @@ function SelectField({
   options,
   value,
   onChange,
+  getOptionLabel,
 }: {
   label: string;
   id: string;
   options: string[];
   value: string;
   onChange: (value: string) => void;
+  getOptionLabel?: (value: string) => string;
 }) {
   return (
-    <>
+    <div className="min-w-0">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
 
       <select
         id={id}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
+        className="mt-2 w-full min-w-0 border border-white bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
       >
         {options.map((option) => (
           <option key={option} value={option}>
-            {option}
+            {getOptionLabel ? getOptionLabel(option) : option}
           </option>
         ))}
       </select>
-    </>
+    </div>
   );
-}
-
-function withAll(options: string[]) {
-  return uniqueOptions(["All", ...options]);
-}
-
-function uniqueOptions(options: string[]) {
-  return Array.from(new Set(options));
 }

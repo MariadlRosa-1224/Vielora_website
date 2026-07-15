@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth-lib/auth-client";
 
 export default function LoginButton() {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,9 +23,10 @@ export default function LoginButton() {
     <button
       onClick={handleLogin}
       disabled={isLoading}
-      className="flex h-12 items-center justify-center rounded-full bg-black text-white px-8 transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+      className="flex h-12 items-center justify-center rounded-full border !border-[#fff48e] bg-black !text-white px-8 transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
     >
-      {isLoading ? "Logging in..." : "Get Started"}
+      
+      {isLoading ? "Logging in..." : "Log in"}
     </button>
   );
 }

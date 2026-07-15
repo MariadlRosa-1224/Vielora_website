@@ -1,47 +1,37 @@
+// src/components/dashboard/DashboardClient.tsx
+
 "use client";
 
-import { useMemo, useState } from "react";
+import type { EntryRecord } from "@/lib/entries-types";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import Link from "next/link";
 import GeneralContentContainer from "@/components/containers/GeneralContentContainer";
 import DashboardSearchForm from "@/components/dashboard/DashboardSearchForm";
+import type {
+  DashboardEntry,
+  DashboardFilters,
+  DashboardRole,
+  EntryStatus,
+  ManagedUser,
+} from "@/lib/dashboard-types";
+import {
+  getEntryFormat,
+  newEntryFormats,
+  type EntryFieldValue,
+} from "@/lib/new-entry-format";
+import {
+  deleteLocalEntryDraft,
+  getLocalEntryDrafts,
+  type LocalEntryDraft,
+} from "@/lib/local-entry-drafts";
 
-type DashboardRole = "user" | "admin";
-
-type EntryStatus = "Pending" | "Approved" | "Published" | "Rejected";
-
-type DashboardEntry = {
-  id: string;
-  title: string;
-  author: string;
-  authorId: string;
-  typeOfEntry: "Codex/creature" | "Lore/characters" | "Codex/potions";
-  entryType: "Codex" | "Lore";
-  category: string;
-  status: EntryStatus;
-  creationDate: string;
-  lastEdition: string;
-
-  location?: string;
-  dangerLevel?: string;
-  rarity?: string;
-  tameability?: string;
-  rank?: string;
-};
-
-type LocalDraft = {
-  id: string;
-  title: string;
-  authorId: string;
-  typeOfEntry: "Codex/creature" | "Lore/characters" | "Codex/potions";
-  entryType: "Codex" | "Lore";
-  category: string;
-
-  location?: string;
-  dangerLevel?: string;
-  rarity?: string;
-  tameability?: string;
-  rank?: string;
-};
+type DashboardTab = "entries" | "drafts" | "users";
 
 type DashboardClientProps = {
   role: DashboardRole;
@@ -49,184 +39,333 @@ type DashboardClientProps = {
   pageLabel: string;
 };
 
-const remoteEntries: DashboardEntry[] = [
-  {
-    id: "entry-1",
-    title: "A cat",
-    author: "Ana",
-    authorId: "user-ana",
-    typeOfEntry: "Codex/creature",
-    entryType: "Codex",
-    category: "Creatures",
-    status: "Pending",
-    creationDate: "01/01/2026",
-    lastEdition: "01/01/2026",
-    location: "Anywhere",
-    dangerLevel: "All",
-    rarity: "Legendary",
-    tameability: "Untameable",
-  },
-  {
-    id: "entry-2",
-    title: "Emerald",
-    author: "Ghost",
-    authorId: "admin-ghost",
-    typeOfEntry: "Lore/characters",
-    entryType: "Lore",
-    category: "Characters",
-    status: "Approved",
-    creationDate: "01/01/2026",
-    lastEdition: "01/01/2026",
-  },
-  {
-    id: "entry-3",
-    title: "Justin",
-    author: "Ana",
-    authorId: "user-ana",
-    typeOfEntry: "Lore/characters",
-    entryType: "Lore",
-    category: "Characters",
-    status: "Published",
-    creationDate: "01/01/2026",
-    lastEdition: "01/01/2026",
-  },
-  {
-    id: "entry-4",
-    title: "Old potion",
-    author: "Other user",
-    authorId: "user-other",
-    typeOfEntry: "Codex/potions",
-    entryType: "Codex",
-    category: "Potions",
-    status: "Rejected",
-    creationDate: "01/01/2026",
-    lastEdition: "01/01/2026",
-    rarity: "Legendary",
-  },
-];
-
-const localDrafts: LocalDraft[] = [
-  {
-    id: "draft-1",
-    title: "Potion of Levitation",
-    authorId: "user-ana",
-    typeOfEntry: "Codex/potions",
-    entryType: "Codex",
-    category: "Potions",
-    rarity: "Legendary",
-  },
-  {
-    id: "draft-2",
-    title: "Ember",
-    authorId: "user-ana",
-    typeOfEntry: "Lore/characters",
-    entryType: "Lore",
-    category: "Characters",
-  },
-  {
-    id: "draft-3",
-    title: "Admin private creature draft",
-    authorId: "admin-ghost",
-    typeOfEntry: "Codex/creature",
-    entryType: "Codex",
-    category: "Creatures",
-    location: "Anywhere",
-    dangerLevel: "All",
-    rarity: "Legendary",
-    tameability: "Untameable",
-  },
-];
-
 export default function DashboardClient({
   role,
   currentUserId,
   pageLabel,
 }: DashboardClientProps) {
-  const [search, setSearch] = useState("");
-  const [entryState, setEntryState] = useState("All Entries");
-  const [entryType, setEntryType] = useState("All Entries");
-  const [category, setCategory] = useState("All Entries");
-  const [rank, setRank] = useState("All");
-  const [location, setLocation] = useState("All");
-  const [dangerLevel, setDangerLevel] = useState("All");
-  const [rarity, setRarity] = useState("All");
-  const [tameability, setTameability] = useState("All");
+  const [activeDashboard, setActiveDashboard] =
+    useState<DashboardTab>("entries");
+
+  const [filters, setFilters] = useState<DashboardFilters>({
+    search: "",
+    entryState: "All Entries",
+    entryGroup: "All Entries",
+    entryFormat: "All Entries",
+    fieldFilters: {},
+  });
+
+  const [localDrafts, setLocalDrafts] = useState<LocalEntryDraft[]>([]);
+
+  const [remoteEntries, setRemoteEntries] = useState<DashboardEntry[]>([]);
+  const [isLoadingEntries, setIsLoadingEntries] = useState(false);
+  const [entriesError, setEntriesError] = useState<string | null>(null);
+
+  const [managedUsers, setManagedUsers] = useState<ManagedUser[]>([]);
+  const [isLoadingManagedUsers, setIsLoadingManagedUsers] = useState(false);
+  const [managedUsersError, setManagedUsersError] = useState<string | null>(
+    null,
+  );
+
+  void currentUserId;
+
+  const canManageUsers = role === "admin";
+  const showEntryFilters = activeDashboard !== "users";
+
+  const loadManagedUsers = useCallback(async () => {
+    if (!canManageUsers) {
+      setManagedUsers([]);
+      return;
+    }
+
+    setIsLoadingManagedUsers(true);
+    setManagedUsersError(null);
+
+    try {
+      const response = await fetch("/api/admin/users", {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Could not load users.");
+      }
+
+      setManagedUsers(result.users ?? []);
+    } catch (error) {
+      setManagedUsersError(
+        error instanceof Error ? error.message : "Could not load users.",
+      );
+    } finally {
+      setIsLoadingManagedUsers(false);
+    }
+  }, [canManageUsers]);
+
+  const loadRemoteEntries = useCallback(async () => {
+    setIsLoadingEntries(true);
+    setEntriesError(null);
+
+    try {
+      const response = await fetch("/api/entries", {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Could not load entries.");
+      }
+
+      const entries = Array.isArray(result.entries)
+        ? result.entries.map((entry: EntryRecord) => toDashboardEntry(entry))
+        : [];
+
+      setRemoteEntries(entries);
+    } catch (error) {
+      setEntriesError(
+        error instanceof Error ? error.message : "Could not load entries.",
+      );
+    } finally {
+      setIsLoadingEntries(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadRemoteEntries();
+  }, [loadRemoteEntries]);
+
+  useEffect(() => {
+    if (!canManageUsers) return;
+
+    void loadManagedUsers();
+  }, [canManageUsers, loadManagedUsers]);
 
   const visibleRemoteEntries = useMemo(() => {
-    const roleFilteredEntries =
-      role === "admin"
-        ? remoteEntries
-        : remoteEntries.filter((entry) => entry.authorId === currentUserId);
-
-    return roleFilteredEntries.filter((entry) =>
-      matchesFilters(entry, {
-        search,
-        entryState,
-        entryType,
-        category,
-        rank,
-        location,
-        dangerLevel,
-        rarity,
-        tameability,
-      }),
-    );
-  }, [
-    role,
-    currentUserId,
-    search,
-    entryState,
-    entryType,
-    category,
-    rank,
-    location,
-    dangerLevel,
-    rarity,
-    tameability,
-  ]);
+    return remoteEntries.filter((entry) => matchesFilters(entry, filters));
+  }, [remoteEntries, filters]);
 
   const visibleLocalDrafts = useMemo(() => {
-    return localDrafts
-      .filter((draft) => draft.authorId === currentUserId)
-      .filter((draft) =>
-        matchesFilters(draft, {
-          search,
-          entryState: "All Entries",
-          entryType,
-          category,
-          rank,
-          location,
-          dangerLevel,
-          rarity,
-          tameability,
-        }),
+    return localDrafts.filter((draft) =>
+      matchesFilters(draft, {
+        ...filters,
+        entryState: "All Entries",
+      }),
+    );
+  }, [localDrafts, filters]);
+
+  const fieldFilterOptions = useMemo(() => {
+    return buildFieldFilterOptions(filters, [
+      ...remoteEntries,
+      ...localDrafts,
+    ]);
+  }, [filters, remoteEntries, localDrafts]);
+
+  function reloadLocalDrafts() {
+    setLocalDrafts(getLocalEntryDrafts());
+  }
+
+  useEffect(() => {
+    reloadLocalDrafts();
+
+    function handleDraftsUpdated() {
+      reloadLocalDrafts();
+    }
+
+    window.addEventListener("storage", handleDraftsUpdated);
+    window.addEventListener(
+      "vielora-local-drafts-updated",
+      handleDraftsUpdated,
+    );
+
+    return () => {
+      window.removeEventListener("storage", handleDraftsUpdated);
+      window.removeEventListener(
+        "vielora-local-drafts-updated",
+        handleDraftsUpdated,
       );
-  }, [
-    currentUserId,
-    search,
-    entryType,
-    category,
-    rank,
-    location,
-    dangerLevel,
-    rarity,
-    tameability,
-  ]);
+    };
+  }, []);
+
+  function handleDeleteLocalDraft(draftId: string) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this local draft?",
+    );
+
+    if (!confirmed) return;
+
+    deleteLocalEntryDraft(draftId);
+    reloadLocalDrafts();
+  }
+
+  async function updateManagedUserRole(
+    userId: string,
+    nextRole: "user" | "moderator",
+  ) {
+    setManagedUsersError(null);
+
+    try {
+      const response = await fetch(
+        `/api/admin/users/${encodeURIComponent(userId)}/role`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            role: nextRole,
+          }),
+        },
+      );
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Could not update user role.");
+      }
+
+      await loadManagedUsers();
+    } catch (error) {
+      setManagedUsersError(
+        error instanceof Error ? error.message : "Could not update user role.",
+      );
+    }
+  }
+
+  async function runEntryAction({
+    action,
+    successMessage,
+  }: {
+    action: () => Promise<Response>;
+    successMessage: string;
+  }) {
+    setEntriesError(null);
+
+    try {
+      const response = await action();
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Action failed.");
+      }
+
+      setEntriesError(null);
+      await loadRemoteEntries();
+
+      console.log(successMessage, result);
+    } catch (error) {
+      setEntriesError(
+        error instanceof Error ? error.message : "Action failed.",
+      );
+    }
+  }
+
+  async function handleApproveEntry(entryId: string) {
+    const confirmed = window.confirm(
+      "Approve and publish this entry to GitHub?",
+    );
+
+    if (!confirmed) return;
+
+    await runEntryAction({
+      successMessage: "Entry approved.",
+      action: () =>
+        fetch(`/api/moderation/entries/${encodeURIComponent(entryId)}/approve`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: "Approved from dashboard.",
+          }),
+        }),
+    });
+  }
+
+  async function handleRejectEntry(entryId: string) {
+    const message = window.prompt(
+      "Why is this entry being rejected?",
+      "Please revise this entry before resubmitting.",
+    );
+
+    if (message === null) return;
+
+    await runEntryAction({
+      successMessage: "Entry rejected.",
+      action: () =>
+        fetch(`/api/moderation/entries/${encodeURIComponent(entryId)}/reject`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message,
+          }),
+        }),
+    });
+  }
+
+  async function handleRequestEditEntry(entryId: string) {
+    const message = window.prompt(
+      "What do you want to change in this entry?",
+      "I want to update this entry.",
+    );
+
+    if (message === null) return;
+
+    await runEntryAction({
+      successMessage: "Edit request submitted.",
+      action: () =>
+        fetch(`/api/entries/${encodeURIComponent(entryId)}/request-edit`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message,
+          }),
+        }),
+    });
+  }
+
+  async function handleDeleteEntry(entryId: string) {
+    const confirmed = window.confirm(
+      "Delete this entry? This only works for unpublished entries.",
+    );
+
+    if (!confirmed) return;
+
+    await runEntryAction({
+      successMessage: "Entry deleted.",
+      action: () =>
+        fetch(`/api/entries/${encodeURIComponent(entryId)}`, {
+          method: "DELETE",
+        }),
+    });
+  }
 
   return (
-    <main className="min-h-screen bg-[#111120] bg-[url('/images/page-backgrounds/galaxies.jpg')] bg-fixed bg-cover bg-center bg-no-repeat px-8 py-24 text-white">
+    <main className="min-h-screen bg-[#111120] bg-[url('/images/page-backgrounds/galaxies.jpg')] bg-fixed bg-cover bg-center bg-no-repeat px-4 py-24 text-white sm:px-6 lg:px-8">
       <p className="px-4 pt-4 text-sm text-white/40">{pageLabel}</p>
 
-      <section className="mx-auto max-w-7xl bg-[url('/images/codex/codex-background.jpg')] bg-cover bg-center bg-no-repeat px-6 py-8">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_260px]">
+      <section className="mx-auto w-full max-w-7xl bg-[url('/images/codex/codex-background.jpg')] bg-cover bg-center bg-no-repeat px-4 py-8 sm:px-6">
+        <div
+          className={
+            showEntryFilters
+              ? "grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px]"
+              : "grid gap-8"
+          }
+        >
           <GeneralContentContainer className="min-h-[70vh]">
-            <header className="mb-8 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-white/50">
-                  {role === "admin" ? "Admin" : "User"}
+                  {role}
                 </p>
 
-                <h1 className="font-[Spectral_SC] text-4xl font-bold uppercase tracking-wide text-white">
+                <h1 className="font-[Spectral_SC] text-3xl font-bold uppercase tracking-wide text-white md:text-4xl">
                   Dashboard
                 </h1>
               </div>
@@ -239,52 +378,171 @@ export default function DashboardClient({
               </Link>
             </header>
 
-            <DashboardTable
-              entries={visibleRemoteEntries}
-              role={role}
+            <DashboardTabs
+              activeDashboard={activeDashboard}
+              setActiveDashboard={setActiveDashboard}
+              canManageUsers={canManageUsers}
             />
 
-            <section className="mt-10">
-              <h2 className="mb-4 font-[Spectral_SC] text-lg font-bold uppercase tracking-wider text-white">
-                Local Drafts
-              </h2>
+            {activeDashboard === "entries" && (
+              <section className="space-y-4">
+                {entriesError && (
+                  <p className="rounded-md border border-red-400/60 bg-red-950/40 px-4 py-3 text-sm text-red-200">
+                    {entriesError}
+                  </p>
+                )}
 
-              <LocalDraftList drafts={visibleLocalDrafts} />
-            </section>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="font-[Spectral_SC] text-lg font-bold uppercase tracking-wider text-white">
+                    Entries
+                  </h2>
+
+                  <button
+                    type="button"
+                    onClick={() => void loadRemoteEntries()}
+                    className="w-fit rounded-md border border-white/40 px-3 py-2 text-xs text-white transition-colors hover:border-[#fff48e]"
+                  >
+                    Refresh Entries
+                  </button>
+                </div>
+
+                {isLoadingEntries ? (
+                  <p className="rounded-md border border-white/20 px-4 py-6 text-center text-sm text-white/60">
+                    Loading entries...
+                  </p>
+                ) : (
+                  <DashboardTable
+                    entries={visibleRemoteEntries}
+                    role={role}
+                    onApprove={handleApproveEntry}
+                    onReject={handleRejectEntry}
+                    onRequestEdit={handleRequestEditEntry}
+                    onDelete={handleDeleteEntry}
+                  />
+                )}
+              </section>
+            )}
+
+            {activeDashboard === "drafts" && (
+              <section>
+                <h2 className="mb-4 font-[Spectral_SC] text-lg font-bold uppercase tracking-wider text-white">
+                  Local Drafts
+                </h2>
+
+                <LocalDraftList
+                  drafts={visibleLocalDrafts}
+                  onDelete={handleDeleteLocalDraft}
+                />
+              </section>
+            )}
+
+            {activeDashboard === "users" && canManageUsers && (
+              <UserRoleDashboard
+                users={managedUsers}
+                isLoading={isLoadingManagedUsers}
+                error={managedUsersError}
+                onRefresh={loadManagedUsers}
+                onRoleChange={updateManagedUserRole}
+              />
+            )}
+
+            {activeDashboard === "users" && !canManageUsers && (
+              <p className="rounded-md border border-white/20 px-4 py-6 text-center text-sm text-white/60">
+                You do not have permission to manage users.
+              </p>
+            )}
           </GeneralContentContainer>
 
-          <DashboardSearchForm
-            search={search}
-            setSearch={setSearch}
-            entryState={entryState}
-            setEntryState={setEntryState}
-            entryType={entryType}
-            setEntryType={setEntryType}
-            category={category}
-            setCategory={setCategory}
-            rank={rank}
-            setRank={setRank}
-            location={location}
-            setLocation={setLocation}
-            dangerLevel={dangerLevel}
-            setDangerLevel={setDangerLevel}
-            rarity={rarity}
-            setRarity={setRarity}
-            tameability={tameability}
-            setTameability={setTameability}
-          />
+          {showEntryFilters && (
+            <DashboardSearchForm
+              className="order-first lg:order-none"
+              filters={filters}
+              setFilters={setFilters}
+              fieldFilterOptions={fieldFilterOptions}
+            />
+          )}
         </div>
       </section>
     </main>
   );
 }
 
+function DashboardTabs({
+  activeDashboard,
+  setActiveDashboard,
+  canManageUsers,
+}: {
+  activeDashboard: DashboardTab;
+  setActiveDashboard: (value: DashboardTab) => void;
+  canManageUsers: boolean;
+}) {
+  return (
+    <div className="mb-8 flex flex-wrap gap-3">
+      <DashboardTabButton
+        active={activeDashboard === "entries"}
+        onClick={() => setActiveDashboard("entries")}
+      >
+        Entries
+      </DashboardTabButton>
+
+      <DashboardTabButton
+        active={activeDashboard === "drafts"}
+        onClick={() => setActiveDashboard("drafts")}
+      >
+        Local Drafts
+      </DashboardTabButton>
+
+      {canManageUsers && (
+        <DashboardTabButton
+          active={activeDashboard === "users"}
+          onClick={() => setActiveDashboard("users")}
+        >
+          User Roles
+        </DashboardTabButton>
+      )}
+    </div>
+  );
+}
+
+function DashboardTabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={[
+        "rounded-md border px-4 py-2 text-sm uppercase tracking-wider transition-colors",
+        active
+          ? "border-[#fff48e] bg-[#fff48e] text-[#111120]"
+          : "border-white/40 text-white hover:border-[#fff48e]",
+      ].join(" ")}
+    >
+      {children}
+    </button>
+  );
+}
+
 function DashboardTable({
   entries,
   role,
+  onApprove,
+  onReject,
+  onRequestEdit,
+  onDelete,
 }: {
   entries: DashboardEntry[];
   role: DashboardRole;
+  onApprove: (entryId: string) => void | Promise<void>;
+  onReject: (entryId: string) => void | Promise<void>;
+  onRequestEdit: (entryId: string) => void | Promise<void>;
+  onDelete: (entryId: string) => void | Promise<void>;
 }) {
   if (entries.length === 0) {
     return (
@@ -310,21 +568,32 @@ function DashboardTable({
         </thead>
 
         <tbody>
-          {entries.map((entry) => (
-            <tr key={entry.id} className="border-t border-white/40">
-              <TableCell>{entry.title}</TableCell>
-              <TableCell>{entry.author}</TableCell>
-              <TableCell>{entry.typeOfEntry}</TableCell>
-              <TableCell>
-                <StatusBadge status={entry.status} />
-              </TableCell>
-              <TableCell>{entry.creationDate}</TableCell>
-              <TableCell>{entry.lastEdition}</TableCell>
-              <TableCell>
-                <EntryActions entry={entry} role={role} />
-              </TableCell>
-            </tr>
-          ))}
+          {entries.map((entry) => {
+            const format = getEntryFormat(entry.entryType);
+
+            return (
+              <tr key={entry.id} className="border-t border-white/40">
+                <TableCell>{entry.title}</TableCell>
+                <TableCell>{entry.author}</TableCell>
+                <TableCell>{format.label}</TableCell>
+                <TableCell>
+                  <StatusBadge status={entry.status} />
+                </TableCell>
+                <TableCell>{entry.creationDate}</TableCell>
+                <TableCell>{entry.lastEdition}</TableCell>
+                <TableCell>
+                  <EntryActions
+                    entry={entry}
+                    role={role}
+                    onApprove={onApprove}
+                    onReject={onReject}
+                    onRequestEdit={onRequestEdit}
+                    onDelete={onDelete}
+                  />
+                </TableCell>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -334,29 +603,73 @@ function DashboardTable({
 function EntryActions({
   entry,
   role,
+  onApprove,
+  onReject,
+  onRequestEdit,
+  onDelete,
 }: {
   entry: DashboardEntry;
   role: DashboardRole;
+  onApprove: (entryId: string) => void | Promise<void>;
+  onReject: (entryId: string) => void | Promise<void>;
+  onRequestEdit: (entryId: string) => void | Promise<void>;
+  onDelete: (entryId: string) => void | Promise<void>;
 }) {
-  if (role === "admin") {
+  const canModerate = role === "moderator" || role === "admin";
+
+  const isReviewable =
+    entry.status === "Pending" ||
+    entry.status === "Rejected" ||
+    entry.status === "Edit Requested";
+
+  const isUnpublished =
+    entry.status === "Pending" ||
+    entry.status === "Rejected" ||
+    entry.status === "Edit Requested";
+
+  if (canModerate) {
     return (
       <div className="flex flex-wrap gap-1 text-[#fff48e]">
-        {entry.status === "Pending" && (
+        <Link href={`/dashboard/entries/${entry.id}`}>View</Link>
+
+        <span className="text-white/40">|</span>
+
+        <Link href={`/editor/edit/${entry.id}`}>Edit</Link>
+
+        {isReviewable && (
           <>
-            <Link href={`/admin/dashboard/review/${entry.id}`}>Review</Link>
             <span className="text-white/40">|</span>
+
+            <button
+              type="button"
+              onClick={() => void onApprove(entry.id)}
+              className="text-green-300 hover:underline"
+            >
+              Approve
+            </button>
+
+            <span className="text-white/40">|</span>
+
+            <button
+              type="button"
+              onClick={() => void onReject(entry.id)}
+              className="text-red-300 hover:underline"
+            >
+              Reject
+            </button>
           </>
         )}
 
-        <Link href={`/dashboard/entries/${entry.id}`}>View</Link>
-        <span className="text-white/40">|</span>
-        <Link href={`/editor/edit/${entry.id}`}>Edit</Link>
-
-        {entry.status === "Pending" && (
+        {isUnpublished && (
           <>
             <span className="text-white/40">|</span>
-            <button type="button" className="text-green-300">
-              Approve
+
+            <button
+              type="button"
+              onClick={() => void onDelete(entry.id)}
+              className="text-red-400 hover:underline"
+            >
+              Delete
             </button>
           </>
         )}
@@ -368,8 +681,16 @@ function EntryActions({
     return (
       <div className="flex flex-wrap gap-1 text-[#fff48e]">
         <Link href={`/dashboard/entries/${entry.id}`}>View</Link>
+
         <span className="text-white/40">|</span>
-        <button type="button">Request Edit</button>
+
+        <button
+          type="button"
+          onClick={() => void onRequestEdit(entry.id)}
+          className="hover:underline"
+        >
+          Request Edit
+        </button>
       </div>
     );
   }
@@ -377,13 +698,35 @@ function EntryActions({
   return (
     <div className="flex flex-wrap gap-1 text-[#fff48e]">
       <Link href={`/dashboard/entries/${entry.id}`}>View</Link>
-      <span className="text-white/40">|</span>
-      <Link href={`/editor/edit/${entry.id}`}>Edit</Link>
+
+      {isUnpublished && (
+        <>
+          <span className="text-white/40">|</span>
+
+          <Link href={`/editor/edit/${entry.id}`}>Edit</Link>
+
+          <span className="text-white/40">|</span>
+
+          <button
+            type="button"
+            onClick={() => void onDelete(entry.id)}
+            className="text-red-400 hover:underline"
+          >
+            Delete
+          </button>
+        </>
+      )}
     </div>
   );
 }
 
-function LocalDraftList({ drafts }: { drafts: LocalDraft[] }) {
+function LocalDraftList({
+  drafts,
+  onDelete,
+}: {
+  drafts: LocalEntryDraft[];
+  onDelete: (draftId: string) => void;
+}) {
   if (drafts.length === 0) {
     return (
       <p className="rounded-md border border-white/20 px-4 py-4 text-sm text-white/60">
@@ -394,40 +737,169 @@ function LocalDraftList({ drafts }: { drafts: LocalDraft[] }) {
 
   return (
     <div className="space-y-4">
-      {drafts.map((draft) => (
-        <article
-          key={draft.id}
-          className="flex flex-col gap-3 rounded-md border border-[#fff48e] bg-[#111120]/60 px-4 py-3 text-xs md:flex-row md:items-center md:justify-between"
-        >
-          <div className="flex flex-wrap gap-3">
-            <h3 className="font-[Spectral_SC] uppercase tracking-wider text-white">
-              {draft.title}:
-            </h3>
+      {drafts.map((draft) => {
+        const format = getEntryFormat(draft.entryType);
 
-            <p className="text-white/70">{draft.typeOfEntry}</p>
-          </div>
+        return (
+          <article
+            key={draft.id}
+            className="flex flex-col gap-3 rounded-md border border-[#fff48e] bg-[#111120]/60 px-4 py-3 text-xs md:flex-row md:items-center md:justify-between"
+          >
+            <div className="min-w-0">
+              <h3 className="font-[Spectral_SC] uppercase tracking-wider text-white">
+                {draft.title}
+              </h3>
 
-          <div className="flex gap-2">
-            <Link
-              href={`/editor/local-drafts/${draft.id}`}
-              className="text-[#fff48e] hover:underline"
-            >
-              Edit
-            </Link>
+              <p className="mt-1 text-white/70">{format.label}</p>
 
-            <span className="text-white/40">|</span>
+              <p className="mt-1 text-white/40">
+                Updated: {formatLocalDate(draft.updatedAt)}
+              </p>
+            </div>
 
-            <button type="button" className="text-red-400 hover:underline">
-              Delete
-            </button>
-          </div>
-        </article>
-      ))}
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={`/editor/new-entry?draftId=${encodeURIComponent(
+                  draft.id,
+                )}`}
+                className="text-[#fff48e] hover:underline"
+              >
+                Edit
+              </Link>
+
+              <span className="text-white/40">|</span>
+
+              <button
+                type="button"
+                onClick={() => onDelete(draft.id)}
+                className="text-red-400 hover:underline"
+              >
+                Delete
+              </button>
+            </div>
+          </article>
+        );
+      })}
     </div>
   );
 }
 
-function TableHead({ children }: { children: React.ReactNode }) {
+function UserRoleDashboard({
+  users,
+  isLoading,
+  error,
+  onRefresh,
+  onRoleChange,
+}: {
+  users: ManagedUser[];
+  isLoading: boolean;
+  error: string | null;
+  onRefresh: () => void | Promise<void>;
+  onRoleChange: (
+    userId: string,
+    nextRole: "user" | "moderator",
+  ) => void | Promise<void>;
+}) {
+  return (
+    <section>
+      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <h2 className="font-[Spectral_SC] text-lg font-bold uppercase tracking-wider text-white">
+          User Role Management
+        </h2>
+
+        <button
+          type="button"
+          onClick={() => void onRefresh()}
+          className="w-fit rounded-md border border-white/40 px-3 py-2 text-xs text-white transition-colors hover:border-[#fff48e]"
+        >
+          Refresh Users
+        </button>
+      </div>
+
+      {error && (
+        <p className="mb-4 rounded-md border border-red-400/60 bg-red-950/40 px-4 py-3 text-sm text-red-200">
+          {error}
+        </p>
+      )}
+
+      {isLoading && (
+        <p className="rounded-md border border-white/20 px-4 py-6 text-center text-sm text-white/60">
+          Loading users...
+        </p>
+      )}
+
+      {!isLoading && users.length === 0 && (
+        <p className="rounded-md border border-white/20 px-4 py-6 text-center text-sm text-white/60">
+          No users found.
+        </p>
+      )}
+
+      {!isLoading && users.length > 0 && (
+        <div className="space-y-4">
+          {users.map((user) => {
+            const userId = user.userId ?? user.id;
+            const isAdminUser = user.role === "admin";
+
+            return (
+              <article
+                key={userId}
+                className="flex flex-col gap-4 rounded-md border border-white/20 bg-[#111120]/70 px-4 py-4 md:flex-row md:items-center md:justify-between"
+              >
+                <div>
+                  <h3 className="font-[Spectral_SC] text-sm font-bold uppercase tracking-wider text-white">
+                    {user.name}
+                  </h3>
+
+                  <p className="mt-1 text-xs text-white/60">{user.email}</p>
+
+                  <p className="mt-2 text-xs uppercase tracking-wider text-[#fff48e]">
+                    Current role: {user.role}
+                  </p>
+
+                  {isAdminUser && (
+                    <p className="mt-1 text-xs text-white/40">
+                      Admin users cannot be modified here.
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    disabled={isAdminUser || user.role === "user"}
+                    onClick={() => onRoleChange(userId, "user")}
+                    className="rounded-md border border-white/40 px-3 py-2 text-xs text-white transition-colors hover:border-[#fff48e] disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Make User
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={isAdminUser || user.role === "moderator"}
+                    onClick={() => onRoleChange(userId, "moderator")}
+                    className="rounded-md border border-[#fff48e] px-3 py-2 text-xs text-white transition-colors hover:bg-[#fff48e] hover:text-[#111120] disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Make Moderator
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function formatLocalDate(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return "Unknown";
+
+  return date.toLocaleString();
+}
+
+function TableHead({ children }: { children: ReactNode }) {
   return (
     <th className="border-r border-white/40 px-3 py-3 last:border-r-0">
       {children}
@@ -435,7 +907,7 @@ function TableHead({ children }: { children: React.ReactNode }) {
   );
 }
 
-function TableCell({ children }: { children: React.ReactNode }) {
+function TableCell({ children }: { children: ReactNode }) {
   return (
     <td className="border-r border-white/30 px-3 py-3 font-bold text-white last:border-r-0">
       {children}
@@ -447,72 +919,144 @@ function StatusBadge({ status }: { status: EntryStatus }) {
   const className =
     status === "Pending"
       ? "text-yellow-200"
-      : status === "Approved" || status === "Published"
-        ? "text-green-300"
-        : "text-red-300";
+      : status === "Edit Requested"
+        ? "text-blue-300"
+        : status === "Approved" || status === "Published"
+          ? "text-green-300"
+          : "text-red-300";
 
   return <span className={className}>{status}</span>;
 }
 
-function matchesFilters(
-  entry: DashboardEntry | LocalDraft,
-  filters: {
-    search: string;
-    entryState: string;
-    entryType: string;
-    category: string;
-    rank: string;
-    location: string;
-    dangerLevel: string;
-    rarity: string;
-    tameability: string;
-  },
+function buildFieldFilterOptions(
+  filters: DashboardFilters,
+  entries: Array<DashboardEntry | LocalEntryDraft>,
 ) {
+  const formats =
+    filters.entryFormat !== "All Entries"
+      ? [getEntryFormat(filters.entryFormat)]
+      : filters.entryGroup !== "All Entries"
+        ? newEntryFormats.filter((format) => format.group === filters.entryGroup)
+        : newEntryFormats;
+
+  const fieldLabels = new Map<string, string>();
+
+  formats.forEach((format) => {
+    format.fields.forEach((field) => {
+      if (["yaml", "stats", "boolean"].includes(field.kind)) return;
+
+      fieldLabels.set(field.name, field.label);
+    });
+  });
+
+  return Array.from(fieldLabels.entries())
+    .map(([name, label]) => {
+      const values = new Set<string>();
+
+      entries.forEach((entry) => {
+        const value = entry.fields[name];
+
+        stringifyFieldValue(value).forEach((item) => {
+          if (item.trim()) values.add(item);
+        });
+      });
+
+      return {
+        name,
+        label,
+        options: Array.from(values).sort(),
+      };
+    })
+    .filter((field) => field.options.length > 0);
+}
+
+function matchesFilters(
+  entry: DashboardEntry | LocalEntryDraft,
+  filters: DashboardFilters,
+) {
+  const format = getEntryFormat(entry.entryType);
   const normalizedSearch = filters.search.trim().toLowerCase();
+
+  const searchableValues = [
+    entry.title,
+    format.label,
+    format.group,
+    ...Object.values(entry.fields).flatMap((value) => stringifyFieldValue(value)),
+  ];
 
   const matchesSearch =
     normalizedSearch.length === 0 ||
-    entry.title.toLowerCase().includes(normalizedSearch) ||
-    entry.typeOfEntry.toLowerCase().includes(normalizedSearch) ||
-    entry.category.toLowerCase().includes(normalizedSearch);
+    searchableValues.some((value) =>
+      value.toLowerCase().includes(normalizedSearch),
+    );
 
   const matchesEntryState =
     isAll(filters.entryState) ||
     ("status" in entry && entry.status === filters.entryState);
 
-  const matchesEntryType =
-    isAll(filters.entryType) || entry.entryType === filters.entryType;
+  const matchesEntryGroup =
+    isAll(filters.entryGroup) || format.group === filters.entryGroup;
 
-  const matchesCategory =
-    isAll(filters.category) || entry.category === filters.category;
+  const matchesEntryFormat =
+    isAll(filters.entryFormat) || entry.entryType === filters.entryFormat;
 
-  const matchesRank = isAll(filters.rank) || entry.rank === filters.rank;
+  const matchesDynamicFields = Object.entries(filters.fieldFilters).every(
+    ([fieldName, expectedValue]) => {
+      if (isAll(expectedValue)) return true;
 
-  const matchesLocation =
-    isAll(filters.location) || entry.location === filters.location;
-
-  const matchesDangerLevel =
-    isAll(filters.dangerLevel) || entry.dangerLevel === filters.dangerLevel;
-
-  const matchesRarity =
-    isAll(filters.rarity) || entry.rarity === filters.rarity;
-
-  const matchesTameability =
-    isAll(filters.tameability) || entry.tameability === filters.tameability;
+      return stringifyFieldValue(entry.fields[fieldName]).some(
+        (actualValue) => actualValue === expectedValue,
+      );
+    },
+  );
 
   return (
     matchesSearch &&
     matchesEntryState &&
-    matchesEntryType &&
-    matchesCategory &&
-    matchesRank &&
-    matchesLocation &&
-    matchesDangerLevel &&
-    matchesRarity &&
-    matchesTameability
+    matchesEntryGroup &&
+    matchesEntryFormat &&
+    matchesDynamicFields
   );
+}
+
+function stringifyFieldValue(value: EntryFieldValue | undefined): string[] {
+  if (value === undefined || value === null) return [];
+
+  if (Array.isArray(value)) {
+    return value.map(String);
+  }
+
+  if (typeof value === "object") {
+    return Object.values(value).map(String);
+  }
+
+  return [String(value)];
 }
 
 function isAll(value: string) {
   return value === "All" || value === "All Entries" || value === "";
+}
+
+function toDashboardEntry(entry: EntryRecord): DashboardEntry {
+  return {
+    id: entry.entryId,
+    title: entry.title,
+    author: entry.authorName,
+    authorId: entry.authorId,
+    entryType: entry.entryType,
+    status: toDashboardStatus(entry.status),
+    creationDate: formatLocalDate(entry.createdAt),
+    lastEdition: formatLocalDate(entry.updatedAt),
+    fields: entry.fields,
+  };
+}
+
+function toDashboardStatus(status: EntryRecord["status"]): EntryStatus {
+  if (status === "pending") return "Pending";
+  if (status === "approved") return "Approved";
+  if (status === "published") return "Published";
+  if (status === "rejected") return "Rejected";
+  if (status === "edit-requested") return "Edit Requested";
+
+  return "Pending";
 }

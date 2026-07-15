@@ -320,15 +320,10 @@ function MobileAbilityList({
         if (level.abilities.length === 0) return null;
 
         return (
-          <section
-            key={level.id}
-            className="rounded-xl border border-white/20 bg-[#111120]/50 p-4 backdrop-blur-sm"
-          >
-            <h3 className="mb-4 text-center font-['Spectral_SC'] text-xl font-bold uppercase tracking-wider text-white">
-              {level.label}
-            </h3>
+          <section key={level.id} className="border border-white/30 rounded-lg ">
+          <CollapsibleSection key={level.id} title={level.label}>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2 pt-4">
               {level.abilities.map((ability) => {
                 const requiredAbilities = ability.requires
                   .map((id) => abilityById[id])
@@ -377,10 +372,62 @@ function MobileAbilityList({
                 );
               })}
             </div>
-          </section>
+          </CollapsibleSection>
+        </section>
         );
       })}
     </div>
+  );
+}
+
+function CollapsibleSection({
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <section className="">
+<button
+  type="button"
+  onClick={() => setIsOpen((current) => !current)}
+  aria-expanded={isOpen}
+  className={["!border-none !bg-[#111120]/50 p-4 !backdrop-blur-sm ",
+    "flex w-full appearance-none items-center justify-between text-left shadow-none !outline-none ring-0",
+  ].join(" ")}
+>
+  <span className="font-['Spectral_SC'] font-bold uppercase tracking-wide">
+    {title}
+  </span>
+
+  <span
+    aria-hidden="true"
+    className={[
+      "text-sm transition-transform duration-200",
+      isOpen ? "rotate-180 text-[#fff48e]" : "rotate-0",
+    ].join(" ")}
+  >
+    ▾
+  </span>
+</button>
+
+      <div
+        className={[
+          "grid transition-all duration-300 ease-in-out",
+          " !bg-[#111120]/50 px-4 !backdrop-blur-sm",
+          isOpen ? "grid-rows-[1fr] pb-4 opacity-100" : "grid-rows-[0fr] opacity-0",
+        ].join(" ")}
+      >
+        <div className="overflow-hidden text-sm leading-relaxed text-white">
+          {children}
+        </div>
+      </div>
+    </section>
   );
 }
 

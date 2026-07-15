@@ -1,3 +1,5 @@
+// src/components/buttons/VerticalColorButton.tsx
+
 import Link from "next/link";
 import React from "react";
 import { vieloraGradients, vieloraHoverGradients } from "@/theme/colors";
@@ -8,6 +10,7 @@ interface VerticalColorButtonProps {
   href: string;
   gradient?: keyof typeof vieloraGradients;
   active?: boolean;
+  className?: string;
 }
 
 const VerticalColorButton: React.FC<VerticalColorButtonProps> = ({
@@ -16,6 +19,7 @@ const VerticalColorButton: React.FC<VerticalColorButtonProps> = ({
   href,
   gradient = "blueVertical",
   active = false,
+  className = "",
 }) => {
   return (
     <Link
@@ -23,12 +27,15 @@ const VerticalColorButton: React.FC<VerticalColorButtonProps> = ({
       aria-current={active ? "page" : undefined}
       style={{ background: vieloraGradients[gradient] }}
       className={[
-        "group relative isolate flex h-[350px] w-[200px] cursor-pointer flex-col items-center justify-around overflow-hidden border-none p-0 no-underline mx-10",
+        "group relative isolate flex h-[280px] w-full max-w-[180px] cursor-pointer flex-col items-center justify-around overflow-hidden border-none p-0 no-underline",
+        "sm:h-[320px] sm:max-w-[190px]",
+        "md:h-[350px] md:max-w-[200px]",
         "rounded-[var(--border-radius)]",
         "transition-transform duration-300 ease-out",
         "hover:-translate-y-2 hover:scale-[1.04]",
         "focus:outline-none focus-visible:scale-[1.04]",
         active ? "scale-[1.04]" : "",
+        className,
       ].join(" ")}
     >
       <div
@@ -45,7 +52,9 @@ const VerticalColorButton: React.FC<VerticalColorButtonProps> = ({
         src={image}
         alt={title}
         className={[
-          "relative z-10 mb-[10px] h-[100px] w-[100px] object-contain",
+          "relative z-10 mb-[10px] h-[80px] w-[80px] object-contain",
+          "sm:h-[90px] sm:w-[90px]",
+          "md:h-[100px] md:w-[100px]",
           "transition-transform duration-300 ease-out",
           "group-hover:scale-110",
           active ? "scale-110" : "",
@@ -54,7 +63,8 @@ const VerticalColorButton: React.FC<VerticalColorButtonProps> = ({
 
       <span
         className={[
-          "relative z-10 text-center font-['Spectral_SC',serif] text-2xl font-bold text-white",
+          "relative z-10 px-3 text-center font-['Spectral_SC',serif] text-xl font-bold text-white",
+          "sm:text-2xl",
           "transition-all duration-300 ease-out",
           "group-hover:tracking-wide",
           "hover:text-white",

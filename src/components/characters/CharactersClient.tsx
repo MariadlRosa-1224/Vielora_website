@@ -44,14 +44,14 @@ export default function CharactersClient({
   }, [initialCharacters, search, affiliation]);
 
   return (
-    <main className="min-h-screen bg-[#111120] bg-[url('/images/page-backgrounds/galaxies.jpg')] bg-fixed bg-cover bg-center bg-no-repeat px-6 py-24 text-white">
-      <section className="mx-auto max-w-7xl">
+    <main className="min-h-screen bg-[#111120] bg-[url('/images/page-backgrounds/galaxies.jpg')] bg-fixed bg-cover bg-center bg-no-repeat px-4 py-24 text-white sm:px-6 lg:px-10">
+      <section className="mx-auto w-full max-w-7xl">
         <header className="mx-auto max-w-4xl text-center">
-          <h1 className="font-['Spectral_SC'] text-3xl font-bold uppercase tracking-wider text-white">
+          <h1 className="font-['Spectral_SC'] text-3xl font-bold uppercase tracking-wider text-white md:text-4xl">
             Characters
           </h1>
 
-          <p className="mt-8 text-base font-semibold leading-relaxed text-white">
+          <p className="mt-8 text-sm font-semibold leading-7 text-white sm:text-base sm:leading-relaxed">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut
             hendrerit ligula, in maximus est. Sed et sem sem. Nunc ultricies
             lorem at sapien iaculis facilisis. Ut nulla magna, luctus eu lacinia
@@ -67,7 +67,7 @@ export default function CharactersClient({
           affiliations={affiliations}
         />
 
-        <section className="mt-14 grid justify-items-center gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="mt-14 grid grid-cols-1 justify-items-center gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredCharacters.map((character) => (
             <CharacterFrame
               key={character.slug}
@@ -105,7 +105,7 @@ function CharacterSearchBar({
   affiliations: string[];
 }) {
   return (
-    <div className="sticky top-[72px] z-30 mx-auto mt-12 max-w-5xl rounded-md border border-[#fff48e] bg-[#111120]/80 px-6 py-4 backdrop-blur-md">
+    <div className="sticky top-[72px] z-30 mx-auto mt-12 w-full max-w-5xl rounded-md border border-[#fff48e] bg-[#111120]/85 px-4 py-4 backdrop-blur-md sm:px-6">
       <form
         className="grid items-center gap-4 md:grid-cols-[auto_minmax(0,1fr)_220px]"
         onSubmit={(event) => event.preventDefault()}
@@ -123,13 +123,13 @@ function CharacterSearchBar({
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Search by name"
-          className="w-full border border-white/60 bg-transparent px-3 py-2 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#fff48e]"
+          className="w-full min-w-0 border border-white/60 bg-transparent px-3 py-2 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#fff48e]"
         />
 
         <select
           value={affiliation}
           onChange={(event) => setAffiliation(event.target.value)}
-          className="w-full border border-white/60 bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
+          className="w-full min-w-0 border border-white/60 bg-[#111120] px-3 py-2 text-sm text-white outline-none focus:border-[#fff48e]"
         >
           {affiliations.map((item) => (
             <option key={item} value={item}>

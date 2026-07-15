@@ -55,20 +55,20 @@ export default function CharacterEntryTemplate({
   );
 
   return (
-    <div>
-      <h1 className="mb-8 font-['Spectral_SC'] text-3xl font-bold uppercase tracking-wider text-white">
+    <div className="w-full">
+      <h1 className="mb-8 text-center font-['Spectral_SC'] text-3xl font-bold uppercase tracking-wider text-white sm:text-left md:text-4xl">
         {entry.title}
       </h1>
 
-      <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <div>
-          <div className="relative h-[390px] w-full overflow-hidden rounded-md border border-[#fff48e]/80 bg-[#111120]/60">
+      <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="mx-auto w-full max-w-[320px] lg:max-w-none">
+          <div className="relative h-[420px] w-full overflow-hidden rounded-md border border-[#fff48e]/80 bg-[#111120]/60 sm:h-[460px] lg:h-[390px]">
             <Image
               src={selectedImage.src}
               alt={selectedImage.alt ?? entry.imageAlt}
               fill
               priority
-              sizes="260px"
+              sizes="(max-width: 1024px) 320px, 280px"
               className="object-cover"
             />
           </div>
@@ -92,7 +92,9 @@ export default function CharacterEntryTemplate({
               <span className="font-['Spectral_SC'] font-bold uppercase tracking-wide">
                 Affiliations:
               </span>{" "}
-              {entry.affiliations.join(", ")}
+              {entry.affiliations.length > 0
+                ? entry.affiliations.join(", ")
+                : "None"}
             </p>
 
             <p>
@@ -131,7 +133,9 @@ function CharacterThumbnailGallery({
             key={`${image.src}-${index}`}
             type="button"
             onClick={() => onSelect(image)}
-            aria-label={`Show ${image.label ?? image.alt ?? `image ${index + 1}`}`}
+            aria-label={`Show ${
+              image.label ?? image.alt ?? `image ${index + 1}`
+            }`}
             aria-pressed={isSelected}
             className={[
               "relative h-[78px] w-[58px] shrink-0 overflow-hidden rounded-md border transition duration-200",

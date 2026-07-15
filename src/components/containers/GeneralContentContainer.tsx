@@ -1,5 +1,3 @@
-// src/components/codex/GeneralContentContainer.tsx
-
 import type { ReactNode } from "react";
 
 type GeneralContentContainerProps = {
@@ -9,10 +7,16 @@ type GeneralContentContainerProps = {
 
 export default function GeneralContentContainer({
   children,
-  className,
+  className = "",
 }: GeneralContentContainerProps) {
   return (
-    <section className={`min-h-[20vh] rounded-[10px] border border-[#fff48e] bg-[#111120]/70 p-8 backdrop-blur-sm ${className || ""}`}>
+    <section
+      className={[
+        "min-h-[20vh] rounded-[10px] border border-[#fff48e] bg-[#111120]/70",
+        "p-4 backdrop-blur-sm sm:p-6 lg:p-8",
+        className,
+      ].join(" ")}
+    >
       {children}
     </section>
   );

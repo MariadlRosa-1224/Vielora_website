@@ -96,37 +96,38 @@ export default function CodexClient({ initialItems }: CodexClientProps) {
         <h1 className="mb-8 font-[Spectral_SC] text-3xl font-bold uppercase tracking-wider">
           Codex
         </h1>
+<div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-12">
+  <aside className="order-first lg:order-2 lg:sticky lg:top-24">
+    <SearchForm
+      search={search}
+      setSearch={setSearch}
+      category={category}
+      setCategory={setCategory}
+      rank={rank}
+      setRank={setRank}
+      location={location}
+      setLocation={setLocation}
+      dangerLevel={dangerLevel}
+      setDangerLevel={setDangerLevel}
+      rarity={rarity}
+      setRarity={setRarity}
+      tameability={tameability}
+      setTameability={setTameability}
+      stat={stat}
+      setStat={setStat}
+      school={school}
+      setSchool={setSchool}
+      techniqueSchool={techniqueSchool}
+      setTechniqueSchool={setTechniqueSchool}
+      mineralType={mineralType}
+      setMineralType={setMineralType}
+    />
+  </aside>
 
-        <div className="grid items-start gap-12 lg:grid-cols-[1fr_300px]">
-          <GeneralContentContainer>
-            <ItemList items={filteredItems} />
-          </GeneralContentContainer>
-
-          <SearchForm
-            search={search}
-            setSearch={setSearch}
-            category={category}
-            setCategory={setCategory}
-            rank={rank}
-            setRank={setRank}
-            location={location}
-            setLocation={setLocation}
-            dangerLevel={dangerLevel}
-            setDangerLevel={setDangerLevel}
-            rarity={rarity}
-            setRarity={setRarity}
-            tameability={tameability}
-            setTameability={setTameability}
-            stat={stat}
-            setStat={setStat}
-            school={school}
-            setSchool={setSchool}
-            techniqueSchool={techniqueSchool}
-            setTechniqueSchool={setTechniqueSchool}
-            mineralType={mineralType}
-            setMineralType={setMineralType}
-          />
-        </div>
+  <GeneralContentContainer className="min-w-0 lg:order-1">
+    <ItemList items={filteredItems} />
+  </GeneralContentContainer>
+</div>
       </div>
     </main>
   );

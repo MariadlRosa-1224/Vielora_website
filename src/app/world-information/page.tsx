@@ -10,15 +10,15 @@ export default function WorldInformationPage() {
 
   return (
     <main className="min-h-screen bg-[#0D0F25] bg-[url('/images/page-backgrounds/dark-starry-sky.jpg')] bg-cover bg-center bg-no-repeat">
-      <section className="relative mt-16 max-h-[50vh] overflow-hidden bg-[#08091c] bg-[url('/images/world-information/library-wip.png')] bg-cover bg-center bg-no-repeat md:min-h-[50vh]" />
+      <section className="relative mt-16 min-h-[280px] overflow-hidden bg-[#08091c] bg-[url('/images/world-information/library-wip.png')] bg-cover bg-center bg-no-repeat sm:min-h-[360px] md:min-h-[50vh]" />
 
-      <section className="relative flex min-h-[30vh] max-h-[100vh] justify-center bg-[#0D0F25] py-10 md:min-h-[50vh]">
-        <div className="relative mx-10 min-w-[1048px] max-w-7xl">
-          <div className="relative z-10 flex flex-col items-center justify-center px-8 pt-10 md:px-10">
+      <section className="relative flex justify-center bg-[#0D0F25] px-4 py-16 sm:px-6 lg:px-10">
+        <div className="relative mx-auto w-full max-w-7xl">
+          <div className="relative z-10 flex flex-col items-center justify-center">
             <TitleField title="World Information" />
 
-            <div className="relative flex w-[60vw] justify-center">
-              <p className="mt-6 pt-5 text-center font-cinzel text-sm tracking-[0.18em] text-white md:text-base">
+            <div className="relative mt-8 flex w-full max-w-3xl justify-center">
+              <p className="text-center font-cinzel text-xs leading-7 tracking-[0.16em] text-white sm:text-sm md:text-base md:tracking-[0.18em]">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut
                 hendrerit ligula, in maximus est. Sed et sem sem. Nunc
                 ultricies lorem at sapien iaculis facilisis. Ut nulla magna,
@@ -29,40 +29,43 @@ export default function WorldInformationPage() {
         </div>
       </section>
 
-      {sections.map((section) => (
-        <section
-          key={section.id}
-          className="relative flex min-h-[760px] flex-col justify-center md:min-h-[760px]"
-        >
-          <InfoSection title={section.title} items={section.entries} />
-        </section>
-      ))}
+      <div className="space-y-20 px-4 pb-24 sm:px-6 lg:px-10">
+        {sections.map((section) => (
+          <InfoSection
+            key={section.id}
+            title={section.title}
+            items={section.entries}
+          />
+        ))}
+      </div>
     </main>
   );
 }
 
 function TitleField({ title }: { title: string }) {
   return (
-    <div className="relative flex h-[100px] w-full justify-center">
-      <div className="relative flex h-[80px] rotate-y-180 items-center justify-left">
+    <div className="flex w-full flex-col items-center justify-center gap-4 text-center sm:flex-row">
+      <div className="hidden h-[80px] items-center sm:flex">
         <Image
           src="/images/crystal-butterfly.png"
           alt=""
-          width={300}
+          width={260}
           height={100}
+          className="h-auto w-[220px] rotate-y-180 md:w-[300px]"
         />
       </div>
 
-      <h2 className="mx-[5vw] text-center font-['Spectral_SC'] text-4xl text-white md:text-5xl">
+      <h2 className="font-['Spectral_SC'] text-3xl text-white sm:text-4xl md:text-5xl">
         {title}
       </h2>
 
-      <div className="relative flex h-[80px] items-center justify-left">
+      <div className="hidden h-[80px] items-center sm:flex">
         <Image
           src="/images/crystal-butterfly.png"
           alt=""
-          width={300}
+          width={260}
           height={100}
+          className="h-auto w-[220px] md:w-[300px]"
         />
       </div>
     </div>
@@ -82,10 +85,10 @@ function InfoSection({
   }[];
 }) {
   return (
-    <div className="relative mx-10 my-20 flex min-h-[760px] min-w-[80vw] max-w-7xl flex-col items-center justify-center md:min-h-[760px]">
+    <section className="relative mx-auto flex w-full max-w-7xl flex-col items-center mt-12">
       <TitleField title={title} />
 
-      <div className="relative mx-10 my-20 flex min-h-[760px] min-w-[1048px] max-w-7xl flex-wrap items-start justify-around md:min-h-[760px]">
+      <div className="mt-12 grid w-full grid-cols-1 justify-items-center gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {items.map((item) => (
           <VerticalColorButton
             key={item.href}
@@ -96,6 +99,6 @@ function InfoSection({
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 }

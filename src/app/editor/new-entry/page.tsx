@@ -1,5 +1,10 @@
-import NewEntryForm from "@/components/editor/NewEntryForm";
+// src/app/editor/new-entry/page.tsx
 
-export default function NewEntryPage() {
+import NewEntryForm from "@/components/editor/NewEntryForm";
+import { verifyPermission } from "@/lib/dal";
+
+export default async function NewEntryPage() {
+  await verifyPermission("entry:create");
+
   return <NewEntryForm />;
 }

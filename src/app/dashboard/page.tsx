@@ -1,16 +1,16 @@
-import DashboardClient from "@/components/dashboard/DashboardClient";
+// src/app/dashboard/page.tsx
 
-export default function UserDashboardPage() {
-  // TODO auth:
-  // const session = await auth.api.getSession(...)
-  // if (!session) redirect("/login")
-  // const userId = session.user.id
+import DashboardClient from "@/components/dashboard/DashboardClient";
+import { verifySession } from "@/lib/dal";
+
+export default async function DashboardPage() {
+  const { user } = await verifySession();
 
   return (
     <DashboardClient
-      role="user"
-      currentUserId="user-ana"
-      pageLabel="User Dashboard"
+      role={user.role}
+      currentUserId={user.id}
+      pageLabel={`Signed in as ${user.email}`}
     />
   );
 }

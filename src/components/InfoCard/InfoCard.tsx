@@ -42,36 +42,52 @@ export default function InfoCard({
   return (
     <article
       className={[
-        "mx-auto flex min-w-[2/3] overflow-hidden rounded-[10px]",
-        "bg-gradient-to-r ",
+        "mx-auto flex w-full max-w-5xl overflow-hidden rounded-[10px] shadow-lg",
+        "bg-gradient-to-b sm:bg-gradient-to-r",
         reverse ? gradientReverse[variant] : gradients[variant],
-        "min-h-[200px] max-h-[200px] shadow-lg",
-        reverse ? "flex-row-reverse" : "flex-row",
+
+        // Mobile: vertical card.
+        "flex-col",
+
+        // Tablet/Desktop: horizontal card.
+        reverse ? "sm:flex-row-reverse" : "sm:flex-row",
       ].join(" ")}
     >
-      <div className={["relative h-[200px] w-[200px] shrink-0",
-        reverse ? "mask-l-from-70% mask-l-to-95%" : "mask-r-from-70% mask-r-to-95%"
-      ].join(" ")}>
+      <div
+        className={[
+          "relative h-[240px] w-full shrink-0",
+          "sm:h-[220px] sm:w-[220px]",
+          "md:h-[240px] md:w-[240px]",
+
+          // Only use masks from sm upward. On mobile, the image is stacked,
+          // so the mask often looks strange.
+          reverse
+            ? "sm:mask-l-from-70% sm:mask-l-to-95%"
+            : "sm:mask-r-from-70% sm:mask-r-to-95%",
+        ].join(" ")}
+      >
         <Image
           src={image}
           alt={imageAlt}
           fill
           className="object-cover"
-          sizes="200px"
+          sizes="(max-width: 640px) 100vw, 240px"
         />
       </div>
 
       <div
         className={[
-          "flex flex-1 flex-col justify-center px-10 py-6",
-          reverse ? "text-left" : "text-right",
+          "flex flex-1 flex-col justify-center px-6 py-8",
+          "sm:px-8 md:px-10",
+          "text-center",
+          reverse ? "sm:text-left" : "sm:text-right",
         ].join(" ")}
       >
-        <h3 className="font-[Spectral_SC] text-2xl font-bold uppercase tracking-wide text-white">
+        <h3 className="font-[Spectral_SC] text-xl font-bold uppercase tracking-wide text-white sm:text-2xl">
           {title}
         </h3>
 
-        <p className="mt-4 text-sm leading-relaxed text-white">
+        <p className="mt-4 text-sm leading-relaxed text-white sm:text-base">
           {text}
         </p>
       </div>
