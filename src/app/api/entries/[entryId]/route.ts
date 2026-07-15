@@ -376,16 +376,27 @@ export async function PATCH(request: Request, context: RouteContext) {
 
     const format = getEntryFormat(currentEntry.entryType);
 
-    if (body.galleryImages && !format.usesGalleryImages) {
-      return NextResponse.json(
-        {
-          error: "This entry type does not support gallery images.",
-        },
-        {
-          status: 400,
-        },
-      );
-    }
+const galleryUpdateHasChanges =
+  body.galleryImages !== undefined &&
+  (body.galleryImages.newImages.length > 0 ||
+    body.galleryImages.keepPublicPaths.length !==
+      (currentEntry.galleryImages ?? []).filter((image) => image.publicPath)
+        .length);
+
+if (body.galleryImages && !format.usesGalleryImages && galleryUpdateHasChanges) {
+  return NextResponse.json(
+    {
+      error: "This entry type does not support gallery images.",
+    },
+    {
+      status: 400,
+    },
+  );
+}
+
+if (body.galleryImages && !format.usesGalleryImages) {
+  body.galleryImages = undefined;
+}
 
     /**
      * Main image update.

@@ -81,6 +81,7 @@ function InfoSection({
     title: string;
     image: string;
     href: string;
+    slug: string;
     gradient: keyof typeof vieloraGradients;
   }[];
 }) {
@@ -91,10 +92,10 @@ function InfoSection({
       <div className="mt-12 grid w-full grid-cols-1 justify-items-center gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {items.map((item) => (
           <VerticalColorButton
-            key={item.href}
+            key={item.slug}
             title={item.title}
             image={item.image}
-            href={item.href}
+            href={item.slug}
             gradient={item.gradient}
           />
         ))}

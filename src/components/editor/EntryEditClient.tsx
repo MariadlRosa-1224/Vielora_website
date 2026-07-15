@@ -30,6 +30,8 @@ export default function EntryEditClient({
     [initialEntry.entryType],
   );
 
+  const supportsGalleryImages = Boolean(format.usesGalleryImages);
+
   const [title, setTitle] = useState(initialEntry.title);
   const [imageAlt, setImageAlt] = useState(initialEntry.imageAlt ?? "");
   const [markdown, setMarkdown] = useState(initialEntry.markdown ?? "");
@@ -69,24 +71,15 @@ const [newGalleryImages, setNewGalleryImages] = useState<PendingGalleryImage[]>(
     }));
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault();
 
-    setIsSubmitting(true);
-    setError(null);
-    setMessage(null);
+  setIsSubmitting(true);
+  setError(null);
+  setMessage(null);
 
-    const newGalleryImagePayloads = await Promise.all(
-  newGalleryImages.map(async (image) => ({
-    fileName: sanitizeFileName(image.file.name),
-    base64: await fileToBase64(image.file),
-    mimeType: image.file.type,
-    publicPath: image.publicPath,
-  })),
-); 
-    
-    
-          const replacementMainImagePayload = replacementMainImage
+  try {
+    const replacementMainImagePayload = replacementMainImage
       ? {
           fileName: sanitizeFileName(replacementMainImage.name),
           base64: await fileToBase64(replacementMainImage),
@@ -94,52 +87,90 @@ const [newGalleryImages, setNewGalleryImages] = useState<PendingGalleryImage[]>(
           publicPath: replacementMainImagePath,
         }
       : undefined;
-    try {
-      const response = await fetch(
-        `/api/entries/${encodeURIComponent(initialEntry.entryId)}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            entryType: initialEntry.entryType,
-            title,
-            slug,
-            fields,
-            markdown,
-            imageAlt,
-            mainImage: replacementMainImagePayload,
-            galleryImages: {
-              keepPublicPaths: keptGalleryImages
-                .map((image) => image.publicPath)
-                .filter(Boolean),
-              newImages: newGalleryImagePayloads,
-            },
-          }),
-        },
-      );
 
-      const result = await response.json().catch(() => ({}));
+    const newGalleryImagePayloads = supportsGalleryImages
+      ? await Promise.all(
+          newGalleryImages.map(async (image) => ({
+            fileName: sanitizeFileName(image.file.name),
+            base64: await fileToBase64(image.file),
+            mimeType: image.file.type,
+            publicPath: image.publicPath,
+          })),
+        )
+      : [];
 
-      if (!response.ok) {
-        throw new Error(result.error ?? "Could not update entry.");
-      }
+    const updatePayload: {
+      entryType: string;
+      title: string;
+      slug: string;
+      fields: Record<string, EntryFieldValue>;
+      markdown: string;
+      imageAlt: string;
+      mainImage?: {
+        fileName: string;
+        base64: string;
+        mimeType: string;
+        publicPath: string;
+      };
+      galleryImages?: {
+        keepPublicPaths: string[];
+        newImages: {
+          fileName: string;
+          base64: string;
+          mimeType: string;
+          publicPath: string;
+        }[];
+      };
+    } = {
+      entryType: initialEntry.entryType,
+      title,
+      slug,
+      fields,
+      markdown,
+      imageAlt,
+      mainImage: replacementMainImagePayload,
+    };
 
-      setMessage("Entry updated and sent for review.");
-
-      router.refresh();
-      router.push(`/dashboard/entries/${initialEntry.entryId}`);
-    } catch (caughtError) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Could not update entry.",
-      );
-    } finally {
-      setIsSubmitting(false);
+    if (supportsGalleryImages) {
+      updatePayload.galleryImages = {
+        keepPublicPaths: keptGalleryImages
+          .map((image) => image.publicPath)
+          .filter((path): path is string => Boolean(path)),
+        newImages: newGalleryImagePayloads,
+      };
     }
+
+    const response = await fetch(
+      `/api/entries/${encodeURIComponent(initialEntry.entryId)}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatePayload),
+      },
+    );
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.error ?? "Could not update entry.");
+    }
+
+    setMessage("Entry updated and sent for review.");
+
+    router.refresh();
+    router.push(`/dashboard/entries/${initialEntry.entryId}`);
+  } catch (caughtError) {
+    setError(
+      caughtError instanceof Error
+        ? caughtError.message
+        : "Could not update entry.",
+    );
+  } finally {
+    setIsSubmitting(false);
   }
+}
   
   function handleReplacementMainImageChange(file: File | null) {
   setReplacementMainImage(file);
@@ -308,13 +339,15 @@ function handleRemoveNewGalleryImage(publicPath: string) {
   )}
 </label>
 
-<EditableGalleryImagesField
-  keptImages={keptGalleryImages}
-  newImages={newGalleryImages}
-  onRemoveExisting={handleRemoveExistingGalleryImage}
-  onAddFiles={handleAddGalleryImages}
-  onRemoveNew={handleRemoveNewGalleryImage}
-/>
+{supportsGalleryImages && (
+  <EditableGalleryImagesField
+    keptImages={keptGalleryImages}
+    newImages={newGalleryImages}
+    onRemoveExisting={handleRemoveExistingGalleryImage}
+    onAddFiles={handleAddGalleryImages}
+    onRemoveNew={handleRemoveNewGalleryImage}
+  />
+)}
 
           <input
             value={imageAlt}
