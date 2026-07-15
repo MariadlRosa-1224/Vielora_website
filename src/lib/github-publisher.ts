@@ -1,13 +1,12 @@
 // src/lib/github-publisher.ts
 
 import "server-only";
+
 import { getGithubTokenFromSecret } from "@/lib/aws-secrets";
 
 const GITHUB_OWNER = process.env.GITHUB_OWNER;
 const GITHUB_REPO = process.env.GITHUB_REPO;
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH ?? "main";
-const GITHUB_TOKEN = await getGithubTokenFromSecret();
-
 
 if (!GITHUB_OWNER) {
   throw new Error("GITHUB_OWNER is missing.");
@@ -16,7 +15,6 @@ if (!GITHUB_OWNER) {
 if (!GITHUB_REPO) {
   throw new Error("GITHUB_REPO is missing.");
 }
-
 
 type GithubContentResponse = {
   content?: {
@@ -38,20 +36,24 @@ function encodeRepoPath(path: string) {
 }
 
 function githubContentsUrl(path: string) {
-  return `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${encodeRepoPath(
-    path,
-  )}`;
+  return `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${encodeRepoPath(path)}`;
+}
+
+async function getGithubHeaders(extraHeaders: HeadersInit = {}) {
+  const token = await getGithubTokenFromSecret();
+
+  return {
+    Accept: "application/vnd.github+json",
+    Authorization: `Bearer ${token}`,
+    "X-GitHub-Api-Version": "2022-11-28",
+    ...extraHeaders,
+  };
 }
 
 async function githubRequest<T>(url: string, init: RequestInit = {}) {
   const response = await fetch(url, {
     ...init,
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${GITHUB_TOKEN}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-      ...(init.headers ?? {}),
-    },
+    headers: await getGithubHeaders(init.headers ?? {}),
   });
 
   const text = await response.text();
@@ -61,7 +63,9 @@ async function githubRequest<T>(url: string, init: RequestInit = {}) {
   try {
     body = text ? JSON.parse(text) : {};
   } catch {
-    body = { message: text };
+    body = {
+      message: text,
+    };
   }
 
   if (!response.ok) {
@@ -80,16 +84,13 @@ async function githubRequest<T>(url: string, init: RequestInit = {}) {
 }
 
 async function getExistingFileSha(path: string) {
-  const url = `${githubContentsUrl(path)}?ref=${encodeURIComponent(
+  const cleanPath = path.replace(/^\/+/, "");
+  const url = `${githubContentsUrl(cleanPath)}?ref=${encodeURIComponent(
     GITHUB_BRANCH,
   )}`;
 
   const response = await fetch(url, {
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${GITHUB_TOKEN}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
+    headers: await getGithubHeaders(),
   });
 
   if (response.status === 404) {
@@ -141,5 +142,32 @@ export async function putGithubFile({
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
+  });
+}
+
+export async function deleteGithubFile({
+  path,
+  message,
+}: {
+  path: string;
+  message: string;
+}) {
+  const cleanPath = path.replace(/^\/+/, "");
+  const sha = await getExistingFileSha(cleanPath);
+
+  if (!sha) {
+    return null;
+  }
+
+  return githubRequest<GithubContentResponse>(githubContentsUrl(cleanPath), {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      message,
+      sha,
+      branch: GITHUB_BRANCH,
+    }),
   });
 }
