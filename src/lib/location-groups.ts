@@ -86,36 +86,5 @@ export const locationGroups: LocationGroup[] = [
       },
     ],
   },
-  {
-    id: "the-inverted",
-    name: "The Inverted",
-    mapImage: "/images/locations/the-inverted-map.jpg",
-    mapAlt: "Map of The Inverted",
-    locations: [
-      {
-        id: "inverted-capital",
-        title: "The Hollow Capital",
-        href: "/locations/the-hollow-capital",
-        pin: { top: "48%", left: "50%" },
-      },
-      {
-        id: "mirror-coast",
-        title: "The Mirror Coast",
-        href: "/locations/the-mirror-coast",
-        pin: { top: "68%", left: "24%" },
-      },
-      {
-        id: "silent-depths",
-        title: "The Silent Depths",
-        href: "/locations/the-silent-depths",
-        pin: { top: "31%", left: "70%" },
-      },
-      {
-        id: "inverted-ruins",
-        title: "The Inverted Ruins",
-        href: "/locations/the-inverted-ruins",
-        pin: { top: "58%", left: "76%" },
-      },
-    ],
-  },
+  
 ];
