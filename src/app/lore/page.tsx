@@ -17,35 +17,35 @@ const loreSections: LoreSection[] = [
     href: "/lore/world-history",
     gradient: "violetHorizontal",
     description:
-      "This page serves as an index to all the lore and stories within Vielora.",
+      "The history of the world and its civilizations.",
   },
   {
     title: "Timeline",
     href: "/lore/timeline",
     gradient: "royalBlueHorizontal",
     description:
-      "This page serves as an index to all the lore and stories within Vielora.",
+      "A summary of the lore and stories within Vielora's roleplay to this day.",
   },
   {
     title: "Characters",
     href: "/lore/characters",
     gradient: "royalBlueHorizontal",
     description:
-      "This page serves as an index to all the lore and stories within Vielora.",
+      "A list of the main characters and npcs in Vielora's lore.",
   },
   {
     title: "Legends and Folklore",
     href: "/lore/legends-and-folklore",
     gradient: "skyBlueHorizontal",
     description:
-      "This page serves as an index to all the lore and stories within Vielora.",
+      "Tales and legends from the world of Vielora.",
   },
   {
     title: "Extras",
     href: "/lore/extras",
     gradient: "aquaHorizontal",
     description:
-      "This page serves as an index to all the lore and stories within Vielora.",
+      "Additional content and information about the world of Vielora.",
   },
 ];
 

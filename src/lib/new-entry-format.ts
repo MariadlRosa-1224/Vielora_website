@@ -59,6 +59,8 @@ export type EntryFieldConfig = {
   max?: number;
 };
 
+// this function allows us to configure each entry type with its own settings, including the content folder, image folder, and any fixed fields that should be included in the entry record. It also allows us to specify which fields are required and what their default values should be.
+
 export type EntryFormatConfig = {
   entryType: NewEntryType;
   label: string;
@@ -78,7 +80,12 @@ export type EntryFormatConfig = {
 
   fixedFields?: Record<string, EntryFieldValue>;
 
+    usesGalleryImages?: boolean;
+  galleryFrontmatterField?: string;
+
   fields: EntryFieldConfig[];
+
+  
 };
 
 const codexImageFolder = (category: string) => {
@@ -576,6 +583,9 @@ export const newEntryFormats: EntryFormatConfig[] = [
   mainImageRequired: true,
   usesMarkdown: true,
 
+  usesGalleryImages: true,
+  galleryFrontmatterField: "galleryImages",
+
   fields: [
     {
       name: "origin",
@@ -664,6 +674,8 @@ abilities:
     usesMainImage: true,
     mainImageRequired: true,
     usesMarkdown: true,
+      usesGalleryImages: true,
+  galleryFrontmatterField: "galleryImages",
     fields: [
       {
         name: "name",

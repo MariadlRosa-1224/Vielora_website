@@ -85,7 +85,7 @@ export default function TransparentDropdown({
         onClick={() => setIsOpen((current) => !current)}
         className={[
           "flex w-full flex-col items-center justify-center rounded-2xl",
-          "border !border-white/10 !bg-[#252642]/5 text-white shadow-lg backdrop-blur-sm",
+          "border !border-white/10 !bg-[#252642]/30 text-white shadow-lg backdrop-blur-sm",
           "transition duration-200 !hover:bg-[#2d2d4d]/70 !hover:shadow-[#fff48e]/10",
           "focus:outline-none focus:ring-2 focus:ring-[#fff48e]",
           isCompact ? "min-h-[66px] px-5 py-3" : "min-h-[130px] px-8 py-6",
@@ -117,7 +117,7 @@ export default function TransparentDropdown({
         className={[
           "absolute left-0 top-full z-50 w-full overflow-hidden rounded-xl",
           " bg-[#111120]/90 shadow-xl backdrop-blur-md",
-          "transition-all duration-200",
+          "transition-all duration-200 !overflow-auto",
           isOpen
             ? "pointer-events-auto max-h-96 translate-y-0 opacity-100"
             : "pointer-events-none max-h-0 -translate-y-2 opacity-0",

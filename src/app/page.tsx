@@ -30,7 +30,7 @@ export default function Home() {
                 rel="noreferrer"
                 className="mt-12 inline-flex w-full max-w-xs justify-center rounded-md border-2 border-[#fff48e] px-8 py-3 font-cinzel text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#fff48e] hover:text-[#111120] sm:w-auto"
               >
-                Join the server
+                Coming soon
               </Link>
             </div>
           </div>
@@ -58,34 +58,34 @@ export default function Home() {
           {/* Info cards */}
           <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-10 py-8 sm:gap-12">
             <InfoCard
-              title="Explore the Lore"
-              text="Dive into the rich history and stories of Vielora, uncovering secrets and legends."
-              image="/images/Deyanira.png"
+              title="Discover the World"
+              text="Journey through the islands, kingdoms, cities, and strange regions that shape the world of Vielora."
+              image="/images/main-page/world-view.jpg"
               imageAlt="Lore Image"
               variant="aqua"
             />
 
             <InfoCard
-              title="Explore the Lore"
-              text="Dive into the rich history and stories of Vielora, uncovering secrets and legends."
-              image="/images/Emerald_old.png"
+              title="Explore the Codex"
+              text="Uncover creatures, spells, techniques, relics, minerals, potions, and other wonders recorded across the ages."
+              image="/images/main-page/book.jpg"
               imageAlt="Lore Image"
               variant="cyan"
               reverse
             />
 
             <InfoCard
-              title="Explore the Lore"
-              text="Dive into the rich history and stories of Vielora, uncovering secrets and legends."
-              image="/images/Emerald_old.png"
+              title="Meet the characters"
+              text="Learn about its races, cultures, heroes, rulers, gods, and the characters whose choices shape its history."
+              image="/images/main-page/Emerald.png"
               imageAlt="Lore Image"
               variant="blue"
             />
 
             <InfoCard
               title="Explore the Lore"
-              text="Dive into the rich history and stories of Vielora, uncovering secrets and legends."
-              image="/images/Emerald_old.png"
+              text="Follow legends, historical events, personal chronicles, and ongoing tales from across the Isles of Vielora."
+              image="/images/Deyanira.png"
               imageAlt="Lore Image"
               variant="purple"
               reverse
@@ -106,7 +106,7 @@ export default function Home() {
               rel="noreferrer"
               className="mt-12 inline-flex w-full max-w-xs justify-center rounded-md border-2 border-[#fff48e] px-8 py-3 font-cinzel text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#fff48e] hover:text-[#111120] sm:w-auto"
             >
-              Join Our Server
+              coming soon
             </Link>
           </div>
         </div>

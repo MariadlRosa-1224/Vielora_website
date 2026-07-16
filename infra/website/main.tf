@@ -21,6 +21,7 @@ provider "aws" {
   region = var.aws_region
 }
 
+
 locals {
   origin_id = "s3-vielora-site"
 }

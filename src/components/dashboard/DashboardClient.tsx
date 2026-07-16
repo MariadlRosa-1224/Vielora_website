@@ -358,21 +358,21 @@ export default function DashboardClient({
               : "grid gap-8"
           }
         >
-          <GeneralContentContainer className="min-h-[70vh]">
+          <GeneralContentContainer className="min-h-[70vh] min-w-0">
             <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-white/50">
                   {role}
                 </p>
 
-                <h1 className="font-[Spectral_SC] text-3xl font-bold uppercase tracking-wide text-white md:text-4xl">
+                <h1 className="font-[Spectral_SC] text-!3xl font-bold uppercase tracking-wide text-white md:!text-4xl">
                   Dashboard
                 </h1>
               </div>
 
               <Link
                 href="/editor/new-entry"
-                className="w-fit rounded-md border border-[#fff48e] px-4 py-2 text-sm text-white transition-colors hover:bg-[#fff48e] hover:text-[#111120]"
+                className="w-full rounded-md border !border-[#fff48e] px-4 py-2 text-sm text-white transition-colors hover:!bg-[#fff48e] hover:!text-[#111120] sm:w-fit"
               >
                 Create entry
               </Link>
@@ -477,29 +477,31 @@ function DashboardTabs({
   canManageUsers: boolean;
 }) {
   return (
-    <div className="mb-8 flex flex-wrap gap-3">
-      <DashboardTabButton
-        active={activeDashboard === "entries"}
-        onClick={() => setActiveDashboard("entries")}
-      >
-        Entries
-      </DashboardTabButton>
-
-      <DashboardTabButton
-        active={activeDashboard === "drafts"}
-        onClick={() => setActiveDashboard("drafts")}
-      >
-        Local Drafts
-      </DashboardTabButton>
-
-      {canManageUsers && (
+    <div className="mb-8 -mx-1 overflow-x-auto pb-2">
+      <div className="flex min-w-max gap-2 px-1 sm:min-w-0 sm:flex-wrap sm:gap-3">
         <DashboardTabButton
-          active={activeDashboard === "users"}
-          onClick={() => setActiveDashboard("users")}
+          active={activeDashboard === "entries"}
+          onClick={() => setActiveDashboard("entries")}
         >
-          User Roles
+          Entries
         </DashboardTabButton>
-      )}
+
+        <DashboardTabButton
+          active={activeDashboard === "drafts"}
+          onClick={() => setActiveDashboard("drafts")}
+        >
+          Local Drafts
+        </DashboardTabButton>
+
+        {canManageUsers && (
+          <DashboardTabButton
+            active={activeDashboard === "users"}
+            onClick={() => setActiveDashboard("users")}
+          >
+            User Roles
+          </DashboardTabButton>
+        )}
+      </div>
     </div>
   );
 }
@@ -518,7 +520,7 @@ function DashboardTabButton({
       type="button"
       onClick={onClick}
       className={[
-        "rounded-md border px-4 py-2 text-sm uppercase tracking-wider transition-colors",
+        "shrink-0 rounded-md border px-4 py-2 text-xs uppercase tracking-wider transition-colors sm:text-sm",
         active
           ? "border-[#fff48e] bg-[#fff48e] text-[#111120]"
           : "border-white/40 text-white hover:border-[#fff48e]",
@@ -528,6 +530,7 @@ function DashboardTabButton({
     </button>
   );
 }
+
 
 function DashboardTable({
   entries,
@@ -553,49 +556,113 @@ function DashboardTable({
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-[780px] border-collapse text-left text-xs">
-        <thead>
-          <tr className="font-[Spectral_SC] uppercase tracking-wider text-white">
-            <TableHead>Title</TableHead>
-            <TableHead>Author</TableHead>
-            <TableHead>Type of Entry</TableHead>
-            <TableHead>Approval State</TableHead>
-            <TableHead>Creation Date</TableHead>
-            <TableHead>Last Edition</TableHead>
-            <TableHead>Actions</TableHead>
-          </tr>
-        </thead>
+    <>
+      <div className="space-y-4 lg:hidden">
+        {entries.map((entry) => {
+          const format = getEntryFormat(entry.entryType);
 
-        <tbody>
-          {entries.map((entry) => {
-            const format = getEntryFormat(entry.entryType);
+          return (
+            <article
+              key={entry.id}
+              className="rounded-md border border-white/20 bg-[#111120]/70 px-4 py-4"
+            >
+              <div className="flex flex-col gap-3">
+                <div className="min-w-0">
+                  <h3 className="break-words font-[Spectral_SC] text-lg font-bold uppercase tracking-wider text-white">
+                    {entry.title}
+                  </h3>
 
-            return (
-              <tr key={entry.id} className="border-t border-white/40">
-                <TableCell>{entry.title}</TableCell>
-                <TableCell>{entry.author}</TableCell>
-                <TableCell>{format.label}</TableCell>
-                <TableCell>
-                  <StatusBadge status={entry.status} />
-                </TableCell>
-                <TableCell>{entry.creationDate}</TableCell>
-                <TableCell>{entry.lastEdition}</TableCell>
-                <TableCell>
-                  <EntryActions
-                    entry={entry}
-                    role={role}
-                    onApprove={onApprove}
-                    onReject={onReject}
-                    onRequestEdit={onRequestEdit}
-                    onDelete={onDelete}
-                  />
-                </TableCell>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                  <p className="mt-1 text-sm text-white/60">
+                    {format.label}
+                  </p>
+                </div>
+
+                <StatusBadge status={entry.status} />
+              </div>
+
+              <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+                <MobileEntryMeta label="Author" value={entry.author} />
+                <MobileEntryMeta label="Created" value={entry.creationDate} />
+                <MobileEntryMeta label="Last edited" value={entry.lastEdition} />
+              </dl>
+
+              <div className="mt-4 border-t border-white/20 pt-4">
+                <EntryActions
+                  entry={entry}
+                  role={role}
+                  onApprove={onApprove}
+                  onReject={onReject}
+                  onRequestEdit={onRequestEdit}
+                  onDelete={onDelete}
+                />
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="hidden overflow-x-auto lg:block">
+        <table className="min-w-[780px] border-collapse text-left text-xs">
+          <thead>
+            <tr className="font-[Spectral_SC] uppercase tracking-wider text-white">
+              <TableHead>Title</TableHead>
+              <TableHead>Author</TableHead>
+              <TableHead>Type of Entry</TableHead>
+              <TableHead>Approval State</TableHead>
+              <TableHead>Creation Date</TableHead>
+              <TableHead>Last Edition</TableHead>
+              <TableHead>Actions</TableHead>
+            </tr>
+          </thead>
+
+          <tbody>
+            {entries.map((entry) => {
+              const format = getEntryFormat(entry.entryType);
+
+              return (
+                <tr key={entry.id} className="border-t border-white/40">
+                  <TableCell>{entry.title}</TableCell>
+                  <TableCell>{entry.author}</TableCell>
+                  <TableCell>{format.label}</TableCell>
+                  <TableCell>
+                    <StatusBadge status={entry.status} />
+                  </TableCell>
+                  <TableCell>{entry.creationDate}</TableCell>
+                  <TableCell>{entry.lastEdition}</TableCell>
+                  <TableCell>
+                    <EntryActions
+                      entry={entry}
+                      role={role}
+                      onApprove={onApprove}
+                      onReject={onReject}
+                      onRequestEdit={onRequestEdit}
+                      onDelete={onDelete}
+                    />
+                  </TableCell>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+function MobileEntryMeta({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-xs uppercase tracking-wider text-white/40">
+        {label}
+      </dt>
+
+      <dd className="mt-1 break-words text-white/80">{value}</dd>
     </div>
   );
 }
@@ -629,49 +696,36 @@ function EntryActions({
 
   if (canModerate) {
     return (
-      <div className="flex flex-wrap gap-1 text-[#fff48e]">
-        <Link href={`/dashboard/entries/${entry.id}`}>View</Link>
+      <div className="grid gap-2 sm:grid-cols-2 lg:flex lg:flex-wrap">
+        <ActionLink href={`/dashboard/entries/${entry.id}`}>View</ActionLink>
 
-        <span className="text-white/40">|</span>
-
-        <Link href={`/editor/edit/${entry.id}`}>Edit</Link>
+        <ActionLink href={`/editor/edit/${entry.id}`}>Edit</ActionLink>
 
         {isReviewable && (
           <>
-            <span className="text-white/40">|</span>
-
-            <button
-              type="button"
+            <ActionButton
+              tone="success"
               onClick={() => void onApprove(entry.id)}
-              className="text-green-300 hover:underline"
             >
               Approve
-            </button>
+            </ActionButton>
 
-            <span className="text-white/40">|</span>
-
-            <button
-              type="button"
+            <ActionButton
+              tone="danger"
               onClick={() => void onReject(entry.id)}
-              className="text-red-300 hover:underline"
             >
               Reject
-            </button>
+            </ActionButton>
           </>
         )}
 
         {isUnpublished && (
-          <>
-            <span className="text-white/40">|</span>
-
-            <button
-              type="button"
-              onClick={() => void onDelete(entry.id)}
-              className="text-red-400 hover:underline"
-            >
-              Delete
-            </button>
-          </>
+          <ActionButton
+            tone="danger"
+            onClick={() => void onDelete(entry.id)}
+          >
+            Delete
+          </ActionButton>
         )}
       </div>
     );
@@ -679,44 +733,80 @@ function EntryActions({
 
   if (entry.status === "Published" || entry.status === "Approved") {
     return (
-      <div className="flex flex-wrap gap-1 text-[#fff48e]">
-        <Link href={`/dashboard/entries/${entry.id}`}>View</Link>
+      <div className="grid gap-2 sm:grid-cols-2 lg:flex lg:flex-wrap">
+        <ActionLink href={`/dashboard/entries/${entry.id}`}>View</ActionLink>
 
-        <span className="text-white/40">|</span>
-
-        <button
-          type="button"
-          onClick={() => void onRequestEdit(entry.id)}
-          className="hover:underline"
-        >
+        <ActionButton onClick={() => void onRequestEdit(entry.id)}>
           Request Edit
-        </button>
+        </ActionButton>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-wrap gap-1 text-[#fff48e]">
-      <Link href={`/dashboard/entries/${entry.id}`}>View</Link>
+    <div className="grid gap-2 sm:grid-cols-2 lg:flex lg:flex-wrap">
+      <ActionLink href={`/dashboard/entries/${entry.id}`}>View</ActionLink>
 
       {isUnpublished && (
         <>
-          <span className="text-white/40">|</span>
+          <ActionLink href={`/editor/edit/${entry.id}`}>Edit</ActionLink>
 
-          <Link href={`/editor/edit/${entry.id}`}>Edit</Link>
-
-          <span className="text-white/40">|</span>
-
-          <button
-            type="button"
+          <ActionButton
+            tone="danger"
             onClick={() => void onDelete(entry.id)}
-            className="text-red-400 hover:underline"
           >
             Delete
-          </button>
+          </ActionButton>
         </>
       )}
     </div>
+  );
+}
+
+function ActionLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="rounded-md border border-white/30 px-3 py-2 text-center text-xs text-[#fff48e] transition-colors hover:border-[#fff48e] hover:bg-[#fff48e] hover:text-[#111120]"
+    >
+      {children}
+    </Link>
+  );
+}
+
+function ActionButton({
+  children,
+  onClick,
+  tone = "default",
+}: {
+  children: ReactNode;
+  onClick: () => void;
+  tone?: "default" | "success" | "danger";
+}) {
+  const toneClass =
+    tone === "success"
+      ? "border-green-300/50 text-green-300 hover:bg-green-300 hover:text-[#111120]"
+      : tone === "danger"
+        ? "border-red-300/50 text-red-300 hover:bg-red-300 hover:text-[#111120]"
+        : "border-white/30 text-[#fff48e] hover:border-[#fff48e] hover:bg-[#fff48e] hover:text-[#111120]";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={[
+        "rounded-md border px-3 py-2 text-center text-xs transition-colors",
+        toneClass,
+      ].join(" ")}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -742,42 +832,33 @@ function LocalDraftList({
 
         return (
           <article
-            key={draft.id}
-            className="flex flex-col gap-3 rounded-md border border-[#fff48e] bg-[#111120]/60 px-4 py-3 text-xs md:flex-row md:items-center md:justify-between"
-          >
-            <div className="min-w-0">
-              <h3 className="font-[Spectral_SC] uppercase tracking-wider text-white">
-                {draft.title}
-              </h3>
+  key={draft.id}
+  className="flex flex-col gap-4 rounded-md border border-[#fff48e] bg-[#111120]/60 px-4 py-4 text-xs md:flex-row md:items-center md:justify-between"
+>
+  <div className="min-w-0">
+    <h3 className="break-words font-[Spectral_SC] uppercase tracking-wider text-white">
+      {draft.title}
+    </h3>
 
-              <p className="mt-1 text-white/70">{format.label}</p>
+    <p className="mt-1 text-white/70">{format.label}</p>
 
-              <p className="mt-1 text-white/40">
-                Updated: {formatLocalDate(draft.updatedAt)}
-              </p>
-            </div>
+    <p className="mt-1 text-white/40">
+      Updated: {formatLocalDate(draft.updatedAt)}
+    </p>
+  </div>
 
-            <div className="flex flex-wrap gap-2">
-              <Link
-                href={`/editor/new-entry?draftId=${encodeURIComponent(
-                  draft.id,
-                )}`}
-                className="text-[#fff48e] hover:underline"
-              >
-                Edit
-              </Link>
+  <div className="grid gap-2 sm:grid-cols-2 md:flex md:flex-wrap">
+    <ActionLink
+      href={`/editor/new-entry?draftId=${encodeURIComponent(draft.id)}`}
+    >
+      Edit
+    </ActionLink>
 
-              <span className="text-white/40">|</span>
-
-              <button
-                type="button"
-                onClick={() => onDelete(draft.id)}
-                className="text-red-400 hover:underline"
-              >
-                Delete
-              </button>
-            </div>
-          </article>
+    <ActionButton tone="danger" onClick={() => onDelete(draft.id)}>
+      Delete
+    </ActionButton>
+  </div>
+</article>
         );
       })}
     </div>
@@ -863,12 +944,12 @@ function UserRoleDashboard({
                   )}
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="grid gap-2 sm:grid-cols-2 md:flex md:flex-wrap">
                   <button
                     type="button"
                     disabled={isAdminUser || user.role === "user"}
                     onClick={() => onRoleChange(userId, "user")}
-                    className="rounded-md border border-white/40 px-3 py-2 text-xs text-white transition-colors hover:border-[#fff48e] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="w-full rounded-md border border-white/40 px-3 py-2 text-xs text-white transition-colors hover:border-[#fff48e] disabled:cursor-not-allowed disabled:opacity-40 md:w-auto"
                   >
                     Make User
                   </button>
@@ -877,7 +958,7 @@ function UserRoleDashboard({
                     type="button"
                     disabled={isAdminUser || user.role === "moderator"}
                     onClick={() => onRoleChange(userId, "moderator")}
-                    className="rounded-md border border-[#fff48e] px-3 py-2 text-xs text-white transition-colors hover:bg-[#fff48e] hover:text-[#111120] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="w-full rounded-md border border-[#fff48e] px-3 py-2 text-xs text-white transition-colors hover:bg-[#fff48e] hover:text-[#111120] disabled:cursor-not-allowed disabled:opacity-40 md:w-auto"
                   >
                     Make Moderator
                   </button>
@@ -909,8 +990,8 @@ function TableHead({ children }: { children: ReactNode }) {
 
 function TableCell({ children }: { children: ReactNode }) {
   return (
-    <td className="border-r border-white/30 px-3 py-3 font-bold text-white last:border-r-0">
-      {children}
+    <td className="max-w-[220px] border-r border-white/30 px-3 py-3 font-bold text-white last:border-r-0">
+      <div className="break-words">{children}</div>
     </td>
   );
 }

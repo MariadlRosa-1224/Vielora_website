@@ -5,103 +5,24 @@ import Link from "next/link";
 import HorizontalColorButton from "@/components/linkButtons/HorizontalColorButton";
 import GeneralContainerNoBorder from "@/components/containers/GeneralContainerNoBorder";
 import type { VieloraHorizontalGradient } from "@/theme/colors";
+import { raceOrigins } from "@/lib/race-origins";
 
-type RaceCard = {
-  name: string;
-  slug: string;
-  href: string;
-  image: string;
-  description: string;
-  gradient: VieloraHorizontalGradient;
-  icon: string;
-};
+
 
 const defaultRace = {
-  name: "(Hover Category)",
+  name: "(Select category)",
   href: "/races",
-  image: "/images/races/place-holder-races.png",
+  backgroundImage: "/images/races/place-holder-races.png",
   description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut hendrerit ligula, in maximus est. Sed et sem sem. Nunc ultricies lorem ut sapien iaculis facilisis. Ut nulla magna, luctus eu lacinia et, ullamcorper sed nulla. Etiam et mattis sem.",
+    "Hover over a category to learn more about it. Click to see the full details of the race",
 };
 
-const races: RaceCard[] = [
-  {
-    name: "Graveborns",
-    slug: "graveborns",
-    href: "/races/graveborns",
-    image: "/images/races/place-holder-races.png",
-    gradient: "violetHorizontal",
-    icon: "/images/icons/races/graveborns.png",
-    description:
-      "Graveborns are beings marked by death, memory, and lingering souls. Their cultures are often tied to burial rites, ancestral magic, and the border between life and the afterlife.",
-  },
-  {
-    name: "Nyxkins",
-    slug: "nyxkins",
-    href: "/races/nyxkins",
-    image: "/images/races/place-holder-races.png",
-    gradient: "royalBlueHorizontal",
-    icon: "/images/icons/races/nyxkins.png",
-    description:
-      "Nyxkins are children of shadow and night. They are commonly associated with dreams, secrecy, lunar magic, and places where darkness is not emptiness but shelter.",
-  },
-  {
-    name: "Remnants",
-    slug: "remnants",
-    href: "/races/remnants",
-    image: "/images/races/place-holder-races.png",
-    gradient: "skyBlueHorizontal",
-    icon: "/images/icons/races/remnants.png",
-    description:
-      "Remnants are fragmented beings that continue existing after ruin. Some are physical remnants, others are spiritual echoes, but all carry traces of something that should have ended.",
-  },
-  {
-    name: "Wilders",
-    slug: "wilders",
-    href: "/races/wilders",
-    image: "/images/races/place-holder-races.png",
-    gradient: "aquaHorizontal",
-    icon: "/images/icons/races/wilders.png",
-    description:
-      "Wilders are deeply connected to nature, beasts, growth, and instinct. They often live close to forests, rivers, mountains, and territories where civilization bends to the living world.",
-  },
-  {
-    name: "Ethereals",
-    slug: "ethereals",
-    href: "/races/ethereals",
-    image: "/images/races/place-holder-races.png",
-    gradient: "parchmentHorizontal",
-    icon: "/images/icons/races/ethereals.png",
-    description:
-      "Ethereals are beings touched by the immaterial. Their bodies, cultures, and abilities often blur the line between spirit, light, thought, and physical existence.",
-  },
-  {
-    name: "Interwined",
-    slug: "interwined",
-    href: "/races/interwined",
-    image: "/images/races/place-holder-races.png",
-    gradient: "coralHorizontal",
-    icon: "/images/icons/races/interwined.png",
-    description:
-      "Intertwined are defined by bonds, dualities, shared essence, or fused origins. Their existence often depends on connection, balance, and the merging of separate forces.",
-  },
-  {
-    name: "Dyphorians",
-    slug: "dyphorians",
-    href: "/races/dyphorians",
-    image: "/images/races/place-holder-races.png",
-    gradient: "roseHorizontal",
-    icon: "/images/icons/races/dyphorians.png",
-    description:
-      "Dyphorians are intense, volatile, and powerful beings often associated with destructive magic, desire, conflict, and ancient forces that resist simple moral classification.",
-  },
-];
 
 export default function RacesPage() {
   const [hoveredRaceSlug, setHoveredRaceSlug] = useState<string | null>(null);
 
   const selectedRace = useMemo(() => {
-    return races.find((race) => race.slug === hoveredRaceSlug) ?? defaultRace;
+    return raceOrigins.find((race) => race.slug === hoveredRaceSlug) ?? defaultRace;
   }, [hoveredRaceSlug]);
 
   const buttonLabel =
@@ -115,7 +36,7 @@ export default function RacesPage() {
           <div
             className="absolute  inset-x-0 top-16 min-h-screen bg-cover bg-center bg-no-repeat transition-[background-image] duration-300"
             style={{
-              backgroundImage: `url('${selectedRace.image}')`,
+              backgroundImage: `url('${selectedRace.backgroundImage}')`,
             }}
           />
 
@@ -152,7 +73,7 @@ export default function RacesPage() {
                 */
               }}
             >
-              {races.map((race) => (
+              {raceOrigins.map((race) => (
                 <div
                   key={race.slug}
                   onMouseEnter={() => setHoveredRaceSlug(race.slug)}

@@ -56,7 +56,7 @@ export default function Header() {
           href="https://discord.gg/example"
           className="hidden rounded-md border border-[#FFF48E] px-8 py-2 text-sm font-medium text-white transition-colors hover:bg-[#FFF48E] hover:text-[#111120] lg:inline-flex"
         >
-          Join the server
+          coming soon
         </Link>
 
         <button
@@ -101,7 +101,7 @@ export default function Header() {
             href="https://discord.gg/example"
             className="mt-6 inline-flex w-full justify-center rounded-md border border-[#FFF48E] px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-[#FFF48E] hover:text-[#111120]"
           >
-            Join the server
+            Coming soon
           </Link>
         </div>
       )}

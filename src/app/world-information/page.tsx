@@ -19,10 +19,7 @@ export default function WorldInformationPage() {
 
             <div className="relative mt-8 flex w-full max-w-3xl justify-center">
               <p className="text-center font-cinzel text-xs leading-7 tracking-[0.16em] text-white sm:text-sm md:text-base md:tracking-[0.18em]">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ut
-                hendrerit ligula, in maximus est. Sed et sem sem. Nunc
-                ultricies lorem at sapien iaculis facilisis. Ut nulla magna,
-                luctus eu lacinia et, ullamcorper sed nulla.
+                From mechanics to history, this section provides a comprehensive overview of the world of Vielora, its rules, and its lore.
               </p>
             </div>
           </div>

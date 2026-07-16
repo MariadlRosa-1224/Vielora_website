@@ -279,6 +279,14 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
           publicPath: image.publicPath,
         })),
       ),
+      galleryImages: await Promise.all(
+  galleryImages.map(async (image) => ({
+    fileName: sanitizeFileName(image.file.name),
+    base64: await fileToBase64(image.file),
+    mimeType: image.file.type,
+    publicPath: image.publicPath,
+  })),
+),
     };
 
     const response = await fetch("/api/entries", {
