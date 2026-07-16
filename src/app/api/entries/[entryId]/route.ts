@@ -17,7 +17,6 @@ import {
   getEntryFormat,
   type EntryFieldValue,
 } from "@/lib/new-entry-format";
-import type { EntryRecord } from "@/lib/entries-types";
 import {
   buildPendingAssetKey,
   deletePendingAsset,

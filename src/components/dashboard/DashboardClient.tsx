@@ -8,6 +8,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import Link from "next/link";
@@ -39,6 +40,67 @@ type DashboardClientProps = {
   pageLabel: string;
 };
 
+const EMPTY_LOCAL_DRAFTS: LocalEntryDraft[] = [];
+
+/*
+ * useSyncExternalStore necesita que getSnapshot conserve la misma referencia
+ * mientras el contenido del store no haya cambiado.
+ */
+let localDraftRevision = 0;
+let cachedLocalDraftRevision = -1;
+let cachedLocalDrafts: LocalEntryDraft[] = EMPTY_LOCAL_DRAFTS;
+
+/**
+ * Suscribe React a los cambios del almacenamiento local.
+ *
+ * - "storage" detecta cambios hechos desde otra pestaña.
+ * - "vielora-local-drafts-updated" detecta cambios hechos en esta pestaña.
+ */
+function subscribeToLocalDrafts(onStoreChange: () => void) {
+  const handleChange = () => {
+    localDraftRevision += 1;
+    onStoreChange();
+  };
+
+  window.addEventListener("storage", handleChange);
+  window.addEventListener("vielora-local-drafts-updated", handleChange);
+
+  return () => {
+    window.removeEventListener("storage", handleChange);
+    window.removeEventListener(
+      "vielora-local-drafts-updated",
+      handleChange,
+    );
+  };
+}
+
+/**
+ * Lee los borradores únicamente cuando el store ha notificado un cambio.
+ * Mientras no cambien, devuelve exactamente el mismo array.
+ */
+function getLocalDraftsSnapshot() {
+  if (cachedLocalDraftRevision !== localDraftRevision) {
+    cachedLocalDrafts = getLocalEntryDrafts();
+    cachedLocalDraftRevision = localDraftRevision;
+  }
+
+  return cachedLocalDrafts;
+}
+
+/**
+ * Durante el render del servidor no existe localStorage.
+ * Por eso el snapshot inicial es una lista vacía estable.
+ */
+function getServerLocalDraftsSnapshot() {
+  return EMPTY_LOCAL_DRAFTS;
+}
+
+
+
+
+
+
+
 export default function DashboardClient({
   role,
   currentUserId,
@@ -55,14 +117,20 @@ export default function DashboardClient({
     fieldFilters: {},
   });
 
-  const [localDrafts, setLocalDrafts] = useState<LocalEntryDraft[]>([]);
+  const localDrafts = useSyncExternalStore(
+  subscribeToLocalDrafts,
+  getLocalDraftsSnapshot,
+  getServerLocalDraftsSnapshot,
+);
 
   const [remoteEntries, setRemoteEntries] = useState<DashboardEntry[]>([]);
   const [isLoadingEntries, setIsLoadingEntries] = useState(false);
   const [entriesError, setEntriesError] = useState<string | null>(null);
 
   const [managedUsers, setManagedUsers] = useState<ManagedUser[]>([]);
-  const [isLoadingManagedUsers, setIsLoadingManagedUsers] = useState(false);
+  const [isLoadingManagedUsers, setIsLoadingManagedUsers] = useState(
+  role === "admin",
+);
   const [managedUsersError, setManagedUsersError] = useState<string | null>(
     null,
   );
@@ -72,76 +140,185 @@ export default function DashboardClient({
   const canManageUsers = role === "admin";
   const showEntryFilters = activeDashboard !== "users";
 
-  const loadManagedUsers = useCallback(async () => {
-    if (!canManageUsers) {
-      setManagedUsers([]);
-      return;
-    }
 
-    setIsLoadingManagedUsers(true);
-    setManagedUsersError(null);
+//Managed users
 
+  type ManagedUsersApiResponse = {
+  error?: string;
+  users?: ManagedUser[];
+};
+
+const fetchManagedUsers = useCallback(async () => {
+  const response = await fetch("/api/admin/users", {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  const result = (await response.json().catch(() => ({}))) as
+    ManagedUsersApiResponse;
+
+  if (!response.ok) {
+    throw new Error(result.error ?? "Could not load users.");
+  }
+
+  return Array.isArray(result.users) ? result.users : [];
+}, []);
+
+
+/**
+ * Recarga manual para el botón Refresh y después de cambiar un rol.
+ */
+const loadManagedUsers = useCallback(async () => {
+  if (!canManageUsers) {
+    return;
+  }
+
+  setIsLoadingManagedUsers(true);
+  setManagedUsersError(null);
+
+  try {
+    const users = await fetchManagedUsers();
+    setManagedUsers(users);
+  } catch (error) {
+    setManagedUsersError(
+      error instanceof Error
+        ? error.message
+        : "Could not load users.",
+    );
+  } finally {
+    setIsLoadingManagedUsers(false);
+  }
+}, [canManageUsers, fetchManagedUsers]);
+
+
+
+
+
+
+  type EntriesApiResponse = {
+  error?: string;
+  entries?: EntryRecord[];
+};
+
+const fetchRemoteEntries = useCallback(async () => {
+  const response = await fetch("/api/entries", {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  const result = (await response.json().catch(() => ({}))) as
+    EntriesApiResponse;
+
+  if (!response.ok) {
+    throw new Error(result.error ?? "Could not load entries.");
+  }
+
+  return Array.isArray(result.entries)
+    ? result.entries.map(toDashboardEntry)
+    : [];
+}, []);
+
+
+
+/**
+ * Se usa desde acciones del usuario, por ejemplo el botón Refresh.
+ *
+ * Actualizar loading inmediatamente aquí es válido porque esta función
+ * se ejecuta desde un evento, no desde el efecto inicial.
+ */
+const loadRemoteEntries = useCallback(async () => {
+  setIsLoadingEntries(true);
+  setEntriesError(null);
+
+  try {
+    const entries = await fetchRemoteEntries();
+    setRemoteEntries(entries);
+  } catch (error) {
+    setEntriesError(
+      error instanceof Error
+        ? error.message
+        : "Could not load entries.",
+    );
+  } finally {
+    setIsLoadingEntries(false);
+  }
+}, [fetchRemoteEntries]);
+
+
+
+useEffect(() => {
+  let cancelled = false;
+
+  async function loadInitialEntries() {
     try {
-      const response = await fetch("/api/admin/users", {
-        method: "GET",
-        cache: "no-store",
-      });
+      /*
+       * El primer setState sucede después del await.
+       * Ya no hay una actualización síncrona durante el efecto.
+       */
+      const entries = await fetchRemoteEntries();
 
-      const result = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(result.error ?? "Could not load users.");
-      }
-
-      setManagedUsers(result.users ?? []);
-    } catch (error) {
-      setManagedUsersError(
-        error instanceof Error ? error.message : "Could not load users.",
-      );
-    } finally {
-      setIsLoadingManagedUsers(false);
-    }
-  }, [canManageUsers]);
-
-  const loadRemoteEntries = useCallback(async () => {
-    setIsLoadingEntries(true);
-    setEntriesError(null);
-
-    try {
-      const response = await fetch("/api/entries", {
-        method: "GET",
-        cache: "no-store",
-      });
-
-      const result = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(result.error ?? "Could not load entries.");
-      }
-
-      const entries = Array.isArray(result.entries)
-        ? result.entries.map((entry: EntryRecord) => toDashboardEntry(entry))
-        : [];
+      if (cancelled) return;
 
       setRemoteEntries(entries);
+      setEntriesError(null);
     } catch (error) {
+      if (cancelled) return;
+
       setEntriesError(
-        error instanceof Error ? error.message : "Could not load entries.",
+        error instanceof Error
+          ? error.message
+          : "Could not load entries.",
       );
     } finally {
-      setIsLoadingEntries(false);
+      if (!cancelled) {
+        setIsLoadingEntries(false);
+      }
     }
-  }, []);
+  }
+
+  void loadInitialEntries();
+
+  return () => {
+    cancelled = true;
+  };
+}, [fetchRemoteEntries]);
 
   useEffect(() => {
-    void loadRemoteEntries();
-  }, [loadRemoteEntries]);
+  if (!canManageUsers) {
+    return;
+  }
 
-  useEffect(() => {
-    if (!canManageUsers) return;
+  let cancelled = false;
 
-    void loadManagedUsers();
-  }, [canManageUsers, loadManagedUsers]);
+  async function loadInitialManagedUsers() {
+    try {
+      const users = await fetchManagedUsers();
+
+      if (cancelled) return;
+
+      setManagedUsers(users);
+      setManagedUsersError(null);
+    } catch (error) {
+      if (cancelled) return;
+
+      setManagedUsersError(
+        error instanceof Error
+          ? error.message
+          : "Could not load users.",
+      );
+    } finally {
+      if (!cancelled) {
+        setIsLoadingManagedUsers(false);
+      }
+    }
+  }
+
+  void loadInitialManagedUsers();
+
+  return () => {
+    cancelled = true;
+  };
+}, [canManageUsers, fetchManagedUsers]);
 
   const visibleRemoteEntries = useMemo(() => {
     return remoteEntries.filter((entry) => matchesFilters(entry, filters));
@@ -163,42 +340,21 @@ export default function DashboardClient({
     ]);
   }, [filters, remoteEntries, localDrafts]);
 
-  function reloadLocalDrafts() {
-    setLocalDrafts(getLocalEntryDrafts());
-  }
+  
 
-  useEffect(() => {
-    reloadLocalDrafts();
+function handleDeleteLocalDraft(draftId: string) {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this local draft?",
+  );
 
-    function handleDraftsUpdated() {
-      reloadLocalDrafts();
-    }
+  if (!confirmed) return;
 
-    window.addEventListener("storage", handleDraftsUpdated);
-    window.addEventListener(
-      "vielora-local-drafts-updated",
-      handleDraftsUpdated,
-    );
-
-    return () => {
-      window.removeEventListener("storage", handleDraftsUpdated);
-      window.removeEventListener(
-        "vielora-local-drafts-updated",
-        handleDraftsUpdated,
-      );
-    };
-  }, []);
-
-  function handleDeleteLocalDraft(draftId: string) {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this local draft?",
-    );
-
-    if (!confirmed) return;
-
-    deleteLocalEntryDraft(draftId);
-    reloadLocalDrafts();
-  }
+  /*
+   * deleteLocalEntryDraft ya emite vielora-local-drafts-updated.
+   * useSyncExternalStore recibirá el evento y actualizará el dashboard.
+   */
+  deleteLocalEntryDraft(draftId);
+}
 
   async function updateManagedUserRole(
     userId: string,

@@ -36,108 +36,125 @@ const DEFAULT_FORMAT = getEntryFormat(DEFAULT_ENTRY_TYPE);
 
 export default function NewEntryForm() {
   const markdownRef = useRef<HTMLTextAreaElement | null>(null);
+  const searchParams = useSearchParams();
+  const draftIdFromUrl = searchParams.get("draftId");
 
+  /*
+   * Todos los estados se declaran antes de cualquier efecto.
+   * Esto evita referencias confusas a setters declarados más abajo.
+   */
+  const [entryType, setEntryType] =
+    useState<NewEntryType>(DEFAULT_ENTRY_TYPE);
 
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [imageAlt, setImageAlt] = useState("");
 
+  const [mainImage, setMainImage] = useState<File | null>(null);
+  const [markdownImages, setMarkdownImages] = useState<PendingImage[]>([]);
+  const [galleryImages, setGalleryImages] = useState<PendingImage[]>([]);
 
+  const [markdown, setMarkdown] = useState("");
 
-const [entryType, setEntryType] =
-  useState<NewEntryType>(DEFAULT_ENTRY_TYPE);
+  const [fields, setFields] = useState<
+    Record<string, EntryFieldValue>
+  >(() => getInitialFieldValues(DEFAULT_FORMAT));
 
-const selectedFormat = useMemo(() => {
-  return getEntryFormat(entryType);
-}, [entryType]);
-
-const [title, setTitle] = useState("");
-const [author, setAuthor] = useState("");
-const [imageAlt, setImageAlt] = useState("");
-const [mainImage, setMainImage] = useState<File | null>(null);
-const [markdownImages, setMarkdownImages] = useState<PendingImage[]>([]);
-const [markdown, setMarkdown] = useState("");
-const [galleryImages, setGalleryImages] = useState<PendingImage[]>([]);
-
-const [fields, setFields] = useState<Record<string, EntryFieldValue>>(() =>
-  getInitialFieldValues(DEFAULT_FORMAT),
-);
-
-
-//draft state
-const searchParams = useSearchParams();
-const draftIdFromUrl = searchParams.get("draftId");
-
-const [localDraftId, setLocalDraftId] = useState<string | null>(null);
-
-// setup form state from local draft if draftId is present in URL
-useEffect(() => {
-  if (!draftIdFromUrl) return;
-
-  const draft = getLocalEntryDraftById(draftIdFromUrl);
-
-  if (!draft) {
-    setSubmitMessage("Local draft not found.");
-    return;
-  }
-
-  const draftFormat = getEntryFormat(draft.entryType);
-
-  setEntryType(draft.entryType);
-  setTitle(draft.title);
-  setAuthor(draft.author ?? "");
-  setImageAlt(draft.imageAlt ?? "");
-  setFields({
-    ...getInitialFieldValues(draftFormat),
-    ...draft.fields,
-  });
-  setMarkdown(draft.markdown ?? "");
-  setMainImage(null);
-  setMarkdownImages([]);
-  setLocalDraftId(draft.id);
-
-  setSubmitMessage(
-    "Local draft loaded. Remember to select the main image again before submitting.",
-  );
-}, [draftIdFromUrl]);
-
-//save in local draft when form state changes
-
-function handleSaveLocalDraft() {
-  const trimmedTitle = title.trim();
-  const safeTitle = trimmedTitle.length > 0 ? trimmedTitle : "Untitled Entry";
-
-  const draft = saveLocalEntryDraft({
-    id: localDraftId ?? crypto.randomUUID(),
-    entryType,
-    title: safeTitle,
-    slug: slugify(safeTitle),
-    author: selectedFormat.requiresAuthor ? author.trim() : undefined,
-    imageAlt: imageAlt.trim(),
-    fields,
-    markdown,
-  });
-
-  setLocalDraftId(draft.id);
-  setSubmitMessage("Local draft saved in this browser.");
-}
-
-
-
-
-
-
-// submit state
+  const [localDraftId, setLocalDraftId] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
-const slug = slugify(title || "new-entry");
+  const selectedFormat = useMemo(() => {
+    return getEntryFormat(entryType);
+  }, [entryType]);
 
-const baseImageFolder = useMemo(() => {
-  return getEntryImageFolder({
-    entryType,
-    slug,
-    fields,
-  });
-}, [entryType, slug, fields]);
+  const slug = slugify(title || "new-entry");
+
+  const baseImageFolder = useMemo(() => {
+    return getEntryImageFolder({
+      entryType,
+      slug,
+      fields,
+    });
+  }, [entryType, slug, fields]);
+
+  /*
+   * El borrador está guardado en localStorage.
+   * localStorage es una fuente externa disponible únicamente en el navegador,
+   * por lo que el borrador debe cargarse después de montar el componente.
+   *
+   * La excepción se limita exclusivamente a este efecto.
+   */
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (!draftIdFromUrl) {
+      return;
+    }
+
+    const draft = getLocalEntryDraftById(draftIdFromUrl);
+
+    if (!draft) {
+      setSubmitMessage("Local draft not found.");
+      return;
+    }
+
+    const draftFormat = getEntryFormat(draft.entryType);
+
+    setEntryType(draft.entryType);
+    setTitle(draft.title);
+    setAuthor(draft.author ?? "");
+    setImageAlt(draft.imageAlt ?? "");
+
+    setFields({
+      ...getInitialFieldValues(draftFormat),
+      ...draft.fields,
+    });
+
+    setMarkdown(draft.markdown ?? "");
+
+    /*
+     * File no puede guardarse en localStorage.
+     * Por eso el usuario debe volver a seleccionar las imágenes.
+     */
+    setMainImage(null);
+    setMarkdownImages([]);
+    setGalleryImages([]);
+
+    setLocalDraftId(draft.id);
+
+    setSubmitMessage(
+      "Local draft loaded. Remember to select the images again before submitting.",
+    );
+  }, [draftIdFromUrl]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  function handleSaveLocalDraft() {
+    const trimmedTitle = title.trim();
+    const safeTitle =
+      trimmedTitle.length > 0 ? trimmedTitle : "Untitled Entry";
+
+    const draft = saveLocalEntryDraft({
+      id: localDraftId ?? crypto.randomUUID(),
+      entryType,
+      title: safeTitle,
+      slug: slugify(safeTitle),
+      author: selectedFormat.requiresAuthor
+        ? author.trim()
+        : undefined,
+      imageAlt: imageAlt.trim(),
+      fields,
+      markdown,
+    });
+
+    setLocalDraftId(draft.id);
+    setSubmitMessage("Local draft saved in this browser.");
+  }
+
+
+
+
+
 
   const mainImagePath = mainImage
     ? `${baseImageFolder}/${sanitizeFileName(mainImage.name)}`
@@ -227,7 +244,7 @@ function handleRemoveGalleryImage(publicPath: string) {
   setGalleryImages([]);
   setMarkdown("");
   setImageAlt("");
-  setSubmitMessage(null);
+
   setLocalDraftId(null);
   setSubmitMessage(null);
 };
@@ -244,50 +261,69 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
   setIsSubmitting(true);
   setSubmitMessage(null);
 
+  //Payload si hay gallery
+  const galleryImagePayload = selectedFormat.usesGalleryImages
+  ? await Promise.all(
+      galleryImages.map(async (image) => ({
+        fileName: sanitizeFileName(image.file.name),
+        base64: await fileToBase64(image.file),
+        mimeType: image.file.type,
+        publicPath: image.publicPath,
+      })),
+    )
+  : undefined;
+
+
+
   try {
-    const payload = {
-      entryType,
-      title: title.trim(),
-      slug,
-      author: selectedFormat.requiresAuthor ? author.trim() : undefined,
-      imageAlt: imageAlt.trim() || title.trim(),
-      contentFolder: getEntryContentFolder({
-        entryType,
-        fields,
-      }),
-      imageFolder: getEntryImageFolder({
-        entryType,
-        slug,
-        fields,
-      }),
-      fixedFields: getEntryFixedFields(entryType),
-      fields,
-      markdown,
-      mainImage: mainImage
-        ? {
-            fileName: sanitizeFileName(mainImage.name),
-            base64: await fileToBase64(mainImage),
-            mimeType: mainImage.type,
-            publicPath: mainImagePath,
-          }
-        : null,
-      markdownImages: await Promise.all(
-        markdownImages.map(async (image) => ({
-          fileName: sanitizeFileName(image.file.name),
-          base64: await fileToBase64(image.file),
-          mimeType: image.file.type,
-          publicPath: image.publicPath,
-        })),
-      ),
-      galleryImages: await Promise.all(
-  galleryImages.map(async (image) => ({
-    fileName: sanitizeFileName(image.file.name),
-    base64: await fileToBase64(image.file),
-    mimeType: image.file.type,
-    publicPath: image.publicPath,
-  })),
-),
-    };
+const payload = {
+  entryType,
+  title: title.trim(),
+  slug,
+  author: selectedFormat.requiresAuthor
+    ? author.trim()
+    : undefined,
+  imageAlt: imageAlt.trim() || title.trim(),
+
+  contentFolder: getEntryContentFolder({
+    entryType,
+    fields,
+  }),
+
+  imageFolder: getEntryImageFolder({
+    entryType,
+    slug,
+    fields,
+  }),
+
+  fixedFields: getEntryFixedFields(entryType),
+  fields,
+  markdown,
+
+  mainImage: mainImage
+    ? {
+        fileName: sanitizeFileName(mainImage.name),
+        base64: await fileToBase64(mainImage),
+        mimeType: mainImage.type,
+        publicPath: mainImagePath,
+      }
+    : null,
+
+  markdownImages: await Promise.all(
+    markdownImages.map(async (image) => ({
+      fileName: sanitizeFileName(image.file.name),
+      base64: await fileToBase64(image.file),
+      mimeType: image.file.type,
+      publicPath: image.publicPath,
+    })),
+  ),
+
+  ...(galleryImagePayload !== undefined
+    ? {
+        galleryImages: galleryImagePayload,
+      }
+    : {}),
+};
 
     const response = await fetch("/api/entries", {
       method: "POST",
@@ -937,32 +973,7 @@ function fileToBase64(file: File): Promise<string> {
   });
 }
 
-function SubmitSection({
-  isSubmitting,
-  submitMessage,
-}: {
-  isSubmitting: boolean;
-  submitMessage: string | null;
-}) {
-  return (
-    <div className="mt-8 flex flex-col items-center">
-      
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full max-w-md rounded-md border-2 border-[#fff48e] px-8 py-3 font-[Spectral_SC] text-lg uppercase tracking-wider transition hover:bg-[#fff48e] hover:text-[#111120] disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {isSubmitting ? "Submitting..." : "Submit"}
-      </button>
 
-      {submitMessage && (
-        <p className="mt-4 text-center text-sm text-[#fff48e]">
-          {submitMessage}
-        </p>
-      )}
-    </div>
-  );
-}
 
 function getDynamicFieldClassName(field: EntryFieldConfig) {
   if (

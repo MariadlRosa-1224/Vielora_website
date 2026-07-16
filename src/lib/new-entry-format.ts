@@ -590,9 +590,10 @@ export const newEntryFormats: EntryFormatConfig[] = [
     {
       name: "origin",
       label: "Origin",
-      kind: "text",
+      kind: "select",
       required: true,
       defaultValue: "Unknown",
+      options: racesOriginsList
     },
     {
       name: "size",

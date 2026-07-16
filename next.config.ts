@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
     implementation: 'sass-embedded',
     },
 
+    output: "standalone",
+
      images: {
     unoptimized: true,
   },

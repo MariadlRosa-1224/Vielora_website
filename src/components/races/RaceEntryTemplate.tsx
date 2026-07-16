@@ -4,7 +4,7 @@
 
 import { RaceWeakness } from "@/lib/races";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import {  useMemo, useState } from "react";
 
 export type RaceGalleryImage = {
   src: string;
@@ -33,28 +33,29 @@ type RaceEntryTemplateProps = {
 
 export default function RaceEntryTemplate({ entry }: RaceEntryTemplateProps) {
   const images = useMemo<RaceGalleryImage[]>(() => {
-    const mainImage: RaceGalleryImage = {
-      src: entry.image,
-      alt: entry.imageAlt,
-      label: "Main portrait",
-    };
+  const mainImage: RaceGalleryImage = {
+    src: entry.image,
+    alt: entry.imageAlt,
+    label: "Main portrait",
+  };
 
-    const extraImages = entry.galleryImages ?? [];
+  const extraImages = entry.galleryImages ?? [];
 
-    const alreadyIncluded = extraImages.some(
-      (image) => image.src === entry.image,
-    );
-
-    return alreadyIncluded ? extraImages : [mainImage, ...extraImages];
-  }, [entry.image, entry.imageAlt, entry.galleryImages]);
-
-  const [selectedImage, setSelectedImage] = useState<RaceGalleryImage>(
-    images[0],
+  const alreadyIncluded = extraImages.some(
+    (image) => image.src === entry.image,
   );
 
-  useEffect(() => {
-    setSelectedImage(images[0]);
-  }, [images]);
+  return alreadyIncluded ? extraImages : [mainImage, ...extraImages];
+}, [entry.image, entry.imageAlt, entry.galleryImages]);
+
+// Solo guardamos la ruta de la imagen elegida.
+const [selectedImageSrc, setSelectedImageSrc] = useState(
+  () => entry.image,
+);
+
+// Si la imagen seleccionada ya no existe, se utiliza la primera disponible.
+const selectedImage =
+  images.find((image) => image.src === selectedImageSrc) ?? images[0];
 
   return (
     <div>
@@ -107,7 +108,7 @@ export default function RaceEntryTemplate({ entry }: RaceEntryTemplateProps) {
           <RaceThumbnailGallery
             images={images}
             selectedImage={selectedImage}
-            onSelect={setSelectedImage}
+            onSelect={(image) => setSelectedImageSrc(image.src)}
           />
         </div>
       </div>

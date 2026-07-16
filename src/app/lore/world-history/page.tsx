@@ -46,7 +46,7 @@ export default async function LocationEntryPage() {
     <div className="max-w-3xl text-center text-white">
     
     <p className="mt-4 text-lg">
-      At the start of time there was only darkness. A void were only a silence lived, where darkness was one's sole companion, an infinite where nothing existed, where nothing could be found, no matter how far you ran, and empty landscape where nothing could be born and yet from the bast darkness the first light was born.
+      At the start of time there was only darkness. A void were only a silence lived, where darkness was one&#39;s sole companion, an infinite where nothing existed, where nothing could be found, no matter how far you ran, and empty landscape where nothing could be born and yet from the bast darkness the first light was born.
     </p>
 
     <p className="mt-4 text-lg">
@@ -196,11 +196,11 @@ Despite being powerless, their intelligence and determination let them survive. 
     </p>
 
     <p className="mt-4 text-lg">
-      Not all humans accepted us, some were the fearful, some jealous, some saw opportunity before seeing people, and many bought a fabricated tale that we couldn't live together.
+      Not all humans accepted us, some were the fearful, some jealous, some saw opportunity before seeing people, and many bought a fabricated tale that we couldn	&#39;t live together.
     </p>
 
     <p className="mt-4 text-lg">
-      It didn't take long for the wrong people to get the power to tell others we didn't deserve to live in the same planet, and so the war started.
+      It didn	&#39;t take long for the wrong people to get the power to tell others we didn	&#39;t deserve to live in the same planet, and so the war started.
     </p>
 
     <p className="mt-4 text-lg">
@@ -208,7 +208,7 @@ Despite being powerless, their intelligence and determination let them survive. 
     </p>
 
     <p className="mt-4 text-lg">
-      Humans themselves weren’t safe from the bloodshed, some helped us and were killed for that, many suffered the consequences of the chaos, of the many other wars erupted from that first one against our ancestors. Details of those other wars lost in time.
+      Humans themselves weren&#39;t safe from the bloodshed, some helped us and were killed for that, many suffered the consequences of the chaos, of the many other wars erupted from that first one against our ancestors. Details of those other wars lost in time.
     </p>
 
     <p className="mt-4 text-lg">
@@ -243,7 +243,7 @@ Despite being powerless, their intelligence and determination let them survive. 
     <div className="max-w-3xl text-center text-white">
     
     <p className="mt-4 text-lg">
-      "This is it, we will die by the hand we were meant to serve, and no one will cry for us."
+      &#34;This is it, we will die by the hand we were meant to serve, and no one will cry for us.&#34;
     </p>
 
     <p className="mt-4 text-lg">
@@ -251,11 +251,11 @@ Despite being powerless, their intelligence and determination let them survive. 
     </p>
 
     <p className="mt-4 text-lg">
-      When many accepted their fate, there were those who couldn't.
+      When many accepted their fate, there were those who couldn	&#39;t.
     </p>
 
     <p className="mt-4 text-lg">
-      The legends talk of an angel who at the brick of death sold their soul to a unknown power, to break free from the imposed order of the gods, falling from grace to the promise they won't die.
+      The legends talk of an angel who at the brick of death sold their soul to a unknown power, to break free from the imposed order of the gods, falling from grace to the promise they won	&#39;t die.
 
     </p>
 
@@ -273,7 +273,7 @@ Despite being powerless, their intelligence and determination let them survive. 
     </p>
 
     <p className="mt-4 text-lg">
-      It wasn't the victory anyone expected or wanted, as those fallen monsters dragged whole human cities to ruin and not even our ancestors knew if they were friends or foes.
+      It wasn	&#39;t the victory anyone expected or wanted, as those fallen monsters dragged whole human cities to ruin and not even our ancestors knew if they were friends or foes.
     </p>
 
     <p className="mt-4 text-lg">
@@ -285,7 +285,7 @@ Despite being powerless, their intelligence and determination let them survive. 
     </p>
 
     <p className="mt-4 text-lg">
-      "Will they come for us after the last of the armies are gone? or will the human punish us for their rebellion once the monsters are defeated? I don't want to know."
+      &#34;Will they come for us after the last of the armies are gone? or will the human punish us for their rebellion once the monsters are defeated? I don	&#39;t want to know.&#34;
     </p>
 
     <p className="mt-4 text-lg">
@@ -317,11 +317,11 @@ Despite being powerless, their intelligence and determination let them survive. 
     </p>
 
     <p className="mt-4 text-lg">
-        "A flash of white light filled the sky, its light burned everything and for what could be seconds of could have been hours the only sound that was heard among the blinding light were screams and the fall of the only world we knew. The earth crack and the oceans rose and the atmosphere itself cracked down.
+        &#34;A flash of white light filled the sky, its light burned everything and for what could be seconds of could have been hours the only sound that was heard among the blinding light were screams and the fall of the only world we knew. The earth crack and the oceans rose and the atmosphere itself cracked down.&#34;
     </p>
 
     <p className="mt-4 text-lg">
-        I closed my eyes, i begged the pain would pass, and when i opened them again the world i lived in was gone, every human i knew my friends or my hunters, they all were dead, planes crashed, buildings fell and everything was still exploding, all that was left was a cold wind growing stronger."
+        &#34;I closed my eyes, i begged the pain would pass, and when i opened them again the world i lived in was gone, every human i knew my friends or my hunters, they all were dead, planes crashed, buildings fell and everything was still exploding, all that was left was a cold wind growing stronger.&#34;
     </p>
 
     <p className="mt-4 text-lg">
@@ -333,7 +333,7 @@ Despite being powerless, their intelligence and determination let them survive. 
     </p>
 
     <p className="mt-4 text-lg">
-      and the oxigen became so thin humanity wasn't able to last.
+      and the oxigen became so thin humanity wasn	&#39;t able to last.
     </p>
 
     <p className="mt-4 text-lg">
@@ -341,11 +341,11 @@ Despite being powerless, their intelligence and determination let them survive. 
     </p>
 
     <p className="mt-4 text-lg">
-      "We were waiting to die, and now there's nothing else for us, but trying to move forward."
+      &#34;We were waiting to die, and now there	&#39;s nothing else for us, but trying to move forward.&#34;
     </p>
 
     <p className="mt-4 text-lg">
-      And so our ancestors did that's why we are still here.
+      And so our ancestors did that	&#39;s why we are still here.
     </p>
 
 
@@ -371,7 +371,7 @@ Despite being powerless, their intelligence and determination let them survive. 
     <div className="max-w-3xl text-center text-white">
     
     <p className="mt-4 text-lg">
-      From the Ice Age itself, there aren't many records either, but we know more of than we know about the human era. We know that angels had to rebuild their civilization. 
+      From the Ice Age itself, there aren	&#39;t many records either, but we know more of than we know about the human era. We know that angels had to rebuild their civilization. 
     </p>
 
     <p className="mt-4 text-lg">
@@ -395,7 +395,7 @@ Despite being powerless, their intelligence and determination let them survive. 
     </p>
 
     <p className="mt-4 text-lg">
-      We were us. And so we decided to call ourself nyphen. A world that, in the human era, didn't have a real meaning, but now belongs to us.
+      We were us. And so we decided to call ourself nyphen. A world that, in the human era, didn	&#39;t have a real meaning, but now belongs to us.
     </p>
 
 
@@ -421,7 +421,7 @@ Despite being powerless, their intelligence and determination let them survive. 
     <div className="max-w-3xl text-center text-white">
     
     <p className="mt-4 text-lg">
-      The first forms of magical creatures also appeared during the Ice Age. The records didn't describe them as we know them today. Creatures that run the world with different amounts of powers. 
+      The first forms of magical creatures also appeared during the Ice Age. The records didn	&#39;t describe them as we know them today. Creatures that run the world with different amounts of powers. 
     </p>
 
     <p className="mt-4 text-lg">
@@ -429,12 +429,12 @@ Despite being powerless, their intelligence and determination let them survive. 
     </p>
 
     <p className="mt-4 text-lg">
-      With the first monsters appearing, even with magic, Nyphen didn't have it easy. Starvation, hypothermia, enemy  factions, monsters. Our ancestors could survive the lack of oxygen and spend weeks without food or water. They still needed to feed and they still needed cover from the cold. So with our rediscovered magic either on purpose or accidental, our ancestors created the first records of Graveborn races, skeletons, Frost walkers, and Ghosts. 
+      With the first monsters appearing, even with magic, Nyphen didn	&#39;t have it easy. Starvation, hypothermia, enemy  factions, monsters. Our ancestors could survive the lack of oxygen and spend weeks without food or water. They still needed to feed and they still needed cover from the cold. So with our rediscovered magic either on purpose or accidental, our ancestors created the first records of Graveborn races, skeletons, Frost walkers, and Ghosts. 
     </p>
 
     <p className="mt-4 text-lg">
       
-The kind of beings that would have been called impossible in the human era. Even if the firsts were also born from nyphen gave a bit of variety to the new world with strengths nyphen didn't have, and it would remain like that for long, maybe forever, if the gods didn't return.
+The kind of beings that would have been called impossible in the human era. Even if the firsts were also born from nyphen gave a bit of variety to the new world with strengths nyphen didn	&#39;t have, and it would remain like that for long, maybe forever, if the gods didn	&#39;t return.
     </p>
 
 
@@ -461,7 +461,7 @@ The kind of beings that would have been called impossible in the human era. Even
     <div className="max-w-3xl text-center text-white">
     
     <p className="mt-4 text-lg">
-      Keep this in mind, it's been three thousand years since the flash. So much time, not even the sons and daughters of the original nyphen who first witnessed the flash remained. Yet, because of the long lifespans of nyphen, the original history is still deep within the cultures of the existing factions. 
+      Keep this in mind, it	&#39;s been three thousand years since the flash. So much time, not even the sons and daughters of the original nyphen who first witnessed the flash remained. Yet, because of the long lifespans of nyphen, the original history is still deep within the cultures of the existing factions. 
     </p>
 
     <p className="mt-4 text-lg">
@@ -469,16 +469,16 @@ The kind of beings that would have been called impossible in the human era. Even
     </p>
 
     <p className="mt-4 text-lg">
-      The start of the rebirt era marked by the flight of the first recorded phoenix and with that phoenix came the gods. The seven gods that to this day oversee our planet. They didn't expect us to still be alive. Their intention was to occupy a planet that first belonged to humanity, thinking it would be empty.
+      The start of the rebirt era marked by the flight of the first recorded phoenix and with that phoenix came the gods. The seven gods that to this day oversee our planet. They didn	&#39;t expect us to still be alive. Their intention was to occupy a planet that first belonged to humanity, thinking it would be empty.
 
     </p>
 
     <p className="mt-4 text-lg">
-      Seven gods that in the past fought against each other to be the god of humanity. Now they settle in sharing their ruins. The wound still existed but wasn't as fresh. Still our ancestors didn't want the gods around. They heard histories from great great grandparents of the gods that left them to die. And our ancestors didn't want to suffer a similar fate accepting gods as if they were a gift. And this suspicion against gods still follows our culture to this day, even if after generations many came to accept the gods.
+      Seven gods that in the past fought against each other to be the god of humanity. Now they settle in sharing their ruins. The wound still existed but wasn	&#39;t as fresh. Still our ancestors didn	&#39;t want the gods around. They heard histories from great great grandparents of the gods that left them to die. And our ancestors didn	&#39;t want to suffer a similar fate accepting gods as if they were a gift. And this suspicion against gods still follows our culture to this day, even if after generations many came to accept the gods.
     </p>
 
     <p className="mt-4 text-lg">
-       Despite our ancestors refusal , the gods settled  in the different continents now name after them and created new races of all kinds of shapes an appearance, all inspired by the humans who once existed but clearly weren't. With them our ancestors started new wars.
+       Despite our ancestors refusal , the gods settled  in the different continents now name after them and created new races of all kinds of shapes an appearance, all inspired by the humans who once existed but clearly weren	&#39;t. With them our ancestors started new wars.
     </p>
 
 
@@ -504,7 +504,7 @@ The kind of beings that would have been called impossible in the human era. Even
     <div className="max-w-3xl text-center text-white">
     
     <p className="mt-4 text-lg">
-      There are more records of wars among gods' created races among anything else in this era. Our ancestors fought, and they fought hard.
+      There are more records of wars among gods	&#39; created races among anything else in this era. Our ancestors fought, and they fought hard.
     </p>
 
     <p className="mt-4 text-lg">
@@ -558,15 +558,15 @@ The kind of beings that would have been called impossible in the human era. Even
     <div className="max-w-3xl text-center text-white">
     
     <p className="mt-4 text-lg">
-      If the rebirth era could be called, the time our ancestors fought for their place in the world, the discordant era, was about where and how. The civilizations known to this day still didn't exist, and many countries rose and fell, some independent, some attempts from the gods  to build something in a place that didn't fit them. 
+      If the rebirth era could be called, the time our ancestors fought for their place in the world, the discordant era, was about where and how. The civilizations known to this day still didn	&#39;t exist, and many countries rose and fell, some independent, some attempts from the gods  to build something in a place that didn	&#39;t fit them. 
     </p>
 
     <p className="mt-4 text-lg">
-      The wars wereconstant conversation of what belonged to who and where. It didn't help that around this area, many new races started appearing, many of which weren't claimed by any of the gods to be their creation. From anyone's perspective, they appeared out of nowhere. 
+      The wars wereconstant conversation of what belonged to who and where. It didn	&#39;t help that around this area, many new races started appearing, many of which weren	&#39;t claimed by any of the gods to be their creation. From anyone	&#39;s perspective, they appeared out of nowhere. 
     </p>
 
     <p className="mt-4 text-lg">
-      They were called nyxkins, races without a claim with often  strange and historically called "barbaric" behaviors. They also tried to settle in the world, exacerbating the existing conflicts. 
+      They were called nyxkins, races without a claim with often  strange and historically called &#34;barbaric&#34; behaviors. They also tried to settle in the world, exacerbating the existing conflicts. 
     </p>
 
     <p className="mt-4 text-lg">
@@ -599,7 +599,7 @@ The kind of beings that would have been called impossible in the human era. Even
     <div className="max-w-3xl text-center text-white">
     
     <p className="mt-4 text-lg">
-      While nyxkins may have been the first few races that appeared that weren't created by any god as far as is known. Definitely weren't the last, nor the most controversial. 
+      While nyxkins may have been the first few races that appeared that weren	&#39;t created by any god as far as is known. Definitely weren	&#39;t the last, nor the most controversial. 
     </p>
 
     <p className="mt-4 text-lg">
@@ -607,7 +607,7 @@ The kind of beings that would have been called impossible in the human era. Even
     </p>
 
     <p className="mt-4 text-lg">
-      If you weren't a remnant or a dysphorian. 
+      If you weren	&#39;t a remnant or a dysphorian. 
     </p>
 
     <p className="mt-4 text-lg">
@@ -628,7 +628,7 @@ The kind of beings that would have been called impossible in the human era. Even
     </p>
 
     <p className="mt-4 text-lg">
-      Remains were the first of this category that appeared. From afar, if you have seen enough images of humans, you may have called a remain a human. They aren't and that become clear quickly, but the resemblance is uncanny at times for researchers.
+      Remains were the first of this category that appeared. From afar, if you have seen enough images of humans, you may have called a remain a human. They aren	&#39;t and that become clear quickly, but the resemblance is uncanny at times for researchers.
     </p>
 
     <p className="mt-4 text-lg">
@@ -650,21 +650,21 @@ The kind of beings that would have been called impossible in the human era. Even
 
 
     <p className="mt-4 text-lg">
-      Now days the threatment towards these races have gone a long way. If only didn't come before a war, around that time, a king of Will, an Enterprise from Artisanry, and a long since excommunicated Council member from Judgement, teamed up to make a war against the Remnants.
+      Now days the threatment towards these races have gone a long way. If only didn	&#39;t come before a war, around that time, a king of Will, an Enterprise from Artisanry, and a long since excommunicated Council member from Judgement, teamed up to make a war against the Remnants.
     </p>
 
     <p className="mt-4 text-lg">
-      With powerful armies, they tried to exterminate the race. They fail. Even if they weren't remarkable in power, Remnants aren't anything if not adaptable. Surviving attack after attack and fighting back until the saying sticked that a remnant isn't dead, until you see their corpse dead and cold
-    </p>
-
-
-    <p className="mt-4 text-lg">
-      The war that lasted longer than anyoe liked to admit, it wasn't until the attention of the public forced agreements to accept both remnants and dysphorias as recognized races of vielora. Those agreements still exist and disrespecting them could lead to grave consequences. 
+      With powerful armies, they tried to exterminate the race. They fail. Even if they weren	&#39;t remarkable in power, Remnants aren	&#39;t anything if not adaptable. Surviving attack after attack and fighting back until the saying sticked that a remnant isn	&#39;t dead, until you see their corpse dead and cold
     </p>
 
 
     <p className="mt-4 text-lg">
-      But it's sad to say that even to this day, there are still people who look down at dysphorians and Remnants even if more quietly, but it has gotten a lot better.
+      The war that lasted longer than anyoe liked to admit, it wasn	&#39;t until the attention of the public forced agreements to accept both remnants and dysphorias as recognized races of vielora. Those agreements still exist and disrespecting them could lead to grave consequences. 
+    </p>
+
+
+    <p className="mt-4 text-lg">
+      But it	&#39;s sad to say that even to this day, there are still people who look down at dysphorians and Remnants even if more quietly, but it has gotten a lot better.
     </p>
     </div>
 
@@ -688,7 +688,7 @@ The kind of beings that would have been called impossible in the human era. Even
     <div className="max-w-3xl text-center text-white">
     
     <p className="mt-4 text-lg">
-      Which lead us to our current age, depending on who you ask. Magitech era or Magika era, time will likely be the one who decides what we'll call it. But so far, what has characterized the current era has been the developments in technology and magical knowledge
+      Which lead us to our current age, depending on who you ask. Magitech era or Magika era, time will likely be the one who decides what we	&#39;ll call it. But so far, what has characterized the current era has been the developments in technology and magical knowledge
     </p>
 
     <p className="mt-4 text-lg">

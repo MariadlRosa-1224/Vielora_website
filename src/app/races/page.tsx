@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import HorizontalColorButton from "@/components/linkButtons/HorizontalColorButton";
 import GeneralContainerNoBorder from "@/components/containers/GeneralContainerNoBorder";
-import type { VieloraHorizontalGradient } from "@/theme/colors";
 import { raceOrigins } from "@/lib/race-origins";
 
 

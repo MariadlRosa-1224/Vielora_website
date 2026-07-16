@@ -100,11 +100,3 @@ function InfoLine({ label, value }: { label: string; value: string }) {
   );
 }
 
-function StatLine({ label, value }: { label: string; value: number }) {
-  return (
-    <p>
-      <span>{label}:</span>{" "}
-      <span className="text-[#fff48e]">{"★".repeat(value)}</span>
-    </p>
-  );
-}

@@ -101,7 +101,6 @@ export default function Achievement({
         "hover:-translate-y-0.5 hover:opacity-85 hover:shadow-lg",
         palette.card,
       ].join(" ")}
-      aria-disabled={locked}
     >
       <div
         className={[
