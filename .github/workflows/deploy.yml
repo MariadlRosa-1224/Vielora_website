@@ -47,11 +47,18 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
+          NEXT_BUILD_ENV: ${{ secrets.NEXT_BUILD_ENV }}
         run: |
+          if [ -z "$NEXT_BUILD_ENV" ]; then
+            echo "::error::GitHub secret NEXT_BUILD_ENV is missing or empty."
+            exit 1
+          fi
+
           IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
 
           docker build \
             --platform linux/amd64 \
+            --secret id=next_build_env,env=NEXT_BUILD_ENV \
             --tag "$IMAGE_URI" \
             .
 
