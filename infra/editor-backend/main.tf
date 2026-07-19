@@ -1,7 +1,7 @@
 # infra/editor-backend/main.tf
 
 terraform {
-  required_version = ">= 1.6.0"
+  required_version = ">= 1.10.0"
 
   required_providers {
     aws = {
@@ -14,11 +14,23 @@ terraform {
       version = ">= 2.4.0"
     }
   }
+
+  backend "s3" {
+    bucket       = "vielora-terraform-state-dev"
+    key          = "projects/vielora/editor-backend/terraform.tfstate"
+    region       = "us-east-2"
+    use_lockfile = true
+    encrypt      = true
+  }
 }
+
+
 
 provider "aws" {
   region = var.aws_region
 }
+
+
 
 // Create a zip archive of the Lambda function code
 

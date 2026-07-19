@@ -1,7 +1,7 @@
 // src/app/api/admin/users/route.ts
 
 import { NextResponse } from "next/server";
-import { requireAdminApi } from "@/lib/auth-lib/api-auth";
+import { requireAdminApi } from "@/lib/api-auth";
 import { listManagedCognitoUsers } from "@/lib/cognito-admin";
 
 export async function GET() {

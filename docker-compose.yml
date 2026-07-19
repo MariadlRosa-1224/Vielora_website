@@ -1,14 +1,14 @@
 services:
   mongodb:
-    image: mongo:7.0
+    image: mongo:8.0
     container_name: nextjs_better_auth_cognito
     restart: unless-stopped
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password
-      MONGO_INITDB_DATABASE: task_manager
+      MONGO_INITDB_ROOT_PASSWORD: vielora-me-24
+      MONGO_INITDB_DATABASE: vielora-entries
     volumes:
       - mongodb_data:/data/db
       - mongodb_config:/data/configdb

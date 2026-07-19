@@ -1,7 +1,7 @@
 // src/app/api/entries/[entryId]/request-edit/route.ts
 
 import { NextResponse } from "next/server";
-import { requireAuthenticatedApi } from "@/lib/auth-lib/api-auth";
+import { requireAuthenticatedApi } from "@/lib/api-auth";
 import { getEntryById, requestEntryEdit } from "@/lib/aws-entries";
 import { canRequestEntryEdit } from "@/lib/entry-authorization";
 

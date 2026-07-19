@@ -21,7 +21,7 @@ export default function Home() {
               </h1>
 
               <p className="mt-8 font-cinzel text-xs font-bold uppercase tracking-[0.18em] text-white sm:text-sm md:text-base">
-                Lore ipsum solor sip ament
+                
               </p>
 
               <Link

@@ -1,7 +1,7 @@
 // src/app/api/moderation/entries/[entryId]/reject/route.ts
 
 import { NextResponse } from "next/server";
-import { requirePermissionApi } from "@/lib/auth-lib/api-auth";
+import { requirePermissionApi } from "@/lib/api-auth";
 import { getEntryById, updateEntryStatus } from "@/lib/aws-entries";
 
 type RouteContext = {

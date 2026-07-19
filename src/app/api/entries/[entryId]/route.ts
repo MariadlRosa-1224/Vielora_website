@@ -1,7 +1,7 @@
 // src/app/api/entries/[entryId]/route.ts
 
 import { NextResponse } from "next/server";
-import { requireAuthenticatedApi } from "@/lib/auth-lib/api-auth";
+import { requireAuthenticatedApi } from "@/lib/api-auth";
 import {
   deleteEntry,
   getEntryById,

@@ -1,7 +1,7 @@
 // src/app/api/admin/users/[userId]/role/route.ts
 
 import { NextResponse } from "next/server";
-import { requireAdminApi } from "@/lib/auth-lib/api-auth";
+import { requireAdminApi } from "@/lib/api-auth";
 import { setCognitoUserRole } from "@/lib/cognito-admin";
 
 type RouteContext = {

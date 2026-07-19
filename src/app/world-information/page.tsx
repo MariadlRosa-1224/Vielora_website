@@ -92,7 +92,7 @@ function InfoSection({
             key={item.slug}
             title={item.title}
             image={item.image}
-            href={item.slug}
+            href={`world-information/${item.slug}`}
             gradient={item.gradient}
           />
         ))}

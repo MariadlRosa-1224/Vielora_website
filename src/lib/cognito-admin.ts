@@ -14,9 +14,9 @@ import {
 import { normalizeRole, type AppRole } from "@/lib/permissions";
 
 const AWS_REGION = process.env.AWS_REGION ?? "us-east-2";
-const COGNITO_USERPOOL_ID = process.env.COGNITO_USERPOOL_ID;
+const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
 
-if (!COGNITO_USERPOOL_ID) {
+if (!COGNITO_USER_POOL_ID) {
   throw new Error("COGNITO_USER_POOL_ID is missing.");
 }
 
@@ -76,7 +76,7 @@ function getRoleFromGroups(groups: string[]): AppRole {
 async function listGroupsForUsername(username: string) {
   const result = await cognito.send(
     new AdminListGroupsForUserCommand({
-      UserPoolId: COGNITO_USERPOOL_ID,
+      UserPoolId: COGNITO_USER_POOL_ID,
       Username: username,
     }),
   );
@@ -89,7 +89,7 @@ async function listGroupsForUsername(username: string) {
 async function addUserToGroup(username: string, groupName: AppRole) {
   await cognito.send(
     new AdminAddUserToGroupCommand({
-      UserPoolId: COGNITO_USERPOOL_ID,
+      UserPoolId: COGNITO_USER_POOL_ID,
       Username: username,
       GroupName: groupName,
     }),
@@ -99,7 +99,7 @@ async function addUserToGroup(username: string, groupName: AppRole) {
 async function removeUserFromGroup(username: string, groupName: AppRole) {
   await cognito.send(
     new AdminRemoveUserFromGroupCommand({
-      UserPoolId: COGNITO_USERPOOL_ID,
+      UserPoolId: COGNITO_USER_POOL_ID,
       Username: username,
       GroupName: groupName,
     }),
@@ -141,7 +141,7 @@ export async function findCognitoUserByEmail(email: string) {
 
   const result = await cognito.send(
     new ListUsersCommand({
-      UserPoolId: COGNITO_USERPOOL_ID,
+      UserPoolId: COGNITO_USER_POOL_ID,
       Filter: `email = "${escapeCognitoFilterValue(cleanEmail)}"`,
       Limit: 1,
     }),
@@ -175,7 +175,7 @@ export async function listManagedCognitoUsers(): Promise<CognitoManagedUser[]> {
   do {
     const result = await cognito.send(
       new ListUsersCommand({
-        UserPoolId: COGNITO_USERPOOL_ID,
+        UserPoolId: COGNITO_USER_POOL_ID,
         Limit: 60,
         PaginationToken: paginationToken,
       }),
@@ -226,7 +226,7 @@ export async function setCognitoUserRole({
 
   const targetUserResult = await cognito.send(
     new ListUsersCommand({
-      UserPoolId: COGNITO_USERPOOL_ID,
+      UserPoolId: COGNITO_USER_POOL_ID,
       Filter: `username = "${escapeCognitoFilterValue(username)}"`,
       Limit: 1,
     }),

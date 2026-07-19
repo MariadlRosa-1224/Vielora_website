@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM node:22-alpine AS base
 
 ENV PNPM_HOME="/pnpm"
@@ -11,7 +13,7 @@ WORKDIR /app
 
 FROM base AS dependencies
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 RUN pnpm install --frozen-lockfile
 
@@ -21,8 +23,10 @@ FROM base AS builder
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
-RUN pnpm build
-
+RUN --mount=type=secret,id=next_build_env,target=/app/.env.production.local,required=true \
+    test -s /app/.env.production.local \
+    && echo "Build environment file mounted" \
+    && pnpm build
 
 FROM node:22-alpine AS runner
 

@@ -1,7 +1,7 @@
 // src/app/api/moderation/entries/[entryId]/approve/route.ts
 
 import { NextResponse } from "next/server";
-import { requirePermissionApi } from "@/lib/auth-lib/api-auth";
+import { requirePermissionApi } from "@/lib/api-auth";
 import { getEntryById, markEntryPublished } from "@/lib/aws-entries";
 import { publishEntryToGitHub } from "@/lib/entry-mdx-publisher";
 import { deletePendingAssetsForEntry } from "@/lib/entry-assets";

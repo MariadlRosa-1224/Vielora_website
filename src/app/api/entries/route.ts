@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import {
   requireAuthenticatedApi,
   requirePermissionApi,
-} from "@/lib/auth-lib/api-auth";
+} from "@/lib/api-auth";
 import {
   listAllEntries,
   listEntriesByStatus,

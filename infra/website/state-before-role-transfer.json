@@ -1,0 +1,676 @@
+{
+  "version": 4,
+  "terraform_version": "1.15.6",
+  "serial": 4,
+  "lineage": "ded84055-d999-6fed-c4a0-7fa4411b1889",
+  "outputs": {
+    "bucket_name": {
+      "value": "vielora-website-dev",
+      "type": "string"
+    },
+    "cloudfront_distribution_id": {
+      "value": "E1GJTTCKVXUCG4",
+      "type": "string"
+    },
+    "cloudfront_url": {
+      "value": "https://ddsttvxi1gntk.cloudfront.net",
+      "type": "string"
+    },
+    "github_actions_deploy_role_arn": {
+      "value": "arn:aws:iam::774157347954:role/vielora-github-actions-deploy",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "current",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "account_id": "774157347954",
+            "arn": "arn:aws:iam::774157347954:root",
+            "id": "774157347954",
+            "user_id": "774157347954"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_cloudfront_cache_policy",
+      "name": "disabled",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:cloudfront::774157347954:cache-policy/4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+            "comment": "Policy with caching disabled",
+            "default_ttl": 0,
+            "etag": "E23ZP02F085DFQ",
+            "id": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+            "max_ttl": 0,
+            "min_ttl": 0,
+            "name": "Managed-CachingDisabled",
+            "parameters_in_cache_key_and_forwarded_to_origin": [
+              {
+                "cookies_config": [
+                  {
+                    "cookie_behavior": "none",
+                    "cookies": []
+                  }
+                ],
+                "enable_accept_encoding_brotli": false,
+                "enable_accept_encoding_gzip": false,
+                "headers_config": [
+                  {
+                    "header_behavior": "none",
+                    "headers": []
+                  }
+                ],
+                "query_strings_config": [
+                  {
+                    "query_string_behavior": "none",
+                    "query_strings": []
+                  }
+                ]
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "allow_cloudfront",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "1088454873",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::vielora-website-dev/*\",\n      \"Principal\": {\n        \"Service\": \"cloudfront.amazonaws.com\"\n      },\n      \"Condition\": {\n        \"StringEquals\": {\n          \"AWS:SourceArn\": \"arn:aws:cloudfront::774157347954:distribution/E1GJTTCKVXUCG4\"\n        }\n      }\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::vielora-website-dev/*\",\"Principal\":{\"Service\":\"cloudfront.amazonaws.com\"},\"Condition\":{\"StringEquals\":{\"AWS:SourceArn\":\"arn:aws:cloudfront::774157347954:distribution/E1GJTTCKVXUCG4\"}}}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "s3:GetObject"
+                ],
+                "condition": [
+                  {
+                    "test": "StringEquals",
+                    "values": [
+                      "arn:aws:cloudfront::774157347954:distribution/E1GJTTCKVXUCG4"
+                    ],
+                    "variable": "AWS:SourceArn"
+                  }
+                ],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [
+                  {
+                    "identifiers": [
+                      "cloudfront.amazonaws.com"
+                    ],
+                    "type": "Service"
+                  }
+                ],
+                "resources": [
+                  "arn:aws:s3:::vielora-website-dev/*"
+                ],
+                "sid": ""
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudfront_distribution",
+      "name": "site",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "aliases": [],
+            "anycast_ip_list_id": "",
+            "arn": "arn:aws:cloudfront::774157347954:distribution/E1GJTTCKVXUCG4",
+            "cache_tag_config": [],
+            "caller_reference": "terraform-20260702001558510500000001",
+            "comment": null,
+            "connection_function_association": [],
+            "continuous_deployment_policy_id": "",
+            "custom_error_response": [],
+            "default_cache_behavior": [
+              {
+                "allowed_methods": [
+                  "GET",
+                  "HEAD"
+                ],
+                "cache_policy_id": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+                "cached_methods": [
+                  "GET",
+                  "HEAD"
+                ],
+                "compress": true,
+                "default_ttl": 0,
+                "field_level_encryption_id": "",
+                "forwarded_values": [],
+                "function_association": [
+                  {
+                    "event_type": "viewer-request",
+                    "function_arn": "arn:aws:cloudfront::774157347954:function/vielora-website-dev-rewrite"
+                  }
+                ],
+                "grpc_config": [
+                  {
+                    "enabled": false
+                  }
+                ],
+                "lambda_function_association": [],
+                "max_ttl": 0,
+                "min_ttl": 0,
+                "origin_request_policy_id": "",
+                "realtime_log_config_arn": "",
+                "response_headers_policy_id": "",
+                "smooth_streaming": false,
+                "target_origin_id": "s3-vielora-site",
+                "trusted_key_groups": [],
+                "trusted_signers": [],
+                "viewer_protocol_policy": "redirect-to-https"
+              }
+            ],
+            "default_root_object": "index.html",
+            "domain_name": "ddsttvxi1gntk.cloudfront.net",
+            "enabled": true,
+            "etag": "E23ZP02F085DFQ",
+            "hosted_zone_id": "Z2FDTNDATAQYW2",
+            "http_version": "http2",
+            "id": "E1GJTTCKVXUCG4",
+            "in_progress_validation_batches": 0,
+            "is_ipv6_enabled": false,
+            "last_modified_time": "2026-07-02 00:15:58.654 +0000 UTC",
+            "logging_config": [],
+            "logging_v1_enabled": false,
+            "ordered_cache_behavior": [],
+            "origin": [
+              {
+                "connection_attempts": 3,
+                "connection_timeout": 10,
+                "custom_header": [],
+                "custom_origin_config": [],
+                "domain_name": "vielora-website-dev.s3.us-east-2.amazonaws.com",
+                "origin_access_control_id": "E289K1N0QO5YEA",
+                "origin_id": "s3-vielora-site",
+                "origin_path": "",
+                "origin_shield": [],
+                "response_completion_timeout": 0,
+                "s3_origin_config": [],
+                "vpc_origin_config": []
+              }
+            ],
+            "origin_group": [],
+            "price_class": "PriceClass_All",
+            "restrictions": [
+              {
+                "geo_restriction": [
+                  {
+                    "locations": [],
+                    "restriction_type": "none"
+                  }
+                ]
+              }
+            ],
+            "retain_on_delete": false,
+            "staging": false,
+            "status": "Deployed",
+            "tags": {},
+            "tags_all": {},
+            "trusted_key_groups": [
+              {
+                "enabled": false,
+                "items": []
+              }
+            ],
+            "trusted_signers": [
+              {
+                "enabled": false,
+                "items": []
+              }
+            ],
+            "viewer_certificate": [
+              {
+                "acm_certificate_arn": "",
+                "cloudfront_default_certificate": true,
+                "iam_certificate_id": "",
+                "minimum_protocol_version": "TLSv1",
+                "ssl_support_method": ""
+              }
+            ],
+            "viewer_mtls_config": [],
+            "wait_for_deployment": true,
+            "web_acl_id": ""
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "identity": {
+            "account_id": "774157347954",
+            "id": "E1GJTTCKVXUCG4"
+          },
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "aws_cloudfront_function.rewrite",
+            "aws_cloudfront_origin_access_control.site",
+            "aws_s3_bucket.site",
+            "data.aws_cloudfront_cache_policy.disabled"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudfront_function",
+      "name": "rewrite",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:cloudfront::774157347954:function/vielora-website-dev-rewrite",
+            "code": "function handler(event) {\n  var request = event.request;\n  var uri = request.uri;\n\n  if (uri.endsWith('/')) {\n    request.uri += 'index.html';\n  } else if (!uri.includes('.')) {\n    request.uri += '/index.html';\n  }\n\n  return request;\n}\n",
+            "comment": "",
+            "etag": "ETVPDKIKX0DER",
+            "id": "vielora-website-dev-rewrite",
+            "key_value_store_associations": [],
+            "live_stage_etag": "ETVPDKIKX0DER",
+            "name": "vielora-website-dev-rewrite",
+            "publish": true,
+            "runtime": "cloudfront-js-2.0",
+            "status": "DEPLOYED",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudfront_origin_access_control",
+      "name": "site",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:cloudfront::774157347954:origin-access-control/E289K1N0QO5YEA",
+            "description": "Allow CloudFront to access the private S3 bucket",
+            "etag": "ETVPDKIKX0DER",
+            "id": "E289K1N0QO5YEA",
+            "name": "vielora-website-dev-oac",
+            "origin_access_control_origin_type": "s3",
+            "signing_behavior": "always",
+            "signing_protocol": "sigv4"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_openid_connect_provider",
+      "name": "github_actions",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::774157347954:oidc-provider/token.actions.githubusercontent.com",
+            "client_id_list": [
+              "sts.amazonaws.com"
+            ],
+            "id": "arn:aws:iam::774157347954:oidc-provider/token.actions.githubusercontent.com",
+            "tags": {},
+            "tags_all": {},
+            "thumbprint_list": [
+              "22ff89586561fc2d52f77491e9f1eff1b80be33e"
+            ],
+            "url": "token.actions.githubusercontent.com"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "identity": {
+            "arn": "arn:aws:iam::774157347954:oidc-provider/token.actions.githubusercontent.com"
+          },
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "github_actions_deploy",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::774157347954:policy/vielora-github-actions-deploy",
+            "attachment_count": 1,
+            "delay_after_policy_creation_in_ms": null,
+            "description": "",
+            "id": "arn:aws:iam::774157347954:policy/vielora-github-actions-deploy",
+            "name": "vielora-github-actions-deploy",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":[\"s3:ListBucket\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:s3:::vielora-website-dev\",\"Sid\":\"ListWebsiteBucket\"},{\"Action\":[\"s3:GetObject\",\"s3:PutObject\",\"s3:DeleteObject\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:s3:::vielora-website-dev/*\",\"Sid\":\"WriteWebsiteFiles\"},{\"Action\":[\"cloudfront:CreateInvalidation\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:cloudfront::774157347954:distribution/E1GJTTCKVXUCG4\",\"Sid\":\"InvalidateCloudFront\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPA3IP27VRZBQKO624XU",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "identity": {
+            "arn": "arn:aws:iam::774157347954:policy/vielora-github-actions-deploy"
+          },
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_cloudfront_distribution.site",
+            "aws_cloudfront_function.rewrite",
+            "aws_cloudfront_origin_access_control.site",
+            "aws_s3_bucket.site",
+            "data.aws_cloudfront_cache_policy.disabled"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "github_actions_deploy",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::774157347954:role/vielora-github-actions-deploy",
+            "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRoleWithWebIdentity\",\"Condition\":{\"StringEquals\":{\"token.actions.githubusercontent.com:aud\":\"sts.amazonaws.com\",\"token.actions.githubusercontent.com:sub\":\"repo:MariadlRosa-1224/Vielora_website:ref:refs/heads/main\"}},\"Effect\":\"Allow\",\"Principal\":{\"Federated\":\"arn:aws:iam::774157347954:oidc-provider/token.actions.githubusercontent.com\"}}],\"Version\":\"2012-10-17\"}",
+            "create_date": "2026-07-02T00:25:12Z",
+            "description": "",
+            "force_detach_policies": false,
+            "id": "vielora-github-actions-deploy",
+            "inline_policy": [],
+            "managed_policy_arns": [
+              "arn:aws:iam::774157347954:policy/vielora-github-actions-deploy"
+            ],
+            "max_session_duration": 3600,
+            "name": "vielora-github-actions-deploy",
+            "name_prefix": "",
+            "path": "/",
+            "permissions_boundary": "",
+            "tags": {},
+            "tags_all": {},
+            "unique_id": "AROA3IP27VRZFH6RZCON7"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "identity": {
+            "account_id": "774157347954",
+            "name": "vielora-github-actions-deploy"
+          },
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_openid_connect_provider.github_actions"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "github_actions_deploy",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "vielora-github-actions-deploy/arn:aws:iam::774157347954:policy/vielora-github-actions-deploy",
+            "policy_arn": "arn:aws:iam::774157347954:policy/vielora-github-actions-deploy",
+            "role": "vielora-github-actions-deploy"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "identity": {
+            "account_id": "774157347954",
+            "policy_arn": "arn:aws:iam::774157347954:policy/vielora-github-actions-deploy",
+            "role": "vielora-github-actions-deploy"
+          },
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_cloudfront_distribution.site",
+            "aws_cloudfront_function.rewrite",
+            "aws_cloudfront_origin_access_control.site",
+            "aws_iam_openid_connect_provider.github_actions",
+            "aws_iam_policy.github_actions_deploy",
+            "aws_iam_role.github_actions_deploy",
+            "aws_s3_bucket.site",
+            "data.aws_cloudfront_cache_policy.disabled"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "site",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "acceleration_status": "",
+            "acl": null,
+            "arn": "arn:aws:s3:::vielora-website-dev",
+            "bucket": "vielora-website-dev",
+            "bucket_domain_name": "vielora-website-dev.s3.amazonaws.com",
+            "bucket_namespace": "global",
+            "bucket_prefix": "",
+            "bucket_region": "us-east-2",
+            "bucket_regional_domain_name": "vielora-website-dev.s3.us-east-2.amazonaws.com",
+            "cors_rule": [],
+            "force_destroy": true,
+            "grant": [
+              {
+                "id": "2103b7a17e025d113c1d60d34babe4c84113b3b69a8fda178cad202994865b3c",
+                "permissions": [
+                  "FULL_CONTROL"
+                ],
+                "type": "CanonicalUser",
+                "uri": ""
+              }
+            ],
+            "hosted_zone_id": "Z2O1EMRO9K5GLX",
+            "id": "vielora-website-dev",
+            "lifecycle_rule": [],
+            "logging": [],
+            "object_lock_configuration": [],
+            "object_lock_enabled": false,
+            "policy": "{\"Statement\":[{\"Action\":\"s3:GetObject\",\"Condition\":{\"StringEquals\":{\"AWS:SourceArn\":\"arn:aws:cloudfront::774157347954:distribution/E1GJTTCKVXUCG4\"}},\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"cloudfront.amazonaws.com\"},\"Resource\":\"arn:aws:s3:::vielora-website-dev/*\"}],\"Version\":\"2012-10-17\"}",
+            "region": "us-east-2",
+            "replication_configuration": [],
+            "request_payer": "BucketOwner",
+            "server_side_encryption_configuration": [
+              {
+                "rule": [
+                  {
+                    "apply_server_side_encryption_by_default": [
+                      {
+                        "kms_master_key_id": "",
+                        "sse_algorithm": "AES256"
+                      }
+                    ],
+                    "bucket_key_enabled": false
+                  }
+                ]
+              }
+            ],
+            "tags": {},
+            "tags_all": {},
+            "timeouts": null,
+            "versioning": [
+              {
+                "enabled": false,
+                "mfa_delete": false
+              }
+            ],
+            "website": [],
+            "website_domain": null,
+            "website_endpoint": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "identity": {
+            "account_id": "774157347954",
+            "bucket": "vielora-website-dev",
+            "region": "us-east-2"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjM2MDAwMDAwMDAwMDAsInJlYWQiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19"
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_policy",
+      "name": "allow_cloudfront",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "bucket": "vielora-website-dev",
+            "id": "vielora-website-dev",
+            "policy": "{\"Statement\":[{\"Action\":\"s3:GetObject\",\"Condition\":{\"StringEquals\":{\"AWS:SourceArn\":\"arn:aws:cloudfront::774157347954:distribution/E1GJTTCKVXUCG4\"}},\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"cloudfront.amazonaws.com\"},\"Resource\":\"arn:aws:s3:::vielora-website-dev/*\"}],\"Version\":\"2012-10-17\"}",
+            "region": "us-east-2"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "identity": {
+            "account_id": "774157347954",
+            "bucket": "vielora-website-dev",
+            "region": "us-east-2"
+          },
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_cloudfront_distribution.site",
+            "aws_cloudfront_function.rewrite",
+            "aws_cloudfront_origin_access_control.site",
+            "aws_s3_bucket.site",
+            "data.aws_cloudfront_cache_policy.disabled",
+            "data.aws_iam_policy_document.allow_cloudfront"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_public_access_block",
+      "name": "site",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "block_public_acls": true,
+            "block_public_policy": true,
+            "bucket": "vielora-website-dev",
+            "id": "vielora-website-dev",
+            "ignore_public_acls": true,
+            "region": "us-east-2",
+            "restrict_public_buckets": true,
+            "skip_destroy": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "identity": {
+            "account_id": "774157347954",
+            "bucket": "vielora-website-dev",
+            "region": "us-east-2"
+          },
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.site"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_server_side_encryption_configuration",
+      "name": "site",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "bucket": "vielora-website-dev",
+            "expected_bucket_owner": "",
+            "id": "vielora-website-dev",
+            "region": "us-east-2",
+            "rule": [
+              {
+                "apply_server_side_encryption_by_default": [
+                  {
+                    "kms_master_key_id": "",
+                    "sse_algorithm": "AES256"
+                  }
+                ],
+                "blocked_encryption_types": [
+                  "SSE-C"
+                ],
+                "bucket_key_enabled": false
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "account_id": "774157347954",
+            "bucket": "vielora-website-dev",
+            "region": "us-east-2"
+          },
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.site"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
+
