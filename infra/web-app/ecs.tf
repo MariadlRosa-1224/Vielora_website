@@ -166,7 +166,8 @@ resource "aws_ecs_service" "web" {
 
   lifecycle {
     ignore_changes = [
-      desired_count
+      desired_count,
+      task_definition,
     ]
   }
 }
